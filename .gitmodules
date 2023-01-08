@@ -1,0 +1,3 @@
+[submodule "submodel/FTXUI"]
+	path = submodel/FTXUI
+	url = https://github.com/ArthurSonzogni/FTXUI.git
