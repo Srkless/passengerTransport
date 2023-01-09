@@ -10,13 +10,14 @@
 
 namespace db
 {
-	template<typename T = std::string>
+	template<typename T>
 	concept Readable = requires(std::istream & is, T & a)
 	{
 		{is >> a} ->std::convertible_to<std::istream&>;
 	};
 
 	// function for reading a specified type from a file
+	// assumes that the '#' symbol terminates the data type
 	// default type is string
 	template<typename T = std::string>
 	requires Readable<T> && (std::copy_constructible<T> || std::copyable<T>)
@@ -51,14 +52,14 @@ namespace db
 	// O is the return type of the specified work function, if the function returns nothing, shoule be void
 	//
 	template<typename T, typename O = void>
-	void readFileCustom(std::filesystem::path path, std::function<O(T& a)> outputFunction, std::function<T(std::ifstream& is)> inputFunction = [](std::ifstream& is) {return readItem<T>(is); })
+	O readFileCustom(std::filesystem::path path, std::function<O(T& a)> outputFunction, std::function<T(std::ifstream& is)> inputFunction = [](std::ifstream& is) {return readItem<T>(is); })
 	{
 		std::ifstream inputFile(path);
 		T workData;
 		workData = inputFunction(inputFile);
-		bool t = outputFunction(workData);
-		std::cout << t;
+		O returnVal = outputFunction(workData);
 		inputFile.close();
+		return O;
 	}
 
 	
