@@ -1,5 +1,7 @@
 #pragma once
+#include <unordered_map>
 #include <iostream>
+#include <memory>
 #include <concepts>
 #include <functional>
 #include <string>
@@ -7,9 +9,28 @@
 #include <fstream>
 #include <sstream>
 #include <type_traits>
+#include "UserAccount.h"
 
 namespace db
 {
+
+	// takes a path to user database, and reads the user data into a hash map, sorted by usernames
+
+	std::unordered_map<std::string, UserAccount> loadUsersFromFile(std::filesystem::path path)
+	{
+		std::ifstream iFile(path);
+		std::unordered_map<std::string, UserAccount> users;
+
+		while(!iFile.eof())
+		{
+			UserAccount acc;
+			iFile >> acc;
+			users[acc.getUsername()] = acc;
+		}
+		iFile.close();
+		return users;
+	}
+
 	template<typename T>
 	concept Readable = requires(std::istream & is, T & a)
 	{
@@ -51,16 +72,22 @@ namespace db
 	// T is the type of data being read from file
 	// O is the return type of the specified work function, if the function returns nothing, shoule be void
 	//
-	template<typename T, typename O = void>
+	/*template<typename T, typename O = void>
 	O readFileCustom(std::filesystem::path path, std::function<O(T& a)> outputFunction, std::function<T(std::ifstream& is)> inputFunction = [](std::ifstream& is) {return readItem<T>(is); })
 	{
 		std::ifstream inputFile(path);
 		T workData;
-		workData = inputFunction(inputFile);
+		std::stringstream sstream;
+		std::getline(inputFile, sstream);
+		while(!inputFile.eof())
+		{
+			workData = inputFunction(inputFile);
+			O returnVal = outputFunction(workData);
+		}
 		O returnVal = outputFunction(workData);
 		inputFile.close();
-		return O;
-	}
+		return returnVal;
+	}*/
 
 	
 }

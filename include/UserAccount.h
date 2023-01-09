@@ -24,4 +24,5 @@ public:
 	void resetNumOfLogins();
 
 	friend std::ostream& operator<<(std::ostream& os, const UserAccount& account);
+	friend std::istream& operator>>(std::istream& is, UserAccount& account);
 };
