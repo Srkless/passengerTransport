@@ -1,6 +1,6 @@
 #include "utility.h"
 #include "UserAccount.h"
-#define ROT 22
+#define ROT 17
 
 std::string Utility::encrypt(std::string password)
 {
