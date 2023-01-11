@@ -62,6 +62,11 @@ void UserAccount::resetNumOfLogins()
 	numOfLogins = 0;
 }
 
+void UserAccount::changeSuspensionStatusTo(bool value)
+{
+	isSuspended = value;
+}
+
 std::istream& operator>>(std::istream& is, UserAccount& account)
 {
 	std::string line;
@@ -70,7 +75,7 @@ std::istream& operator>>(std::istream& is, UserAccount& account)
 	std::vector<std::string> items;
 	std::string item;
 	size_t count = 0;
-	while (std::getline(sstream, item, '#') && count < 4)
+	while (std::getline(sstream, item, '#') && count < 5)
 	{
 		items.push_back(item);
 		count++;
@@ -80,12 +85,20 @@ std::istream& operator>>(std::istream& is, UserAccount& account)
 	account.accountType = items[1];
 	account.password = Utility::decrypt(items[2]);
 	account.numOfLogins = std::stoi(items[3]);
+	if (std::stoi(items[4]) == 1)
+	{
+		account.isSuspended = true;
+	}
+	else
+	{
+		account.isSuspended = false;
+	}
 
 	return is;
 }
 
 std::ostream& operator<<(std::ostream& os, const UserAccount& account)
 {
-	os << account.username << "#" << account.accountType << "#" << Utility::encrypt(account.password) << "#" << account.numOfLogins;
+	os << account.username << "#" << account.accountType << "#" << Utility::encrypt(account.password) << "#" << account.numOfLogins << "#" << account.isSuspended;
 	return os;
 }
