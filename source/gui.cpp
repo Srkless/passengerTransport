@@ -100,6 +100,10 @@ void gui::login_interface()
 	std::string correct_password;
 
 	std::string welcome_message{ "Softver za agenciju za prevoz putnika" };
+	
+	// create necessary data when running application
+	
+
 	std::unordered_map<std::string, UserAccount> userDatabase;
 	userDatabase = db::loadUsersFromFile();
 	ftxui::Component name_input = ftxui::Input(&username, "Username");
