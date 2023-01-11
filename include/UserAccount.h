@@ -8,6 +8,7 @@ private:
 	std::string password;
 	std::string accountType;
 	int numOfLogins;
+	bool isSuspended;
 public:
 	UserAccount();
 	UserAccount(std::string username, std::string password, std::string accountType, int numOfLogins);
