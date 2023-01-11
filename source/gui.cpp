@@ -116,7 +116,6 @@ void gui::login_interface()
 		inputColor = { bright_green };
 		passwordColor = bright_green;
 		// lozinku je dovoljno provjeravati samo u slucaju da je korisnicko ime tacno
-		correct_password = password;
 	}
 	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(),
