@@ -2,14 +2,22 @@
 #include<fstream>
 #include<iostream>
 #include <cstdio>
+#include <iostream>
+#include <functional>
+#include <string>
+#include <filesystem>
+#include <fstream>
+#include <sstream>
 
 std::vector<std::string> CodeBooks;
 
-
-
 bool Administrator::DeleteCodeBook()
 {
-    std::string word1 = "DATA/DATA.txt", word;
+    std::filesystem::path word1 = std::filesystem::current_path();
+    word1 += "\\data\\codebooks";
+    std::filesystem::create_directories(word1);
+    word1 += "\\data.txt";
+    std::string word;
     std::ifstream Data(word1);
     int SerialNum;
     std::string DeleteFile,Check;
@@ -68,8 +76,11 @@ bool Administrator::DeleteCodeBook()
 
 bool Administrator::ModificationCodeBoks()
 {
-
-    std::string word1 = "DATA/DATA.txt", word;
+    std::filesystem::path word1 = std::filesystem::current_path();
+    word1 += "\\data\\codebooks";
+    std::filesystem::create_directories(word1);
+    word1 += "\\data.txt";
+    std::string word;
     std::ifstream Data(word1);
     int SerialNum;
     std::string ModifyFile, Check;
@@ -158,7 +169,11 @@ bool Administrator::ModificationCodeBoks()
 
 bool Administrator::CreateCodeBook()
 {
-    std::string word1="DATA/DATA.txt",word;
+    std::filesystem::path word1 = std::filesystem::current_path();
+    word1 += "\\data\\codebooks";
+    std::filesystem::create_directories(word1);
+    word1 += "\\data.txt";
+    std::string word;
     std::ifstream Data(word1);
     
     while (Data >> word)

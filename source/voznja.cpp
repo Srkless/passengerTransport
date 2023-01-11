@@ -61,4 +61,9 @@ std::vector<std::string> Voznja::getPathLocations()
 	return m_PathLocations;
 }
 
+std::string Voznja::geEndLocation()
+{
+	return m_EndLocation;
+}
+
 

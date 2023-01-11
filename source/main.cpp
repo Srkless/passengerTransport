@@ -3,6 +3,7 @@
 #include <fstream>
 #include <filesystem>
 #include "utility.h"
+#include "Administrator.h"
 int main()
 {
 	// check if the application is being run for the first time
@@ -50,6 +51,12 @@ int main()
 			users.close();
 		}
 	}
+
+	Administrator admin;
+	admin.CreateCodeBook();
+	admin.CreateCodeBook();
+	admin.ModificationCodeBoks();
+	admin.DeleteCodeBook();
 
 	gui::register_interface();
 	return 0;
