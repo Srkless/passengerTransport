@@ -14,11 +14,16 @@
 namespace db
 {
 
-	// takes a path to user database, and reads the user data into a hash map, sorted by usernames
+	// loads users from database into an unordered map
 
-	std::unordered_map<std::string, UserAccount> loadUsersFromFile(std::filesystem::path path)
+	std::unordered_map<std::string, UserAccount> loadUsersFromFile()
 	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\users";
+		std::filesystem::create_directories(path);
+		path += "\\userdata.txt";
 		std::ifstream iFile(path);
+;
 		std::unordered_map<std::string, UserAccount> users;
 
 		while(!iFile.eof())
@@ -30,6 +35,23 @@ namespace db
 		iFile.close();
 		return users;
 	}
+
+	// adds user to database
+	// should only be used during registration 
+
+	void addUserToFile(const UserAccount& usr)
+	{
+		std::ofstream oFile;
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\users";
+		std::filesystem::create_directories(path);
+		path += "userdata.txt";
+		oFile.open(path, std::ios::app);
+
+		oFile << usr;
+		oFile.close();
+	}
+
 
 	template<typename T>
 	concept Readable = requires(std::istream & is, T & a)

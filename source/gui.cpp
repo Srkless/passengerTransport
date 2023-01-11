@@ -90,7 +90,7 @@ void gui::login_interface()
 
 	std::string welcome_message{ "Softver za agenciju za prevoz putnika" };
 	std::unordered_map<std::string, UserAccount> userDatabase;
-	userDatabase = db::loadUsersFromFile("C:/Users/Srdja/OneDrive/Documents/test/hello.txt");
+	userDatabase = db::loadUsersFromFile();
 	ftxui::Component name_input = ftxui::Input(&username, "Username");
 	ftxui::InputOption password_option;
 	password_option.password = true;
