@@ -52,9 +52,9 @@ int main()
 		}
 	}
 
-	Administrator admin;
-	admin.CreateCodeBook();
-	admin.CreateCodeBook();
+	//Administrator admin;
+	//admin.CreateCodeBook();
+	//admin.CreateCodeBook();
 	gui::register_interface();
 	return 0;
 }

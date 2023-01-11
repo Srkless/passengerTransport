@@ -43,7 +43,7 @@ add_subdirectory(${FTXUI_DIR})
 
 # exe
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "source/*.?pp")
-add_executable(${PROJECT_NAME} ${SOURCES} "source/main.cpp" "include/gui.h" "source/gui.cpp" "include/voznja.h" "source/voznja.cpp" "include/DriverAccount.h" "source/DriverAccount.cpp")
+add_executable(${PROJECT_NAME} ${SOURCES} "source/main.cpp" "include/gui.h" "source/gui.cpp" "include/Ride.h" "source/Ride.cpp" "include/DriverAccount.h" "source/DriverAccount.cpp")
 target_include_directories(${PROJECT_NAME} PRIVATE ${FTXUI_DIR}/include src include)
 
 
