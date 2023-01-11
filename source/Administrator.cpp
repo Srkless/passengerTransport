@@ -2,32 +2,26 @@
 #include<fstream>
 #include<iostream>
 #include <cstdio>
-#include <iostream>
-#include <functional>
-#include <string>
-#include <filesystem>
-#include <fstream>
-#include <sstream>
 
 std::vector<std::string> CodeBooks;
 
+
+
 bool Administrator::DeleteCodeBook()
 {
-    std::filesystem::path word1 = std::filesystem::current_path();
-    word1 += "\\data\\codebooks";
-    std::filesystem::create_directories(word1);
-    word1 += "\\data.txt";
-    std::string word;
+    std::string word1 = "Data/DATA.txt", word;
     std::ifstream Data(word1);
     int SerialNum;
     std::string DeleteFile,Check;
 
+    std::vector<std::string> CodeBooks2;
+
     while (Data >> word)
     {
-        CodeBooks.push_back(word);
+        CodeBooks2.push_back(word);
     };
 
-    if (CodeBooks.size() == 0)
+    if (CodeBooks2.size() == 0)
     {
         std::cout << "There is no codebooks" << std::endl;
         return false;
@@ -36,27 +30,40 @@ bool Administrator::DeleteCodeBook()
     Data.close();
     std::ofstream DATA;
     DATA.open(word1);
+
     do
     {
         std::cout << "Printout of all codeBooks!" << std::endl;
-        for (int i = 0; i < CodeBooks.size(); i++)
+        for (int i = 0; i < CodeBooks2.size(); i++)
         {
-            std::cout << i + 1 << ". " << CodeBooks[i] << std::endl;
+            std::cout << i + 1 << ". " << CodeBooks2[i] << std::endl;
         }
-        std::cout << std::endl << " Enter the serial number of the code you are deleting" << std::endl;
-        std::cin >> SerialNum;
-        DeleteFile = CodeBooks[SerialNum - 1];
+
+        do
+        {
+            std::cout << std::endl << " Enter the serial number of the code you are deleting" << std::endl;
+            std::cin >> SerialNum;
+
+            if (SerialNum > 0 && SerialNum <= CodeBooks2.size())
+                break;
+
+        } while (1);
+        
+        
+        DeleteFile = CodeBooks2[SerialNum - 1];
         std::cout << "Enter yes if you are sure you want to delete?" << std::endl;
         std::cin >> Check;
         if (Check == "yes")
         {
             const char* a = DeleteFile.c_str();
 
-            CodeBooks.erase(CodeBooks.begin() + (SerialNum - 1));//Brisanje iz glavnog fajla gdje su imena svih sifranika!
-            for (int i = 0; i < CodeBooks.size(); i++)
+            CodeBooks2.erase(CodeBooks2.begin() + (SerialNum - 1));//Brisanje iz glavnog fajla gdje su imena svih sifranika!
+
+            for (int i = 0; i < CodeBooks2.size(); i++)
             {
-                DATA << CodeBooks[i]<<std::endl;
+                DATA << CodeBooks2[i] << std::endl;
             };
+            DATA.close();
 
             if (remove(a))
                 return true;
@@ -66,52 +73,73 @@ bool Administrator::DeleteCodeBook()
         std::cout << "Do you want to go back?" << std::endl;
         std::cout << "          yes or no    " << std::endl;
         std::cin >> Check;
+
+       
+
         if(Check=="yes")
         {
+            for (int i = 0; i < CodeBooks2.size(); i++)
+            {
+                DATA << CodeBooks2[i] << std::endl;
+            };
+            DATA.close();
+
             return false;
         }
+
+
     } while (1);
 
 }
 
 bool Administrator::ModificationCodeBoks()
 {
-    std::filesystem::path word1 = std::filesystem::current_path();
-    word1 += "\\data\\codebooks";
-    std::filesystem::create_directories(word1);
-    word1 += "\\data.txt";
-    std::string word;
+    std::vector<std::string> CodeBooks2;
+    std::string word1 = "Data/DATA.txt", word;
     std::ifstream Data(word1);
     int SerialNum;
     std::string ModifyFile, Check;
 
     while (Data >> word)
     {
-        CodeBooks.push_back(word);
+        CodeBooks2.push_back(word);
     };
 
-    if (CodeBooks.size() == 0)
+    if (CodeBooks2.size() == 0)
     {
         std::cout << "There is no codebooks" << std::endl;
         return false;
     };
     Data.close();
+
+   
+
     std::string type;
     do
     {
         std::cout << "Printout of all codeBooks!" << std::endl;
-        for (int i = 0; i < CodeBooks.size(); i++)
+        for (int i = 0; i < CodeBooks2.size(); i++)
         {
-            std::cout << i + 1 << ". " << CodeBooks[i] << std::endl;
+            std::cout << i + 1 << ". " << CodeBooks2[i] << std::endl;
         }
-        std::cout << std::endl << " Enter the serial number of the code you want to change!" << std::endl;
-        std::cin >> SerialNum;
-        ModifyFile = CodeBooks[SerialNum - 1];
+
+        do
+        {
+            std::cout << std::endl << " Enter the serial number of the code you want to change!" << std::endl;
+            std::cin >> SerialNum;
+
+            if (SerialNum > 0 && SerialNum <= CodeBooks2.size())
+                break;
+            
+        } while (1);
+
+        ModifyFile = CodeBooks2[SerialNum - 1];
+
 
         std::cout << "  Do you want to add something to the code or change it completely ? " << std::endl;
         std::cout << "        modify or change  " << std::endl;
         std::cin >> Check;
-
+        std::cin.ignore(100, '\n');
         if (Check == "modify")
         {
             std::ofstream DATA;
@@ -169,17 +197,14 @@ bool Administrator::ModificationCodeBoks()
 
 bool Administrator::CreateCodeBook()
 {
-    std::filesystem::path word1 = std::filesystem::current_path();
-    word1 += "\\data\\codebooks";
-    std::filesystem::create_directories(word1);
-    word1 += "\\data.txt";
-    std::string word;
+    std::string word1="Data/DATA.txt",word;
     std::ifstream Data(word1);
     
     while (Data >> word)
     {
         CodeBooks.push_back(word);
     };
+
     Data.close();
     std::string name;
     std::ofstream data;
@@ -215,15 +240,13 @@ bool Administrator::CreateCodeBook()
 
     } while (1);
 
-    std::filesystem::path path = std::filesystem::current_path();
-    path += "\\data\\codebooks\\";
-    path += name;
-    path += ".txt";
    
 
     std::ofstream file;
-    file.open(path);
+    file.open(name);
     
+    std::cin.ignore(100, '\n');
+
     if (file)
     {
         if(type=="Location")
@@ -235,18 +258,20 @@ bool Administrator::CreateCodeBook()
             do
             {
                 std::cout <<"Enter the city!" << std::endl;
-                std::cin >> location;
+
+                getline(std::cin,location);
                 if (location == "END")
                     break;
                 std::cout << "Enter the country!" << std::endl;
-                std::cin >> country;
+             
+                getline(std::cin, country);
                 file <<location << "#" << country << std::endl;
             } while (1);
             file.close();
 
             if(is_equal(name))
             {
-                std::cout << "Such a codebook already exists";
+                std::cout << "Such a codebook already exists"<<std::endl;
                 const char* a = name.c_str();
                 remove(a);
                 return false;
@@ -264,19 +289,23 @@ bool Administrator::CreateCodeBook()
             std::string Registration;
 
             std::cout << "Enter bus brand " << std::endl;
-            std::cin >> busBrand;
+   
+            getline(std::cin, busBrand);
             file << busBrand;
 
             std::cout << "Enter bus model " << std::endl;
-            std::cin >> model;
+      
+            getline(std::cin, model);
             file <<"#" << model;
 
             std::cout << "Enter bus the year of production" << std::endl;
-            std::cin >>yearProduction;
+            
+            getline(std::cin, yearProduction);
             file << "#" <<yearProduction;
 
             std::cout << "Enter registration" << std::endl;
-            std::cin >> Registration;
+            
+            getline(std::cin, Registration);
             file << "#" << Registration;
             file.close();
             if (is_equal(name))
@@ -298,12 +327,14 @@ bool Administrator::CreateCodeBook()
 
             //file << type << std::endl;
             std::cout << "Enter start location" << std::endl;
-            std::cin >> location1;
-            file << location1 << std::endl;
+            
+            getline(std::cin, location1);
+           // file << location1 << std::endl;
 
             std::cout << "Enter stop location" << std::endl;
-            std::cin >> location2;
-            file << location2 << std::endl;
+       
+            getline(std::cin, location2);
+           // file << location2 << std::endl;
 
             std::cout << "Enter stops between the start and end locations!" << std::endl;
             std::cout << "Enter END for end!" << std::endl;
@@ -311,7 +342,9 @@ bool Administrator::CreateCodeBook()
 
             do
             {
-                std::cin >> location;
+                
+                getline(std::cin, location);
+
                 if (location == "END")
                     break;
                 file << "#" << location;
@@ -338,8 +371,16 @@ bool Administrator::CreateCodeBook()
     {
         std::cout << "Unable to open file";
         return false;
-    }
+    };
 
+    data.open(word1, std::ios::app);
+
+    for (int i = 0; i < CodeBooks.size(); i++)
+    {
+        file << CodeBooks[i] << std::endl;
+    };
+
+    data.close();
     return true;
 
 }
@@ -412,7 +453,8 @@ bool is_equal( std::string name)
 
 bool modify(std::string type,std::ofstream& file)
 {
-    file << std::endl;
+   /* file << std::endl;*/
+    std::cin.ignore(100, '\n');
     if (type == "Location")
     {
         std::string location;
@@ -422,11 +464,13 @@ bool modify(std::string type,std::ofstream& file)
         do
         {
             std::cout << "Enter the city!" << std::endl;
-            std::cin >> location;
+       
+            getline(std::cin, location);
             if (location == "END")
                 break;
             std::cout << "Enter the country!" << std::endl;
-            std::cin >> country;
+        
+            getline(std::cin, country);
             file << location << "#" << country << std::endl;
 
         } while (1);
@@ -444,19 +488,23 @@ bool modify(std::string type,std::ofstream& file)
         std::string Registration;
 
         std::cout << "Enter bus brand " << std::endl;
-        std::cin >> busBrand;
+      
+        getline(std::cin, busBrand);
         file << busBrand;
 
         std::cout << "Enter bus model " << std::endl;
-        std::cin >> model;
+
+             getline(std::cin, model);
         file << "#" << model;
 
         std::cout << "Enter bus the year of production" << std::endl;
-        std::cin >> yearProduction;
+       
+        getline(std::cin, yearProduction);
         file << "#" << yearProduction;
 
         std::cout << "Enter registration" << std::endl;
-        std::cin >> Registration;
+    
+        getline(std::cin, Registration);
         file << "#" << Registration;
        
         std::cout << "You have finished entering the codebook!" << std::endl;
@@ -469,12 +517,14 @@ bool modify(std::string type,std::ofstream& file)
 
         //file << type << std::endl;
         std::cout << "Enter start location" << std::endl;
-        std::cin >> location1;
-        file << location1 << std::endl;
+       
+        getline(std::cin, location1);
+     //   file << location1 << std::endl;
 
         std::cout << "Enter stop location" << std::endl;
-        std::cin >> location2;
-        file << location2 << std::endl;
+      
+        getline(std::cin, location2);
+       // file << location2 << std::endl;
 
         std::cout << "Enter stops between the start and end locations!" << std::endl;
         std::cout << "Enter END for end!" << std::endl;
@@ -482,7 +532,8 @@ bool modify(std::string type,std::ofstream& file)
 
         do
         {
-            std::cin >> location;
+            std::cin.ignore();
+            getline(std::cin, location);
             if (location == "END")
                 break;
             file << "#" << location;
