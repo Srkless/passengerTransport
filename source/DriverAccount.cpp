@@ -65,7 +65,7 @@ void DriverAccount::writeReport(const std::string& fileName, const Ride& ride) c
 		std::cout << "Make ride report: " << std::endl;
 		std::getline(std::cin, report);
 
-		file << "#" << report << "#";
+		file << report << "#";
 	}
 	else
 		throw std::runtime_error("File could not open!");
@@ -85,8 +85,6 @@ void DriverAccount::problemReport(const std::string& fileName, const Ride& ride)
 			if (option != 1 && option != 2)
 				std::cout << "Invald option, try again!" << std::endl;
 		} while (option != 1 && option != 2);
-
-		file << "#";
 
 		/*if (option == 1)
 			file << "Passenger problem" << std::endl << std::endl;
