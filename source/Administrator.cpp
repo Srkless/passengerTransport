@@ -215,10 +215,14 @@ bool Administrator::CreateCodeBook()
 
     } while (1);
 
+    std::filesystem::path path = std::filesystem::current_path();
+    path += "\\data\\codebooks\\";
+    path += name;
+    path += ".txt";
    
 
     std::ofstream file;
-    file.open(name);
+    file.open(path);
     
     if (file)
     {
