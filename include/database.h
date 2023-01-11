@@ -45,10 +45,10 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\users";
 		std::filesystem::create_directories(path);
-		path += "userdata.txt";
+		path += "\\userdata.txt";
 		oFile.open(path, std::ios::app);
 
-		oFile << usr;
+		oFile << std::endl << usr;
 		oFile.close();
 	}
 

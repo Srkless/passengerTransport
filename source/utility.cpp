@@ -25,8 +25,6 @@ std::string Utility::encrypt(std::string password)
 		}
 		else if (password[i] == ' ')
 			continue;
-		else
-			password[i] += ROT % 9;
 	}
 	return password;
 }
@@ -53,8 +51,6 @@ std::string Utility::decrypt(std::string password)
 		}
 		else if (password[i] == ' ')
 			continue;
-		else
-			password[i] += ROT % 9;
 	}
 	return password;
 }

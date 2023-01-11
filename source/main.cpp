@@ -4,6 +4,6 @@
 #include "utility.h"
 int main()
 {
-	gui::login_interface();
+	gui::register_interface();
 	return 0;
 }

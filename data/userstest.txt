@@ -1,2 +1,0 @@
-user#Admin#pwd#4
-user2#NotAdmin#pswd#5

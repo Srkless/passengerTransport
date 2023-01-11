@@ -44,7 +44,6 @@ void gui::register_interface()
 	std::string welcome_message{ "Softver za agenciju za prevoz putnika" };
 	ftxui::Color welcomeMess_color = blue;
 	std::string label = "";
-	bool checked = false;
 
 	ftxui::Component inputUsername = ftxui::Input(&username, "Username");
 
@@ -52,22 +51,34 @@ void gui::register_interface()
 	password_option.password = true;
 	ftxui::Component inputPassword = ftxui::Input(&password, "Password", password_option);
 	ftxui::Component inputPasswordAgain = ftxui::Input(&againPassword, "Password again", password_option);
-
-
-	auto RegisterButton = ftxui::Button("Registruj se", [&] {});
+	std::unordered_map<std::string, UserAccount> userDatabase;
+	userDatabase = db::loadUsersFromFile();
+	int flag = 0;
+	auto RegisterButton = ftxui::Button("Registruj se", [&] {
+		flag = 1;
+		if (flag) {
+			welcome_message = "USPJESNA REGISTRACIJA";
+			welcomeMess_color = bright_green;
+			usernameFile = username;
+			passwordFile = password;
+			UserAccount curr(usernameFile, passwordFile, "korisnik", 0);
+			if (flag)
+				db::addUserToFile(curr);
+			login_interface();
+		}
+		});
 	auto exit_button = ftxui::Button("IZLAZ", [&] { exit(0); });
 
 	auto component = ftxui::Container::Vertical({ inputUsername, inputPassword, inputPasswordAgain, RegisterButton, exit_button});
-
+	
 	auto renderer = ftxui::Renderer(component, [&] {
 		ftxui::Color input_color = light_gray;
 		ftxui::Color password_color = light_gray;
-	if (password == againPassword && password.size() > 0)
+	if (userDatabase[username].getUsername() == "" && password == againPassword && password.size() > 7)
 	{
 		input_color = bright_green;
 		password_color = bright_green;
-		usernameFile = username;
-		passwordFile = password;
+		
 	}
 	
 	return  vbox({ center(bold(ftxui::text(welcome_message)) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(welcomeMess_color)),
@@ -101,7 +112,7 @@ void gui::login_interface()
 	
 	ftxui::Color welcomeMess_color = blue;
 	auto log_in_button = ftxui::Button("PRIJAVI SE", [&] {
-		if (0) {
+		if (userDatabase[username].getUsername() != "" && Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(password)) {
 				welcome_message = "USPJESNA PRIJAVA";
 				welcomeMess_color = bright_green;
 			}
@@ -114,7 +125,7 @@ void gui::login_interface()
 		ftxui::Color input_color = light_gray;
 		ftxui::Color password_color = light_gray;
 
-	if (password.size() >= 8) { // Provjera da li posotji username
+	if (userDatabase[username].getUsername() != "" && Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(password)) { // Provjera da li posotji username
 
 		input_color = { bright_green };
 		password_color = bright_green;
