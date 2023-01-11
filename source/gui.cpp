@@ -85,48 +85,45 @@ void gui::login_interface()
 {
 	std::string username;
 	std::string password;
-	std::string correct_username;
-	std::string correct_password;
 
-	std::string welcome_message{ "Softver za agenciju za prevoz putnika" };
+	std::string bannerMessage = "Softver za agenciju za prevoz putnika";
 	std::unordered_map<std::string, UserAccount> userDatabase;
-	userDatabase = db::loadUsersFromFile("C:/Users/Srdja/OneDrive/Documents/test/hello.txt");
-	ftxui::Component name_input = ftxui::Input(&username, "Username");
-	ftxui::InputOption password_option;
-	password_option.password = true;
-	ftxui::Component password_input = ftxui::Input(&password, "Password", password_option);
+	ftxui::Component inputName = ftxui::Input(&username, "Username");
+	ftxui::InputOption passwordOption;
+	passwordOption.password = true;
+	ftxui::Component inputPassword = ftxui::Input(&password, "Password", passwordOption);
 
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	auto quit_app = screen.ExitLoopClosure();
 	
-	ftxui::Color welcomeMess_color = blue;
-	auto log_in_button = ftxui::Button("PRIJAVI SE", [&] {
+	ftxui::Color bannerMessageColor = blue;
+	auto logInButton = ftxui::Button("PRIJAVI SE", [&] {
 		if (0) {
-				welcome_message = "USPJESNA PRIJAVA";
-				welcomeMess_color = bright_green;
+				bannerMessage = "USPJESNA PRIJAVA";
+				bannerMessageColor = bright_green;
 			}
 		});
 
-	auto exit_button = ftxui::Button("IZLAZ", [&] { exit(0); });
+	auto exitButton = ftxui::Button("IZLAZ", [&] { exit(0); });
 	int a = 0;
-	auto component = ftxui::Container::Vertical({ name_input, password_input, log_in_button, exit_button});
+	auto component = ftxui::Container::Vertical({ inputName, inputPassword, logInButton, exitButton });
 	auto renderer = ftxui::Renderer(component, [&] {
-		ftxui::Color input_color = light_gray;
-		ftxui::Color password_color = light_gray;
+		ftxui::Color inputColor = light_gray;
+		ftxui::Color passwordColor = light_gray;
 
 	if (password.size() >= 8) { // Provjera da li posotji username
 
-		input_color = { bright_green };
-		password_color = bright_green;
+		inputColor = { bright_green };
+		passwordColor = bright_green;
 		// lozinku je dovoljno provjeravati samo u slucaju da je korisnicko ime tacno
 		correct_password = password;
 	}
-	return ftxui::vbox({ center(bold(ftxui::text(welcome_message)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(welcomeMess_color)),
+	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(),
-			ftxui::hbox({ftxui::vbox({center(ftxui::hbox(ftxui::text(""), name_input->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(input_color)))}) | ftxui::borderRounded,
-			center(hbox(ftxui::text(""), password_input->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(password_color))) | ftxui::borderRounded}),
-			center(hbox({ftxui::hbox({center(log_in_button->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green),
-			center(hbox(center(exit_button->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+			ftxui::hbox({ftxui::vbox({center(ftxui::hbox(ftxui::text(""), inputName->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(inputColor)))}) | ftxui::borderRounded,
+			center(hbox(ftxui::text(""), inputPassword->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(passwordColor))) | ftxui::borderRounded}),
+			center(hbox({ftxui::hbox({center(logInButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green),
+			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	int depth = 0;
 	auto on_agree = [&]() { depth = 0; };
 
