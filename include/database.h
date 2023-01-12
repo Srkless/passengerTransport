@@ -173,6 +173,49 @@ namespace db
 		return tmp;
 	}
 
+	inline std::unordered_map<std::string, UserAccount> loadDriversFromFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\users";
+		std::filesystem::create_directories(path);
+		path += "\\userdata.txt";
+		std::ifstream iFile(path);
+		std::unordered_map<std::string, UserAccount> drivers;
+
+		while (!iFile.eof())
+		{
+			UserAccount acc;
+			iFile >> acc;
+			if (acc.getAccountType() == "driver")
+			{
+				drivers[acc.getUsername()] = acc;
+			}
+			
+		}
+		iFile.close();
+		return drivers;
+	}
+
+	inline std::unordered_map<std::string, Ride> loadDriverRides()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides";
+		std::filesystem::create_directories(path);
+		path += "\\userdata.txt";
+		std::ifstream iFile(path);
+		std::unordered_map<std::string, Ride> rides;
+
+		while (!iFile.eof())
+		{
+			Ride tmpRide;
+			iFile >> tmpRide;
+			
+
+		}
+		iFile.close();
+		return rides;
+	}
+
 	// function for reading the whole file
 	// can only read one type of data, specified by T
 	// accepts two std::function wrappers
