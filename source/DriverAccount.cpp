@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 #include "DriverAccount.h"
+#include "Ride.h"
+#include "Report.h"
+#include "ProblemReport.h"
 
 std::vector<std::string> DriverAccount::routeOverview(const std::string& fileName) const noexcept(false)
 {
@@ -29,51 +32,85 @@ std::vector<std::string> DriverAccount::routeOverview(const std::string& fileNam
 		throw std::runtime_error("File not found!");
 }
 
-void DriverAccount::generatingTravelOrder(const std::string& travelOrderFileName, const Ride& ride) const noexcept(false)
+void DriverAccount::generatingTravelOrder(const std::string& fileName, const Ride& ride) const noexcept(false)
 {
-	std::ofstream file(travelOrderFileName);
+	std::ofstream file;
+	std::filesystem::path path1 = std::filesystem::current_path();
+	path1 += "\\data\\rides";
+	std::filesystem::create_directories(path1);
+	path1 += fileName;
+	file.open(path1, std::ios::app);
 
-	if (file.good())                    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
+	std::ofstream fileArray;
+	std::filesystem::path path2 = std::filesystem::current_path();
+	path2 += "\\data\\rides";
+	path2 += "\\AllTravelOrders.txt";
+	fileArray.open(path2, std::ios::app);
+
+
+	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
 	{
-		file << ride.getRideID() << "#";
-		file << ride.getDriver() << "#";
-		file << ride.getStartTime() << "#";
-		file << ride.getEndTime() << "#";
-		file << ride.getStartLocation() << "#";
-
-		auto route = ride.getPathLocations();
-		for (auto& string : route)
-			file << string << "#";
-
-		file << ride.geEndLocation() << "#";
+		fileArray << fileName << std::endl;
+		//file << report;
 	}
 	else
 		throw std::runtime_error("File could not open!");
 }
 
-void DriverAccount::writeReport(const std::string& fileName, const Ride& ride) const noexcept(false)
+void DriverAccount::writeReport(const std::string& fileName, Report& report) const noexcept(false)
 {
-	std::ofstream file(fileName);
+	std::ofstream file;
+	std::filesystem::path path1 = std::filesystem::current_path();
+	path1 += "\\data\\rides";
+	std::filesystem::create_directories(path1);
+	path1 += fileName;
+	file.open(path1, std::ios::app);
 
-	if (file.good())                    // routeID, name(username), content
+	std::ofstream fileArray;
+	std::filesystem::path path2 = std::filesystem::current_path();
+	path2 += "\\data\\rides";
+	path2 += "\\AllReports.txt";
+	fileArray.open(path2, std::ios::app);
+
+	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
 	{
-		std::string report;
-
-		file << ride.getRideID() << "#";
-		file << ride.getDriver() << "#";
-
-		std::cout << "Make ride report: " << std::endl;
-		std::getline(std::cin, report);
-
-		file << report << "#";
+		fileArray << fileName << std::endl;
+		//file << report;
 	}
 	else
 		throw std::runtime_error("File could not open!");
 }
 
-void DriverAccount::problemReport(const std::string& fileName, const Ride& ride) const noexcept(false)
+void DriverAccount::problemReport(const std::string& fileName, ProblemReport& report) const noexcept(false)
 {
-	std::ofstream file(fileName); /// KAKO ZNATI KOJI JE PROBLEM AKO SAMO UPISUJEM #
+	std::ofstream file;
+	std::filesystem::path path1 = std::filesystem::current_path();
+	path1 += "\\data\\rides";
+	std::filesystem::create_directories(path1);
+	path1 += fileName;
+	file.open(path1, std::ios::app);
+
+	std::ofstream fileArray;
+	std::filesystem::path path2 = std::filesystem::current_path();
+	path2 += "\\data\\rides";
+	path2 += "\\AllProblemReports.txt";
+	fileArray.open(path2, std::ios::app);
+
+	fileArray << fileName << std::endl;
+
+
+	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
+	{
+		fileArray << fileName << std::endl;
+		//file << report;
+	}
+	else
+		throw std::runtime_error("File could not open!");
+
+
+
+
+	/*std::ofstream file(fileName); /// KAKO ZNATI KOJI JE PROBLEM AKO SAMO UPISUJEM #
 
 	if (file.good())
 	{
@@ -86,24 +123,29 @@ void DriverAccount::problemReport(const std::string& fileName, const Ride& ride)
 				std::cout << "Invald option, try again!" << std::endl;
 		} while (option != 1 && option != 2);
 
-		/*if (option == 1)
-			file << "Passenger problem" << std::endl << std::endl;
-		else
-			file << "Bus problem" << std::endl << std::endl;*/
+		
 
 		std::string problem;
 		std::getchar();
+		report.setReportAuthor(this->getUsername());
 
-		file << ride.getRideID() << "#";
-		file << ride.getDriver() << "#";
+		file << report.getRideID() << "#";
+		file << report.getAuthor() << "#";
+		
+		if (option == 1)
+			file << "Passenger problem" << "#";
+		else
+			file << "Bus problem" << "#";
 
 		std::cout << "Make ride report: " << std::endl;
 		std::getline(std::cin, problem);
 
-		file << problem << "#";
+		report.setContent(problem);
+
+		file << report.getContent() << "#";
 	}
 	else
-		throw std::runtime_error("File could not open!");
+		throw std::runtime_error("File could not open!");*/
 }
 
 std::string DriverAccount::overview(const std::string& fileName) const noexcept(false)

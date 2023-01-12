@@ -41,7 +41,7 @@ void gui::register_interface()
 
 	std::string bannerMessage = "Softver za agenciju za prevoz putnika";
 
-	ftxui::Color bannerMessageColor = blue;
+	ftxui::Color bannerMessageColor = white;
 	ftxui::Color inputUsernameColor = light_gray;
 	ftxui::Color inputPasswordColor = light_gray;
 
@@ -107,7 +107,7 @@ void gui::register_interface()
 			wrongPassword = 0;
 		}
 
-	return  vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
+	return  vbox({ center(ftxui::text(bannerMessage) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
 			separatorDouble(),
 			center(hbox(center(inputUsername->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(inputUsernameColor)))) | ftxui::borderRounded,
 			center(hbox(center(inputPassword->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(inputPasswordColor)))) | ftxui::borderRounded,
