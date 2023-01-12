@@ -36,6 +36,7 @@ public:
 	std::string getStartLocation() const;
 	std::vector<std::string> getPathLocations() const;
 	std::string geEndLocation() const;
+
 	friend std::ostream& operator<<(std::ostream& os, const Ride& ride);
 	friend std::istream& operator>>(std::istream& is, Ride& ride);
 };

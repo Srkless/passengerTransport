@@ -17,4 +17,7 @@ public:
 	std::string getRideID() const noexcept(true);
 	std::string getAuthor() const noexcept(true);
 	std::string getContent() const noexcept(true);
+
+	friend std::ostream& operator<<(std::ostream& os, const Report& report);
+	friend std::istream& operator>>(std::istream& is, Report& report);
 };
