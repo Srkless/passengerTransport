@@ -21,7 +21,7 @@ void gui::registerInterface(int number)
 
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 
-	std::string bannerMessage = "Softver za agenciju za prevoz putnika";
+	std::string bannerMessage = "SOFTWARE FOR A PASSENGER TRANSPORT AGENCY";
 
 	ftxui::Color bannerMessageColor = blue;
 	ftxui::Color inputUsernameColor = light_gray;
@@ -38,10 +38,10 @@ void gui::registerInterface(int number)
 	userDatabase = db::loadUsersFromFile();
 
 	int flag = 0;
-	auto registerButton = ftxui::Button("Registruj se", [&] {
+	auto registerButton = ftxui::Button("Register", [&] {
 		flag = 1;
 	if (flag && userDatabase[username].getUsername() == "" && password == againPassword && password.size() > 7) {
-		bannerMessage = "USPJESNA REGISTRACIJA";
+		bannerMessage = "Successful registration!";
 		bannerMessageColor = bright_green;
 		wrongPassword = 0;
 		wrongUsername = 0;
@@ -62,14 +62,14 @@ void gui::registerInterface(int number)
 		}
 		else
 		{
-			UserAccount curr(username, password, "korisnik", 0);
+			UserAccount curr(username, password, "user", 0);
 			db::addUserToFile(curr);
 			loginInterface();
 		}
 	}
 	else
 	{
-		bannerMessage = "NEUSPJESNA REGISTRACIJA";
+		bannerMessage = "Failed registration!";
 		bannerMessageColor = red;
 		if (userDatabase[username].getUsername() != "")
 		{
@@ -94,8 +94,8 @@ void gui::registerInterface(int number)
 		}
 	}
 		});
-	auto exitButton = ftxui::Button("IZLAZ", [&] { exit(0); });
-	auto backButton = ftxui::Button("Back", [&] {gui::loginInterface(); });
+	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
+	auto backButton = ftxui::Button("Back", [&] {gui::login_interface(); });
 	auto component = ftxui::Container::Vertical({ inputUsername, inputPassword, inputPasswordAgain, registerButton, exitButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -116,10 +116,10 @@ void gui::registerInterface(int number)
 			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 
 	auto agreePasswordButton = [&]() { wrongPassword = 0; wrongUsername = 0; };
-	auto wrongPasswoedContainer = Container::Horizontal({ Button("PONOVO", [&] { agreePasswordButton(); }) });
+	auto wrongPasswoedContainer = Container::Horizontal({ Button("Retry", [&] { agreePasswordButton(); }) });
 	auto wrongPasswoedRederer = Renderer(wrongPasswoedContainer, [&] {
 		return vbox({
-				   text("Loznike se ne poklapaju ili su manje od 8 slova"),
+				   text("Passwords do not match or are less than 8 characters"),
 				   separator(),
 				   center(hbox(wrongPasswoedContainer->Render())) | color(red),
 			}) |
@@ -127,10 +127,10 @@ void gui::registerInterface(int number)
 		});
 
 	auto agreeUsernameButton = [&]() { wrongUsername = 0; wrongPassword = 0; };
-	auto wrongUsernameContainer = Container::Horizontal({ Button("PONOVO", [&] { agreeUsernameButton(); }) });
+	auto wrongUsernameContainer = Container::Horizontal({ Button("Retry", [&] { agreeUsernameButton(); }) });
 	auto wrongUsernameRenderer = Renderer(wrongUsernameContainer, [&] {
 		return vbox({
-				   text("Username vec postoji"),
+				   text("Username already exists!"),
 				   separator(),
 				   center(hbox(wrongUsernameContainer->Render())) | color(red),
 			}) |
@@ -165,7 +165,7 @@ void gui::loginInterface()
 	std::string username;
 	std::string password;
 
-	std::string bannerMessage = "Softver za agenciju za prevoz putnika";
+	std::string bannerMessage = "SOFTWARE FOR A PASSENGER TRANSPORT AGENCY";
 	int wrongPassword = 0;
 	int wrongUsername = 0;
 	int suspended = 0;
@@ -197,9 +197,9 @@ void gui::loginInterface()
 	ftxui::Color usernameColor = light_gray;
 	ftxui::Color passwordColor = light_gray;
 
-	auto logInButton = ftxui::Button("PRIJAVI SE", [&] {
+	auto logInButton = ftxui::Button("SIGN IN", [&] {
 		if (userDatabase[username].getUsername() != "" && Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(password) && !userDatabase[username].getSuspendInfo()) {
-			bannerMessage = "USPJESNA PRIJAVA";
+			bannerMessage = "Successful login";
 			bannerMessageColor = bright_green;
 			wrongPassword = 0;
 			wrongUsername = 0;
@@ -225,7 +225,7 @@ void gui::loginInterface()
 		}
 		else
 		{
-			bannerMessage = "NEUSPJESNA PRIJAVA";
+			bannerMessage = "Failed login!";
 			if (userDatabase[username].getUsername() == "")
 			{
 				usernameColor = red;
@@ -242,8 +242,8 @@ void gui::loginInterface()
 
 		});
 
-	auto exitButton = ftxui::Button("IZLAZ", [&] { exit(0); });
-	auto registerButton = ftxui::Button("REGISTRUJ SE", [&] {registerInterface(0); });
+	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
+	auto registerButton = ftxui::Button("SIGN UP", [&] {register_interface(0); });
 	auto component = ftxui::Container::Vertical({ usernameInput, passwordInput, logInButton, exitButton, registerButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -269,10 +269,10 @@ void gui::loginInterface()
 
 
 	auto agreeUsernameButton = [&]() { wrongUsername = 0; wrongPassword = 0; suspended = 0; };
-	auto wrongUsernameContainer = Container::Horizontal({ Button("PONOVO", [&] { agreeUsernameButton(); }) });
+	auto wrongUsernameContainer = Container::Horizontal({ Button("Retry", [&] { agreeUsernameButton(); }) });
 	auto wrongUsernameRenderer = Renderer(wrongUsernameContainer, [&] {
 		return vbox({
-				   text("Username netacan"),
+				   text("Username incorrect!"),
 				   separator(),
 				   center(hbox(wrongUsernameContainer->Render())) | color(red),
 			}) |
@@ -280,20 +280,20 @@ void gui::loginInterface()
 		});
 
 	auto agreePasswordButton = [&]() { wrongPassword = 0; wrongUsername = 0; suspended = 0; };
-	auto wrongPasswordContainer = Container::Horizontal({ Button("PONOVO", [&] { agreePasswordButton(); }) });
+	auto wrongPasswordContainer = Container::Horizontal({ Button("Retry", [&] { agreePasswordButton(); }) });
 	auto wrongPasswordRederer = Renderer(wrongPasswordContainer, [&] {
 		return vbox({
-				   text("Loznika netacna"),
+				   text("Incorrect password!"),
 				   separator(),
 				   center(hbox(wrongPasswordContainer->Render())) | color(red),
 			}) |
 			border;
 		});
 	auto agreeSuspended = [&]() { wrongUsername = 0; wrongPassword = 0; suspended = 0; };
-	auto suspendedContainer = Container::Horizontal({ Button("PONOVO", [&] { agreeSuspended(); }) });
+	auto suspendedContainer = Container::Horizontal({ Button("Retry", [&] { agreeSuspended(); }) });
 	auto suspendedRederer = Renderer(suspendedContainer, [&] {
 		return vbox({
-				   text("Nalog je suspendovan"),
+				   text("This account has been suspended"),
 				   separator(),
 				   center(hbox(wrongPasswordContainer->Render())) | color(red),
 			}) |
@@ -329,24 +329,24 @@ void gui::changePassword(std::string username)
 	ftxui::Color passwordColor = light_gray;
 	int passwordControl = 0; // 0 - sve okej, -1 stara sifra ne valja, 1 ne valja nova
 
-	std::string bannerMessage = "Promjena lozinke";
+	std::string bannerMessage = "Password change";
 	ftxui::Color bannerMessageColor = light_gray;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 
 	ftxui::InputOption passwordOption;
 	passwordOption.password = true;
 
-	ftxui::Component oldPasswordInput = ftxui::Input(&oldPassword, "Old Password", passwordOption);
-	ftxui::Component passwordInput = ftxui::Input(&password, "New Password", passwordOption);
-	ftxui::Component confirmPasswordInput = ftxui::Input(&confirmPassword, "Confirm Password", passwordOption);
+	ftxui::Component oldPasswordInput = ftxui::Input(&oldPassword, "Old password", passwordOption);
+	ftxui::Component passwordInput = ftxui::Input(&password, "New password", passwordOption);
+	ftxui::Component confirmPasswordInput = ftxui::Input(&confirmPassword, "Confirm password", passwordOption);
 
 	std::unordered_map<std::string, UserAccount> userDatabase;
 	userDatabase = db::loadUsersFromFile();
 
-	auto confirmButton = ftxui::Button("POTVRDI", [&] {
-		if (Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword) && Utility::decrypt(password) != Utility::decrypt(oldPassword))
+	auto confirmButton = ftxui::Button("CONFIRM", [&] {
+		if (Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword))
 		{
-			bannerMessage = "Uspjesna promjena lozinke";
+			bannerMessage = "Successful password change";
 			passwordColor = bright_green;
 			bannerMessageColor = bright_green;
 			passwordControl = 0;
@@ -357,7 +357,7 @@ void gui::changePassword(std::string username)
 		}
 		else
 		{
-			bannerMessage = "Neuspjesna promjena lozinke";
+			bannerMessage = "Failed password change";
 			bannerMessageColor = red;
 			passwordColor = red;
 			if (Utility::decrypt(userDatabase[username].getPassword()) != Utility::decrypt(oldPassword))
@@ -366,7 +366,7 @@ void gui::changePassword(std::string username)
 				passwordControl = 1;
 		}
 	});
-	auto exitButton = ftxui::Button("IZLAZ", [&] { exit(0); });
+	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
 
 	auto component = ftxui::Container::Vertical({ oldPasswordInput, passwordInput, confirmPasswordInput , confirmButton, exitButton});
 
@@ -391,10 +391,10 @@ void gui::changePassword(std::string username)
 
 
 	auto agreePasswordButton = [&]() { passwordControl = 0; };
-	auto wrongPasswordContainer = Container::Horizontal({ Button("PONOVO", [&] { agreePasswordButton(); }) });
+	auto wrongPasswordContainer = Container::Horizontal({ Button("Retry", [&] { agreePasswordButton(); }) });
 	auto wrongOldPasswordRederer = Renderer(wrongPasswordContainer, [&] {
 		return vbox({
-				   text("Stara Loznika netacna"),
+				   text("Incorrect old password!"),
 				   separator(),
 				   center(hbox(wrongPasswordContainer->Render())) | color(red),
 			}) |
@@ -403,7 +403,7 @@ void gui::changePassword(std::string username)
 
 	auto wrongConfirmPasswordRederer = Renderer(wrongPasswordContainer, [&] {
 		return vbox({
-				   text("Loznike se ne poklapaju"),
+				   text("Passwords do not match!"),
 				   separator(),
 				   center(hbox(wrongPasswordContainer->Render())) | color(red),
 			}) |
@@ -435,7 +435,7 @@ void gui::administrator_interface(std::string username)
 	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {gui::scheduleSettings(username); }); // ostale metode
 	auto reportsSettings = ftxui::Button("Reports settings", [&] {gui::reportsSettings(username); }); // ostale metode
 	auto generateTravelWarrant = ftxui::Button("Generate Travel Warrant", [&] {exit(0); });
-	auto logout = ftxui::Button("Logout", [&] {loginInterface(); }); // done
+	auto logout = ftxui::Button("SIGN OUT", [&] {login_interface(); });
 
 
 	// CodeBooks Settings

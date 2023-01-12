@@ -55,11 +55,16 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	path2 += "\\AllReports.txt";
 	fileArray.open(path2, std::ios::app); 
 
-	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
+	fileArray.seekp(0, std::ios::end);
+	if (fileArray.tellp() == 0)
+	{
+		fileArray << fileName;
+	}
+	else if (fileArray.good() && file.good())
 	{
 		if (!checkName("\\reports\\", "AllReports.txt", fileName))
 		{
-			fileArray << fileName << std::endl;
+			fileArray << std::endl << fileName;
 			file << report;
 		}
 		fileArray.close();

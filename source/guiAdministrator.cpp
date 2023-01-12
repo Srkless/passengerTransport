@@ -48,7 +48,7 @@ void editAccountInterface(int value, std::string currUsername)
 	auto menu = Radiobox(&entries, &selected);
 	auto acceptButton = ftxui::Button("Accept", [&] {(value == 3 && selected != -1) ? (userDatabase.erase(entries[selected]), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(currUsername))
 			: (value == 4 && selected != -1) ? (userDatabase[entries[selected]].setPassword("admin"), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(currUsername)): (userDatabase[entries[selected]].changeSuspensionStatus(), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(currUsername)); });
-	auto backButton = ftxui::Button("Back", [&] {gui::accountSettingsInterface(currUsername); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(currUsername); });
 	auto component = ftxui::Container::Vertical({ menu,acceptButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -72,7 +72,7 @@ void gui::accountSettingsInterface(std::string username)
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string currUsername = username;
-	std::string bannerMessage = currUsername + "'s account Settings";
+	std::string bannerMessage = currUsername + "'s account settings";
 
 	// Account Settings
 	auto createAccount = ftxui::Button("Create account", [&] {choiceAccountInterface(username); });
@@ -83,7 +83,7 @@ void gui::accountSettingsInterface(std::string username)
 
 	auto suspendPassword = ftxui::Button("Suspend password", [&] {editAccountInterface(4, username); });
 	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(username); });
-	auto backButton = ftxui::Button("Back", [&] {gui::administrator_interface(username); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(username); });
 
 	
 

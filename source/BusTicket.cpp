@@ -1,6 +1,6 @@
 #include "BusTicket.h"
 
-BusTicket::BusTicket(std::string rideID, size_t seatNumber, std::string startLocation, std::string endLocation, double price, bool hasBaggage)
+BusTicket::BusTicket(std::string rideID, size_t seatNumber, std::string startLocation, std::string endLocation, double price, bool hasBaggageb)
 	: m_rideID(rideID), m_seatNumber(seatNumber), m_startLocation(startLocation), m_endLocation(endLocation)
 {}
 
