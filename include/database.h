@@ -17,27 +17,27 @@
 
 namespace db
 {
-	inline bool CheckName(std::string name,std::string name2)
+	inline bool checkName(std::string fileArray,std::string fileName)
 	{
-		std::vector<std::string> CodeBooks;
-		std::filesystem::path word1 = std::filesystem::current_path();
-		word1 += "\\data";
-		std::filesystem::create_directories(word1);
-		word1 += name;
-		word1 += "\\.txt";
+		std::vector<std::string> fileData;
+		std::filesystem::path path1 = std::filesystem::current_path();
+		path1 += "\\data";
+		std::filesystem::create_directories(path1);
+		path1 += fileArray;
+		path1 += "\\.txt";
 		std::string word;
-		std::ifstream Data(word1);
+		std::ifstream file(path1);
 
-		while (Data >> word)
+		while (file >> word)
 		{
-			CodeBooks.push_back(word);
+			fileData.push_back(word);
 		};
 
-		Data.close();
+		file.close();
 		std::string name;
-		for (int i = 0; i < CodeBooks.size(); i++)
+		for (int i = 0; i < fileData.size(); i++)
 		{
-			if (name2 == CodeBooks[i])
+			if (fileName == fileData[i])
 				return true;
 		}
 		return false;
