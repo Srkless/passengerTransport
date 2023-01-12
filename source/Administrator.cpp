@@ -11,13 +11,13 @@ std::vector<std::string> CodeBooks;
 
 using namespace db;
 
-void Administrator::generatingTravelOrder(const std::string& fileName, const Ride& ride) const noexcept(false)
+void Administrator::generatingTravelOrder(const Ride& ride) const noexcept(false)
 {
     std::ofstream file;
     std::filesystem::path path1 = std::filesystem::current_path();
     path1 += "\\data\\rides";
     std::filesystem::create_directories(path1);
-    path1 += fileName;
+    path1 += ride.getRideID() + ".txt";
     file.open(path1, std::ios::app);
 
     std::ofstream fileArray;
@@ -29,7 +29,7 @@ void Administrator::generatingTravelOrder(const std::string& fileName, const Rid
 
     if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
     {
-        fileArray << fileName << std::endl;
+        fileArray << ride << std::endl;
         //file << report;
     }
 }

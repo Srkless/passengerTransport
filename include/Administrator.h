@@ -10,7 +10,7 @@ bool modify(std::string,std::ofstream& file);
 class Administrator
 {
 public:
-	void generatingTravelOrder(const std::string& travelOrderFileName, const Ride& ride) const noexcept(false); /// podaci naloga, putanja
+	void generatingTravelOrder(const Ride& ride) const noexcept(false); /// podaci naloga, putanja
 	void ViewUserAccount();
 	bool CreateCodeBook();
 	bool DeleteCodeBook();

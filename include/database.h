@@ -373,7 +373,6 @@ namespace db
 				iFile2.close();
 				iFile.close();
 			}
-
 			return rides;
 		}
 	}
