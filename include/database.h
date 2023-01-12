@@ -10,6 +10,7 @@
 #include <sstream>
 #include <type_traits>
 #include "Ride.h"
+#include "Bus.h"
 #include "UserAccount.h"
 #include "Schedule.h"
 #include "Report.h"
@@ -17,14 +18,46 @@
 
 namespace db
 {
+
+	inline std::unordered_map<std::string, bus> readBusFromFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\codebooks";
+		std::filesystem::create_directories(path);
+		path += "\\Bus.txt";
+		std::ifstream iFile(path);
+		std::unordered_map<std::string, bus> busMap;
+
+		while (!iFile.eof())
+		{
+			std::filesystem::path path = std::filesystem::current_path();
+			path += "\\data\\codebooks\\";
+
+			std::string name;
+			std::getline(iFile, name);
+			path += name;
+
+			bus tmpBus;
+
+			std::ifstream iFile2(path);
+			iFile2 >> tmpBus;
+
+			busMap[tmpBus.getRegistraion()] = tmpBus;
+			iFile2.close();
+		}
+		iFile.close();
+
+		return busMap;
+	}
+
+	// used to make sure no duplicates exist
 	inline bool checkName(std::string fileArray, std::string fileName)
 	{
 		std::vector<std::string> fileData;
 		std::filesystem::path path1 = std::filesystem::current_path();
-		path1 += "\\data";
+		path1 += "\\data\\";
 		std::filesystem::create_directories(path1);
 		path1 += fileArray;
-		path1 += "\\.txt";
 		std::string word;
 		std::ifstream file(path1);
 
@@ -112,18 +145,23 @@ namespace db
 		path += "\\ridedata.txt";
 		oFile.open(path, std::ios::app);
 
+		std::ofstream oFile2;
+		path = std::filesystem::current_path();
+		path += "\\data\\rides\\";
+		path += ride.getRideID();
+		path += ".txt";
+
 		oFile.seekp(0, std::ios::end);
 		if (oFile.tellp() == 0)
 		{
 			oFile << ride.getRideID() << ".txt";
+			oFile2.open(path);
+			oFile2 << ride;
+			oFile2.close();
 		}
 		else
 		{
-			std::ofstream oFile2;
-			path = std::filesystem::current_path();
-			path += "\\data\\rides\\";
-			path += ride.getRideID();
-			path += ".txt";
+			
 			std::string cmpName = ride.getRideID() + ".txt";
 			if (!checkName("ridedata.txt", cmpName))
 			{

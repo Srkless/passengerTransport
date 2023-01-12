@@ -453,6 +453,7 @@ bool Administrator::CreateCodeBook()
             std::string model;
             std::string yearProduction;
             std::string Registration;
+            int numberOfSeats;
 
             std::cout << "Enter bus brand " << std::endl;
 
