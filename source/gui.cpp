@@ -95,7 +95,7 @@ void gui::registerInterface(int number)
 	}
 		});
 	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
-	auto backButton = ftxui::Button("Back", [&] {gui::loginInterface(); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::loginInterface(); });
 	auto component = ftxui::Container::Vertical({ inputUsername, inputPassword, inputPasswordAgain, registerButton, exitButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
