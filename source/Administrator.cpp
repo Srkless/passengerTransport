@@ -2,10 +2,67 @@
 #include<fstream>
 #include<iostream>
 #include <cstdio>
+#include"database.h"
 #include <filesystem>
+
 
 std::vector<std::string> CodeBooks;
 
+using namespace db;
+
+void Administrator::generatingTravelOrder(const std::string& fileName, const Ride& ride) const noexcept(false)
+{
+    std::ofstream file;
+    std::filesystem::path path1 = std::filesystem::current_path();
+    path1 += "\\data\\rides";
+    std::filesystem::create_directories(path1);
+    path1 += fileName;
+    file.open(path1, std::ios::app);
+
+    std::ofstream fileArray;
+    std::filesystem::path path2 = std::filesystem::current_path();
+    path2 += "\\data\\rides";
+    path2 += "\\AllTravelOrders.txt";
+    fileArray.open(path2, std::ios::app);
+
+
+    if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
+    {
+        fileArray << fileName << std::endl;
+        //file << report;
+    }
+    else
+        throw std::runtime_error("File could not open!");
+}
+
+void Administrator::ViewUserAccount()
+{
+    std::cout << "User Accounts!" << std::endl;
+    std::unordered_map<std::string, UserAccount> myMap = db::loadUsersFromFile();
+    int i = 1;
+    for (auto const& x : myMap)
+    {
+        std::cout <<i++<<". " << x.first << std::endl;
+    };
+   
+}
+
+bool Administrator::SuspendingUserAccount()
+{
+    std::string username;
+    std::unordered_map<std::string, UserAccount> myMap = db::loadUsersFromFile();
+    int i = 1;
+    for (auto const& x : myMap)
+    {
+        std::cout << x.first << std::endl;
+    };
+    std::cout << "Enter username of the user you want to suspend!" << std::endl;
+    std::cin >> username;
+
+    myMap[username].changeSuspensionStatusTo(true);
+
+    return false;
+};
 
 
 bool Administrator::DeleteCodeBook()
@@ -69,8 +126,11 @@ bool Administrator::DeleteCodeBook()
                 DATA << CodeBooks2[i] << std::endl;
             };
             DATA.close();
-
-            if (remove(a))
+            std::filesystem::path path = std::filesystem::current_path();
+            path += "\\data\\codebooks\\";
+            path += DeleteFile;
+            path += ".txt";
+            if (remove(path))
                 return true;
             else
                 return false;

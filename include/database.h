@@ -9,24 +9,97 @@
 #include <fstream>
 #include <sstream>
 #include <type_traits>
+#include "Ride.h"
 #include "UserAccount.h"
+#include "Schedule.h"
 
 namespace db
 {
+	inline Schedule readScheduleFromFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides\\schedule.txt";
+		std::ifstream iFile(path);
+		iFile.open(path, std::ios::app);
+
+		Schedule tmp;
+		iFile >> tmp;
+		return tmp;
+	}
+
+	inline void editScheduleFile(const Schedule& schedule)
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides";
+		std::filesystem::create_directories(path);
+		path += "\\schedule.txt";
+		std::ofstream oFile(path);
+		oFile.open(path, std::ios::app);
+
+		oFile.seekp(0, std::ios::end);
+		if (oFile.tellp() == 0)
+		{
+			oFile << schedule;
+		}
+		else
+		{
+			oFile << std::endl << schedule;
+		}
+	}
+
+	// read rides from file into an unordered map
+	inline std::unordered_map<std::string, Ride> loadRidesFromFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides";
+		std::filesystem::create_directories(path);
+		path += "\\ridedata.txt";
+		std::ifstream iFile(path);
+		std::unordered_map<std::string, Ride> rides;
+
+		while (!iFile.eof())
+		{
+			Ride newRide;
+			iFile >> newRide;
+			rides[newRide.getRideID()] = newRide;
+		}
+		iFile.close();
+		return rides;
+	}
+	
+	// add Ride to a file
+	inline void addRideToFile(const Ride& ride)
+	{
+		std::ofstream oFile;
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides";
+		std::filesystem::create_directories(path);
+		path += "\\ridedata.txt";
+		oFile.open(path, std::ios::app);
+
+		oFile.seekp(0, std::ios::end);
+		if (oFile.tellp() == 0)
+		{
+			oFile  << ride;
+		}
+		else
+		{
+			oFile << std::endl << ride;
+		}
+	}
 
 	// loads users from database into an unordered map
 
-	inline std::unordered_map<std::string, UserAccount> loadUsersFromFile()
+	std::unordered_map<std::string, UserAccount> loadUsersFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\users";
 		std::filesystem::create_directories(path);
 		path += "\\userdata.txt";
 		std::ifstream iFile(path);
-;
 		std::unordered_map<std::string, UserAccount> users;
 
-		while(!iFile.eof())
+		while (!iFile.eof())
 		{
 			UserAccount acc;
 			iFile >> acc;
@@ -84,13 +157,13 @@ namespace db
 	// function for reading a specified type from a file
 	// assumes that the '#' symbol terminates the data type
 	// default type is string
-	template<typename T = std::string>
-	requires Readable<T> && (std::copy_constructible<T> || std::copyable<T>)
+	 template<typename T = std::string>
+		requires Readable<T> && (std::copy_constructible<T> || std::copyable<T>)
 	T readItem(std::ifstream& is)
 	{
 		std::string line;
 		std::getline(is, line, '#');
-		
+
 		std::stringstream stream(line);
 
 		T tmp;
@@ -133,6 +206,6 @@ namespace db
 		return returnVal;
 	}*/
 
-	
-}
+
+};
 
