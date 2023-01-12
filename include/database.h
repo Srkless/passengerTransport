@@ -88,7 +88,7 @@ namespace db
 		while (!iFile.eof())
 		{
 			path = std::filesystem::current_path();
-			path += "\\data\\rides";
+			path += "\\data\\rides\\";
 			std::string name;
 			std::getline(iFile, name);
 			path += name;
