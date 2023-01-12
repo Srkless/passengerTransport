@@ -5,6 +5,7 @@
 #include "utility.h"
 #include "Administrator.h"
 #include "Configuration.h"
+
 int main()
 {
 	config::configure();
