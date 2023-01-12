@@ -4,36 +4,11 @@
 #include <cstdio>
 #include"database.h"
 #include <filesystem>
-
+#include<algorithm>
 
 std::vector<std::string> CodeBooks;
 
 using namespace db;
-
-void Administrator::generatingTravelOrder(const std::string& fileName, const Ride& ride) const noexcept(false)
-{
-    std::ofstream file;
-    std::filesystem::path path1 = std::filesystem::current_path();
-    path1 += "\\data\\rides";
-    std::filesystem::create_directories(path1);
-    path1 += fileName;
-    file.open(path1, std::ios::app);
-
-    std::ofstream fileArray;
-    std::filesystem::path path2 = std::filesystem::current_path();
-    path2 += "\\data\\rides";
-    path2 += "\\AllTravelOrders.txt";
-    fileArray.open(path2, std::ios::app);
-
-
-    if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
-    {
-        fileArray << fileName << std::endl;
-        //file << report;
-    }
-    else
-        throw std::runtime_error("File could not open!");
-}
 
 void Administrator::ViewUserAccount()
 {
@@ -47,22 +22,6 @@ void Administrator::ViewUserAccount()
    
 }
 
-bool Administrator::SuspendingUserAccount()
-{
-    std::string username;
-    std::unordered_map<std::string, UserAccount> myMap = db::loadUsersFromFile();
-    int i = 1;
-    for (auto const& x : myMap)
-    {
-        std::cout << x.first << std::endl;
-    };
-    std::cout << "Enter username of the user you want to suspend!" << std::endl;
-    std::cin >> username;
-
-    myMap[username].changeSuspensionStatus();
-
-    return false;
-};
 
 
 bool Administrator::DeleteCodeBook()
@@ -71,25 +30,67 @@ bool Administrator::DeleteCodeBook()
     word1 += "\\data\\codebooks";
     std::filesystem::create_directories(word1);
     word1 += "\\data.txt";
+
+    std::filesystem::path word2 = std::filesystem::current_path();
+    word2 += "\\data\\codebooks";
+    std::filesystem::create_directories(word2);
+    word2 += "\\location.txt";
+
+    std::filesystem::path word3 = std::filesystem::current_path();
+    word3 += "\\data\\codebooks";
+    std::filesystem::create_directories(word3);
+    word3 += "\\Bus.txt";
+
+    std::filesystem::path word4 = std::filesystem::current_path();
+    word4 += "\\data\\codebooks";
+    std::filesystem::create_directories(word4);
+    word4 += "\\Tour.txt";
+
     std::string word;
     std::ifstream Data(word1);
     int SerialNum;
     std::string DeleteFile, Check;
 
     std::vector<std::string> CodeBooks2;
+    std::vector<std::string> CodeBooks3;
+    std::vector<std::string> CodeBooks4;
+    std::vector<std::string> CodeBooks5;
 
     while (Data >> word)
     {
         CodeBooks2.push_back(word);
     };
+    Data.close();
+    Data.open(word2);
+
+    while (Data >> word)
+    {
+        CodeBooks3.push_back(word);
+    };
+    Data.close();
+
+    Data.open(word3);
+    while (Data >> word)
+    {
+        CodeBooks4.push_back(word);
+    };
+
+    Data.close();
+
+    Data.open(word4);
+    while (Data >> word)
+    {
+        CodeBooks5.push_back(word);
+    };
+
 
     if (CodeBooks2.size() == 0)
     {
         std::cout << "There is no codebooks" << std::endl;
         return false;
     };
+ Data.close();
 
-    Data.close();
     std::ofstream DATA;
     DATA.open(word1);
 
@@ -121,15 +122,60 @@ bool Administrator::DeleteCodeBook()
 
             CodeBooks2.erase(CodeBooks2.begin() + (SerialNum - 1));//Brisanje iz glavnog fajla gdje su imena svih sifranika!
 
+            auto n = std::find(CodeBooks3.begin(), CodeBooks3.end(), DeleteFile);
+            if (n != CodeBooks3.end())
+            {
+                CodeBooks3.erase(n);
+            };
+            n = std::find(CodeBooks4.begin(), CodeBooks4.end(), DeleteFile);
+            if (n != CodeBooks4.end())
+            {
+                CodeBooks4.erase(n);
+            };
+             n = std::find(CodeBooks4.begin(), CodeBooks4.end(), DeleteFile);
+            if (n != CodeBooks4.end())
+            {
+                CodeBooks4.erase(n);
+            };
+             n = std::find(CodeBooks5.begin(), CodeBooks5.end(), DeleteFile);
+            if (n != CodeBooks5.end())
+            {
+                CodeBooks5.erase(n);
+            };
+        
+
             for (int i = 0; i < CodeBooks2.size(); i++)
             {
                 DATA << CodeBooks2[i] << std::endl;
             };
             DATA.close();
+
+            DATA.open(word2);
+            for (int i = 0; i < CodeBooks3.size(); i++)
+            {
+                DATA << CodeBooks3[i] << std::endl;
+            };
+            DATA.close();
+
+            DATA.open(word3);
+            for (int i = 0; i < CodeBooks4.size(); i++)
+            {
+                DATA << CodeBooks4[i] << std::endl;
+            };
+            DATA.close();
+
+            DATA.open(word4);
+            for (int i = 0; i < CodeBooks5.size(); i++)
+            {
+                DATA << CodeBooks5[i] << std::endl;
+            };
+            DATA.close();
+
             std::filesystem::path path = std::filesystem::current_path();
             path += "\\data\\codebooks\\";
             path += DeleteFile;
             path += ".txt";
+
             if (remove(path))
                 return true;
             else
@@ -327,6 +373,15 @@ bool Administrator::CreateCodeBook()
     {
         if (type == "Location")
         {
+
+            std::filesystem::path location3 = std::filesystem::current_path();
+            location3 += "\\data\\codebooks";
+            std::filesystem::create_directories(location3);
+            location3 += "\\location.txt";
+
+            std::ofstream location33;
+            location33.open(location3,std::ios::app);
+
             std::string location;
             std::string country;
             std::cout << "Enter the location where bus can go!" << std::endl;
@@ -353,11 +408,21 @@ bool Administrator::CreateCodeBook()
             }
             std::cout << "You have finished entering the codebook!" << std::endl;
             data << name << std::endl;
+            location33 << name<<std::endl;
             data.close();
+            location33.close();
         }
         // Marka, model, godina proizvodnje, registracija
         else if (type == "Bus")
         {
+            std::filesystem::path location3 = std::filesystem::current_path();
+            location3 += "\\data\\codebooks";
+            std::filesystem::create_directories(location3);
+            location3 += "\\Bus.txt";
+
+            std::ofstream location33;
+            location33.open(location3, std::ios::app);
+
             std::string busBrand;
             std::string model;
             std::string yearProduction;
@@ -391,11 +456,22 @@ bool Administrator::CreateCodeBook()
                 return false;
             }
             data << name << std::endl;
+            location33 << name << std::endl;
             data.close();
+            location33.close();
             std::cout << "You have finished entering the codebook!" << std::endl;
         }
         else
         {
+
+            std::filesystem::path location3 = std::filesystem::current_path();
+            location3 += "\\data\\codebooks";
+            std::filesystem::create_directories(location3);
+            location3 += "\\Tour.txt";
+
+            std::ofstream location33;
+            location33.open(location3, std::ios::app);
+
             std::string location;
             std::string location1;
             std::string location2;
@@ -438,7 +514,9 @@ bool Administrator::CreateCodeBook()
             }
 
             data << name << std::endl;
+            location33 << name << std::endl;
             data.close();
+            location33.close();
             std::cout << "You have finished entering the codebook!" << std::endl;
         }
     }
