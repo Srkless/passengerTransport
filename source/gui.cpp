@@ -11,7 +11,7 @@
 
 #define loginNums 20
 
-void gui::register_interface(int number)
+void gui::registerInterface(int number)
 {
 	std::string username;
 	std::string password;
@@ -64,7 +64,7 @@ void gui::register_interface(int number)
 		{
 			UserAccount curr(username, password, "korisnik", 0);
 			db::addUserToFile(curr);
-			login_interface();
+			loginInterface();
 		}
 	}
 	else
@@ -95,7 +95,7 @@ void gui::register_interface(int number)
 	}
 		});
 	auto exitButton = ftxui::Button("IZLAZ", [&] { exit(0); });
-	auto backButton = ftxui::Button("Back", [&] {gui::login_interface(); });
+	auto backButton = ftxui::Button("Back", [&] {gui::loginInterface(); });
 	auto component = ftxui::Container::Vertical({ inputUsername, inputPassword, inputPasswordAgain, registerButton, exitButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -160,7 +160,7 @@ void gui::register_interface(int number)
 	screen.Loop(mainRenderer);
 }
 
-void gui::login_interface()
+void gui::loginInterface()
 {
 	std::string username;
 	std::string password;
@@ -243,7 +243,7 @@ void gui::login_interface()
 		});
 
 	auto exitButton = ftxui::Button("IZLAZ", [&] { exit(0); });
-	auto registerButton = ftxui::Button("REGISTRUJ SE", [&] {register_interface(0); });
+	auto registerButton = ftxui::Button("REGISTRUJ SE", [&] {registerInterface(0); });
 	auto component = ftxui::Container::Vertical({ usernameInput, passwordInput, logInButton, exitButton, registerButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -344,7 +344,7 @@ void gui::changePassword(std::string username)
 	userDatabase = db::loadUsersFromFile();
 
 	auto confirmButton = ftxui::Button("POTVRDI", [&] {
-		if (Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword))
+		if (Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword) && Utility::decrypt(password) != Utility::decrypt(oldPassword))
 		{
 			bannerMessage = "Uspjesna promjena lozinke";
 			passwordColor = bright_green;
@@ -353,7 +353,7 @@ void gui::changePassword(std::string username)
 			userDatabase[username].setPassword(confirmPassword);
 			userDatabase[username].resetNumOfLogins();
 			db::writeUsersToFile(userDatabase);
-			login_interface();
+			loginInterface();
 		}
 		else
 		{
@@ -430,22 +430,18 @@ void gui::administrator_interface(std::string username)
 	std::string bannerMessage = "Administrator Account";
 	ftxui::Color bannerMessageColor = blue;
 
-	auto accountSettings = ftxui::Button("Account settings", [&] {gui::accountSettingsInterface(username); });
+	auto accountSettings = ftxui::Button("Account settings", [&] {gui::accountSettingsInterface(username); }); // done
 	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {exit(0); });
-	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {exit(0); });
-	auto reportsSettings = ftxui::Button("Reports settings", [&] {exit(0); });
+	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {gui::scheduleSettings(username); }); // ostale metode
+	auto reportsSettings = ftxui::Button("Reports settings", [&] {gui::reportsSettings(username); }); // ostale metode
 	auto generateTravelWarrant = ftxui::Button("Generate Travel Warrant", [&] {exit(0); });
-	auto logout = ftxui::Button("Logout", [&] {login_interface(); });
+	auto logout = ftxui::Button("Logout", [&] {loginInterface(); }); // done
 
 
 	// CodeBooks Settings
 	auto createCodebooks = ftxui::Button("Create codebooks", [&] {exit(0); });
 	auto deleteCodebook = ftxui::Button("Create codebooks", [&] {exit(0); });
 	auto modifyCodebooks = ftxui::Button("Modify codebooks", [&] {exit(0); });
-
-	// Schedule
-	auto addRide = ftxui::Button("Add ride", [&] {exit(0); });
-	auto deleteRide = ftxui::Button("Delete ride", [&] {exit(0); });
 
 	auto component = ftxui::Container::Vertical({ accountSettings, codeBooksSettings, ScheduleSettings, reportsSettings, generateTravelWarrant, logout });
 
@@ -460,6 +456,4 @@ void gui::administrator_interface(std::string username)
 		});
 
 	screen.Loop(renderer);
-	//| hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150), | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green)))
-
 }
