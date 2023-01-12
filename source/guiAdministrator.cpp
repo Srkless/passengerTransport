@@ -7,7 +7,7 @@ void choiceAccountInterface(std::string username)
 	ftxui::Color bannerMessageColor = blue;
 	auto createAdministratorAccount = ftxui::Button("Create administrator account", [&] {gui::registerInterface(1); });
 	auto createDriverAccount = ftxui::Button("Create driver account", [&] {gui::registerInterface(2); });
-	auto backButton = ftxui::Button("Back", [&] {gui::accountSettingsInterface(username); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(username); });
 	auto component = ftxui::Container::Vertical({ createAdministratorAccount,  createDriverAccount, backButton });
 	
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -122,7 +122,7 @@ void gui::scheduleSettings(std::string username)
 
 	auto addRide = ftxui::Button("Add ride", [&] {addRideInterface(); });
 	auto deleteRide = ftxui::Button("Delete ride", [&] {deleteRideInterface(); });
-	auto backButton = ftxui::Button("Back", [&] {gui::administrator_interface(username); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(username); });
 	auto component = ftxui::Container::Vertical({ addRide, deleteRide, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -151,7 +151,7 @@ void viewReportInterface(std::string username)
 		entries.push_back(elem.first);
 	int selected = -1;
 	auto menu = Radiobox(&entries, &selected);
-	auto backButton = ftxui::Button("Back", [&] {gui::reportsSettings(username); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::reportsSettings(username); });
 	auto acceptButton = ftxui::Button("Accept", [&] {});
 	auto component = ftxui::Container::Vertical({ menu, backButton, acceptButton });
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -180,7 +180,7 @@ void gui::reportsSettings(std::string username)
 	auto viewReport = ftxui::Button("View reports", [&] { viewReportInterface(username); });
 	auto viewPassengerProblems = ftxui::Button("View passenger problems", [&] {viewPassengerProblemsInterface(username); });
 	auto viewRideProblems = ftxui::Button("View ride problems", [&] {viewRideProblemsInterface(username); });
-	auto backButton = ftxui::Button("Back", [&] {gui::administrator_interface(username); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(username); });
 
 	auto component = ftxui::Container::Vertical({ viewReport, viewPassengerProblems, viewRideProblems, backButton});
 
