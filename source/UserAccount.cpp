@@ -40,9 +40,14 @@ int UserAccount::getNumOfLogins() const
 	return this->numOfLogins;
 }
 
+bool UserAccount::getSuspendInfo() const
+{
+	return this->isSuspended;
+}
+
 void UserAccount::setPassword(std::string newPassword)
 {
-	this->password = password;
+	this->password = newPassword;
 }
 
 UserAccount UserAccount::createAccount(std::string username, std::string password, std::string accountType)
@@ -62,9 +67,9 @@ void UserAccount::resetNumOfLogins()
 	numOfLogins = 0;
 }
 
-void UserAccount::changeSuspensionStatusTo(bool value)
+void UserAccount::changeSuspensionStatus()
 {
-	isSuspended = value;
+	this->isSuspended = !this->isSuspended;
 }
 
 std::istream& operator>>(std::istream& is, UserAccount& account)

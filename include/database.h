@@ -89,6 +89,7 @@ namespace db
 	}
 
 	// loads users from database into an unordered map
+
 	inline std::unordered_map<std::string, UserAccount> loadUsersFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
@@ -124,6 +125,28 @@ namespace db
 		oFile.close();
 	}
 
+	// write users to database
+	inline void writeUsersToFile(std::unordered_map<std::string, UserAccount>& map)
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\users";
+		std::filesystem::create_directories(path);
+		path += "\\userdata.txt";
+		std::ofstream oFile(path);
+		
+		for (auto& user : map)
+		{
+			if (user.second.getUsername() != "")
+			{
+				oFile.seekp(0, std::ios::end);
+				if (oFile.tellp() == 0)
+					oFile << user.second;
+				else
+					oFile << std::endl << user.second;
+			}
+		}
+		oFile.close();
+	}
 
 	template<typename T>
 	concept Readable = requires(std::istream & is, T & a)

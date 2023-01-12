@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "database.hpp"
+#include "database.h"
 #include "UserAccount.h"
 #include "utility.h"
 #include <ftxui/dom/table.hpp>
@@ -18,16 +18,34 @@
 #include "ftxui/util/ref.hpp"
 
 using namespace ftxui;
+namespace {
+	ftxui::Color purple = { 93, 39, 93 };
+	ftxui::Color red = { 177, 62, 83 };
+	ftxui::Color orange = { 239, 125, 87 };
+	ftxui::Color yellow = { 255, 205, 117 };
+	ftxui::Color bright_green = { 167, 240, 112 };
+	ftxui::Color dark_green = { 56, 183, 100 };
+	ftxui::Color teal = { 37, 113, 121 };
+	ftxui::Color dark_blue = { 41, 54, 111 };
+	ftxui::Color blue = { 59, 93, 201 };
+	ftxui::Color light_blue = { 65, 166, 246 };
+	ftxui::Color cyan = { 115, 239, 247 };
+	ftxui::Color white = { 255, 255, 255 };
+	ftxui::Color light_gray = { 148, 176, 194 };
+	ftxui::Color gray = { 86, 108, 134 };
+	ftxui::Color dark_gray = { 51, 60, 87 };
+
+}
 
 namespace gui {
 
 	void login_interface();
-	void register_interface();
-	/*void change_password(Database& db, User& user, bool quitable,
-		std::function<void(Database&)> caller);
+	void register_interface(int number);
+	void change_password(std::string username);
+	void administrator_interface();
 
-	void employee_interface(Database& db);
-	void selling_items_interface(Database& db);
+	void accountSettingsInterface();
+	/*void selling_items_interface(Database& db);
 	void supervisor_interface(Database& db);
 	void employee_overview(Database& db);
 	void create_employee_interface(Database& db);

@@ -9,7 +9,7 @@ private:
 	std::string password;
 	std::string accountType;
 	int numOfLogins;
-	bool isSuspended = false;
+	bool isSuspended = true;
 public:
 	UserAccount();
 	UserAccount(std::string username, std::string password, std::string accountType, int numOfLogins);
@@ -19,12 +19,13 @@ public:
 	std::string getPassword() const;
 	std::string getAccountType() const;
 	int getNumOfLogins() const;
+	bool getSuspendInfo() const;
 
 	void setPassword(std::string newPassword);
 	UserAccount createAccount(std::string username, std::string password, std::string accountType);
 	void increaseNumOfLogins();
 	void resetNumOfLogins();
-	void changeSuspensionStatusTo(bool value);
+	void changeSuspensionStatus();
 
 	friend std::ostream& operator<<(std::ostream& os, const UserAccount& account);
 	friend std::istream& operator>>(std::istream& is, UserAccount& account);
