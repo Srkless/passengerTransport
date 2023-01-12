@@ -95,7 +95,7 @@ void gui::registerInterface(int number)
 	}
 		});
 	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
-	auto backButton = ftxui::Button("Back", [&] {gui::login_interface(); });
+	auto backButton = ftxui::Button("Back", [&] {gui::loginInterface(); });
 	auto component = ftxui::Container::Vertical({ inputUsername, inputPassword, inputPasswordAgain, registerButton, exitButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -243,7 +243,7 @@ void gui::loginInterface()
 		});
 
 	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
-	auto registerButton = ftxui::Button("SIGN UP", [&] {register_interface(0); });
+	auto registerButton = ftxui::Button("SIGN UP", [&] {registerInterface(0); });
 	auto component = ftxui::Container::Vertical({ usernameInput, passwordInput, logInButton, exitButton, registerButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -435,7 +435,7 @@ void gui::administrator_interface(std::string username)
 	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {gui::scheduleSettings(username); }); // ostale metode
 	auto reportsSettings = ftxui::Button("Reports settings", [&] {gui::reportsSettings(username); }); // ostale metode
 	auto generateTravelWarrant = ftxui::Button("Generate Travel Warrant", [&] {exit(0); });
-	auto logout = ftxui::Button("SIGN OUT", [&] {login_interface(); });
+	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); });
 
 
 	// CodeBooks Settings
