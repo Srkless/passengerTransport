@@ -16,6 +16,8 @@ std::ostream& operator<<(std::ostream& os, const Schedule& schedule)
 	{
 		os << item.second;
 	};
+
+	return os;
 }
 
 std::istream& operator>>(std::istream& is, Schedule& schedule)
@@ -26,4 +28,6 @@ std::istream& operator>>(std::istream& is, Schedule& schedule)
 		is >> tmp;
 		schedule.m_Schedule[tmp.getRideID()] = tmp;
 	}
+
+	return is;
 }
