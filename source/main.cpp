@@ -52,11 +52,11 @@ int main()
 		}
 	}
 
-	Administrator admin;
-	admin.CreateCodeBook();
-	admin.CreateCodeBook();
-	//admin.SuspendingUserAccount();
-	admin.ViewUserAccount();
+	//Administrator admin;
+	//admin.CreateCodeBook();
+	//admin.CreateCodeBook();
+	////admin.SuspendingUserAccount();
+	//admin.ViewUserAccount();
 	gui::register_interface();
 	return 0;
 }
