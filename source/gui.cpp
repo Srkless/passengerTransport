@@ -261,9 +261,9 @@ void gui::loginInterface()
 		}
 	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(),
-			ftxui::hbox({ftxui::vbox({center(ftxui::hbox(ftxui::text(""), usernameInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(usernameColor)))}) | ftxui::borderRounded,
-			center(hbox(ftxui::text(""), passwordInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(passwordColor))) | ftxui::borderRounded}),
-			center(hbox({ftxui::hbox({center(logInButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green),
+			ftxui::hbox({vbox({center(ftxui::hbox(ftxui::text(""), usernameInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(usernameColor)))}) | ftxui::borderRounded,
+			center(hbox(text(""), passwordInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(passwordColor))) | ftxui::borderRounded}),
+			center(hbox({hbox({center(logInButton->Render()) | size(WIDTH, EQUAL, 9) | ftxui::color(bright_green),
 			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})), 
 			(configNum == 1)?(center(hbox(center(registerButton->Render()) | size(WIDTH, EQUAL, 15) | ftxui::color(orange)))):(center(hbox()))}) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 
