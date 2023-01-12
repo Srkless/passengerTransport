@@ -95,8 +95,8 @@ void gui::register_interface(int number)
 	}
 		});
 	auto exitButton = ftxui::Button("IZLAZ", [&] { exit(0); });
-
-	auto component = ftxui::Container::Vertical({ inputUsername, inputPassword, inputPasswordAgain, registerButton, exitButton });
+	auto backButton = ftxui::Button("Back", [&] {gui::login_interface(); });
+	auto component = ftxui::Container::Vertical({ inputUsername, inputPassword, inputPasswordAgain, registerButton, exitButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
 		if (userDatabase[username].getUsername() == "" && password == againPassword && password.size() > 7)
@@ -112,7 +112,8 @@ void gui::register_interface(int number)
 			center(hbox(center(inputPassword->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(inputPasswordColor)))) | ftxui::borderRounded,
 			center(hbox(hbox(center(inputPasswordAgain->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(inputPasswordColor))))) | ftxui::borderRounded,
 			center(hbox({ftxui::hbox({center(registerButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green),
-			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+			center(hbox(center(backButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(dark_green))) })})),
+			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 
 	auto agreePasswordButton = [&]() { wrongPassword = 0; wrongUsername = 0; };
 	auto wrongPasswoedContainer = Container::Horizontal({ Button("PONOVO", [&] { agreePasswordButton(); }) });
@@ -207,11 +208,11 @@ void gui::login_interface()
 				std::ofstream config(path);
 				config << 1;
 				config.close();
-				change_password(userDatabase[username].getUsername());
+				changePassword(userDatabase[username].getUsername());
 			}
 			if (userDatabase[username].getNumOfLogins() >= loginNums)
 			{
-				change_password(userDatabase[username].getUsername());
+				changePassword(userDatabase[username].getUsername());
 				userDatabase[username].resetNumOfLogins();
 			}
 			else
@@ -320,7 +321,7 @@ void gui::login_interface()
 
 }
 
-void gui::change_password(std::string username)
+void gui::changePassword(std::string username)
 {
 	std::string oldPassword;
 	std::string password;
