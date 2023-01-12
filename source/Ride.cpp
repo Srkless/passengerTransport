@@ -3,7 +3,7 @@
 Ride::Ride()
 	: m_Driver(""), m_StartTime(std::string()), m_EndTime(std::string()), m_StartLocation(""), m_PathLocations{}, m_EndLocation("") {}
 
-Ride::Ride(std::string rideID, std::string driver, std::string startTime, std::string endTime, std::string startLocation, std::vector<std::string> pathLocations, std::string endLocation)
+Ride::Ride(std::string rideID, std::string driver, std::string busReg, std::string startTime, std::string endTime, std::string startLocation, std::vector<std::string> pathLocations, std::string endLocation)
 	: m_RideID(rideID), m_Driver(driver), m_StartTime(startTime), m_EndTime(endTime), m_StartLocation(startLocation), m_PathLocations(pathLocations), m_EndLocation(endLocation) {}
 
 void Ride::setRideID(std::string RideID)
@@ -14,6 +14,11 @@ void Ride::setRideID(std::string RideID)
 void Ride::setDriver(std::string driver)
 {
 	m_Driver = driver;
+}
+
+void Ride::setBusReg(std::string busReg)
+{
+	m_BusRegistration = busReg;
 }
 
 void Ride::setStartTime(std::string startTime)
@@ -85,7 +90,7 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 	std::vector<std::string> pathLocationItems;
 	std::string item;
 	size_t count = 0;
-	while (std::getline(sstream, item, '#') && count < 5)
+	while (std::getline(sstream, item, '#') && count < 6)
 	{
 		items.push_back(item);
 		count++;
@@ -99,9 +104,10 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 
 	ride.m_RideID = items[0];
 	ride.m_Driver = items[1];
-	ride.m_StartTime = items[2];
-	ride.m_EndTime = items[3];
-	ride.m_StartLocation = items[4];
+	ride.m_BusRegistration = items[2];
+	ride.m_StartTime = items[3];
+	ride.m_EndTime = items[4];
+	ride.m_StartLocation = items[5];
 	ride.m_EndLocation = item;
 	ride.m_PathLocations = pathLocationItems;
 
@@ -110,7 +116,7 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 
 std::ostream& operator<<(std::ostream& os, const Ride& ride)
 {
-	os << ride.m_RideID << "#" << ride.m_Driver << "#" << ride.m_StartTime << "#" << ride.m_EndLocation << "#" << ride.m_StartLocation << "#" << ride.m_EndLocation << "#";
+	os << ride.m_RideID << "#" << ride.m_Driver << "#" << ride.m_BusRegistration << "#" << ride.m_StartTime << "#" << ride.m_EndLocation << "#" << ride.m_StartLocation << "#" << ride.m_EndLocation << "#";
 	for (size_t i = 0; i < ride.m_PathLocations.size(); i++)
 	{
 			os << ride.m_PathLocations[i] << "!";

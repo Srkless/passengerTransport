@@ -9,6 +9,7 @@ class Ride
 private:
 	std::string m_RideID;
 	std::string m_Driver;
+	std::string m_BusRegistration;
 	std::string m_StartTime;
 	std::string m_EndTime;
 	std::string m_StartLocation;
@@ -16,11 +17,12 @@ private:
 	std::string m_EndLocation;
 public:
 	Ride();
-	Ride(std::string rideID, std::string driver, std::string startTime,
+	Ride(std::string rideID, std::string driver, std::string busReg, std::string startTime,
 		std::string endTime, std::string startLocation, std::vector<std::string> pathLocations, std::string endLocation);
 
 	void setRideID(std::string RideID);
 	void setDriver(std::string driver);
+	void setBusReg(std::string busReg);
 	void setStartTime(std::string startTime);
 	void setEndTime(std::string endTime);
 	void setStartLocation(std::string startLocation);
