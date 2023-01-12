@@ -90,7 +90,7 @@ namespace db
 
 	// loads users from database into an unordered map
 
-	std::unordered_map<std::string, UserAccount> loadUsersFromFile()
+	inline std::unordered_map<std::string, UserAccount> loadUsersFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\users";

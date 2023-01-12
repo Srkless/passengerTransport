@@ -23,7 +23,7 @@ void gui::register_interface(int number)
 
 	std::string bannerMessage = "Softver za agenciju za prevoz putnika";
 
-	ftxui::Color bannerMessageColor = white;
+	ftxui::Color bannerMessageColor = blue;
 	ftxui::Color inputUsernameColor = light_gray;
 	ftxui::Color inputPasswordColor = light_gray;
 

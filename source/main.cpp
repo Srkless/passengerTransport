@@ -13,6 +13,6 @@ int main()
 	//admin.CreateCodeBook();
 	////admin.SuspendingUserAccount();
 	//admin.ViewUserAccount();
-	gui::register_interface(0);
+	gui::login_interface();
 	return 0;
 }
