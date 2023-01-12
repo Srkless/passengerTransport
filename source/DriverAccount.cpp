@@ -35,12 +35,47 @@ inline bool checkName(std::string fileDirectory, std::string fileArray, std::str
 	return false;
 }
 
-Ride& DriverAccount::routeOverview(const std::string& fileName, std::unordered_map<std::string, Ride>& map) const noexcept(false)
+Ride& DriverAccount::singleRouteOverview(const std::string& fileName, std::unordered_map<std::string, Ride>& map) const
 {
 	return map[fileName];
 }
 
-void DriverAccount::writeReport(const std::string& fileName, Report& report) const noexcept(false)
+std::unordered_map<std::string, Ride> DriverAccount::allRoutesOverview() const
+{
+	std::unordered_map <std::string, Ride> map = db::loadDriverRides(this->getUsername());
+}
+
+std::unordered_map<std::string, Ride> DriverAccount::allDrivenRides() const
+{
+	/*std::unordered_map<std::string, Ride> trueMap;
+
+	for (auto& ride : map)
+	{
+		if (ride.second.getDrivenStatus())
+		{
+			trueMap[ride.first] = ride.second;
+		}
+	}
+	return trueMap;*/
+}
+
+std::unordered_map<std::string, Ride> DriverAccount::allUndrivenRides() const
+{
+	/*std::unordered_map<std::string, Ride> falseMap;
+
+	for (auto& ride : map)
+	{
+		if (!ride.second.getDrivenStatus())
+		{
+			falseMap[ride.first] = ride.second;
+		}
+	}
+	return falseMap;*/
+}
+
+
+
+void DriverAccount::writeReport(const std::string& fileName, Report& report) const
 {
 	std::ofstream file;
 	std::filesystem::path path1 = std::filesystem::current_path();
@@ -72,7 +107,7 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	}
 }
 
-void DriverAccount::writeProblemReport(const std::string& fileName, ProblemReport& report) const noexcept(false)
+void DriverAccount::writeProblemReport(const std::string& fileName, ProblemReport& report) const
 {
 	std::ofstream file;
 	std::filesystem::path path1 = std::filesystem::current_path();
@@ -98,12 +133,17 @@ void DriverAccount::writeProblemReport(const std::string& fileName, ProblemRepor
 	}
 }
 
-std::unordered_map<std::string, Report> DriverAccount::overviewReports() const noexcept(false)
+std::unordered_map<std::string, Report> DriverAccount::overviewReports() const
 {
 	return db::loadReportsFromFile();
 }
 
-std::unordered_map<std::string, ProblemReport> DriverAccount::overviewProblemReports() const noexcept(false)
+std::unordered_map<std::string, ProblemReport> DriverAccount::overviewProblemReports() const
 {
 	return db::loadProblemReportsFromFile();
+}
+
+void DriverAccount::driveRoute()
+{
+	//TODO
 }
