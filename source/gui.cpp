@@ -45,13 +45,27 @@ void gui::register_interface(int number)
 		bannerMessageColor = bright_green;
 		wrongPassword = 0;
 		wrongUsername = 0;
-		UserAccount curr(username, password, "korisnik", 0);
-		if (flag)
+		std::string currUsername = userDatabase[username].getUsername();
+		if(number == 1)
+		{
+			UserAccount curr(username, password, "administrator", 0);
+			curr.changeSuspensionStatus();
 			db::addUserToFile(curr);
-		if (number == 0)
+			administrator_interface(currUsername);
+		}
+		else if(number == 2)
+		{
+			UserAccount curr(username, password, "driver", 0);
+			curr.changeSuspensionStatus();
+			db::addUserToFile(curr);
+			administrator_interface(currUsername);
+		}
+		else
+		{
+			UserAccount curr(username, password, "korisnik", 0);
+			db::addUserToFile(curr);
 			login_interface();
-		else if (number == 1)
-			administrator_interface();
+		}
 	}
 	else
 	{
@@ -189,7 +203,7 @@ void gui::login_interface()
 				db::writeUsersToFile(userDatabase);
 			}
 			if (userDatabase[username].getAccountType() == "administrator")
-				administrator_interface();
+				administrator_interface(userDatabase[username].getUsername());
 		}
 		else
 		{
@@ -391,13 +405,13 @@ void gui::change_password(std::string username)
 	screen.Loop(mainRenderer);
 }
 
-void gui::administrator_interface()
+void gui::administrator_interface(std::string username)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Administrator Account";
 	ftxui::Color bannerMessageColor = blue;
 
-	auto accountSettings = ftxui::Button("Account settings", [&] {gui::accountSettingsInterface(); });
+	auto accountSettings = ftxui::Button("Account settings", [&] {gui::accountSettingsInterface(username); });
 	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {exit(0); });
 	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {exit(0); });
 	auto reportsSettings = ftxui::Button("Reports settings", [&] {exit(0); });
