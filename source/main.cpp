@@ -55,6 +55,6 @@ int main()
 	//Administrator admin;
 	//admin.CreateCodeBook();
 	//admin.CreateCodeBook();
-	gui::register_interface();
+	gui::administrator_interface();
 	return 0;
 }
