@@ -55,13 +55,14 @@ void DriverAccount::problemReport(const std::string& fileName, ProblemReport& re
 	fileArray << fileName << std::endl;
 
 
-	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
-	{
-		fileArray << fileName << std::endl;
-		file << report;
-	}
-	else
-		throw std::runtime_error("File could not open!");
+	//if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
+	//{
+	//	if (!checkName("AllProblemReports.txt", fileName))
+	//		fileArray << fileName << std::endl;
+	//	file << report;
+	//}
+	//else
+	//	throw std::runtime_error("File could not open!");
 
 
 
@@ -108,3 +109,29 @@ std::string DriverAccount::overview(const std::string& fileName) const noexcept(
 {
 	return std::string();
 }
+
+//inline bool checkName(std::string fileArray, std::string fileName)
+//{
+//	std::vector<std::string> fileData;
+//	std::filesystem::path path1 = std::filesystem::current_path();
+//	path1 += "\\data";
+//	std::filesystem::create_directories(path1);
+//	path1 += fileArray;
+//	path1 += "\\.txt";
+//	std::string word;
+//	std::ifstream file(path1);
+//
+//	while (file >> word)
+//	{
+//		fileData.push_back(word);
+//	};
+//
+//	file.close();
+//	std::string name;
+//	for (int i = 0; i < fileData.size(); i++)
+//	{
+//		if (fileName == fileData[i])
+//			return true;
+//	}
+//	return false;
+//}

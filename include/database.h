@@ -118,7 +118,6 @@ namespace db
 			oFile << ride.getRideID() << ".txt";
 		}
 
-
 		oFile.close();
 
 		path = std::filesystem::current_path();

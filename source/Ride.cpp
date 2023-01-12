@@ -121,7 +121,7 @@ std::ostream& operator<<(std::ostream& os, const Ride& ride)
 	os << ride.m_RideID << "#" << ride.m_Driver << "#" << ride.m_BusRegistration << "#" << ride.m_StartTime << "#" << ride.m_EndTime << "#" << ride.m_StartLocation << "#";
 	for (size_t i = 0; i < ride.m_PathLocations.size(); i++)
 	{
-			os << ride.m_PathLocations[i] << "!";
+		os << ride.m_PathLocations[i] << "!";
 	}
 	os << ride.m_EndLocation;
 	return os;
