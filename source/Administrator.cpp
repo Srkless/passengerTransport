@@ -5,10 +5,36 @@
 #include"database.h"
 #include <filesystem>
 #include<algorithm>
+#include"Ride.h"
 
 std::vector<std::string> CodeBooks;
 
 using namespace db;
+
+void Administrator::generatingTravelOrder(const std::string& fileName, const Ride& ride) const noexcept(false)
+{
+    std::ofstream file;
+    std::filesystem::path path1 = std::filesystem::current_path();
+    path1 += "\\data\\rides";
+    std::filesystem::create_directories(path1);
+    path1 += fileName;
+    file.open(path1, std::ios::app);
+
+    std::ofstream fileArray;
+    std::filesystem::path path2 = std::filesystem::current_path();
+    path2 += "\\data\\rides";
+    path2 += "\\AllTravelOrders.txt";
+    fileArray.open(path2, std::ios::app);
+
+
+    if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
+    {
+        fileArray << fileName << std::endl;
+        //file << report;
+    }
+    else
+        throw std::runtime_error("File could not open!");
+}
 
 void Administrator::ViewUserAccount()
 {
