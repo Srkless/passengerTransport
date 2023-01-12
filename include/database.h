@@ -17,6 +17,32 @@
 
 namespace db
 {
+	inline bool CheckName(std::string name,std::string name2)
+	{
+		std::vector<std::string> CodeBooks;
+		std::filesystem::path word1 = std::filesystem::current_path();
+		word1 += "\\data";
+		std::filesystem::create_directories(word1);
+		word1 += name;
+		word1 += "\\.txt";
+		std::string word;
+		std::ifstream Data(word1);
+
+		while (Data >> word)
+		{
+			CodeBooks.push_back(word);
+		};
+
+		Data.close();
+		std::string name;
+		for (int i = 0; i < CodeBooks.size(); i++)
+		{
+			if (name2 == CodeBooks[i])
+				return true;
+		}
+		return false;
+	}
+	
 	inline Schedule readScheduleFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
