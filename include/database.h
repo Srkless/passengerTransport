@@ -358,8 +358,7 @@ namespace db
 		{
 			Ride tmpRide;
 			iFile >> tmpRide;
-
-
+			rides[tmpRide.getRideID()];
 		}
 		iFile.close();
 		return rides;
