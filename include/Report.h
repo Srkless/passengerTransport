@@ -8,6 +8,7 @@ protected:
 	std::string author;
 	std::string content;
 public:
+	Report() {};
 	Report(std::string reportID, std::string reportAuthor, std::string content);
 
 	void setReportID(std::string reportID) noexcept(true);

@@ -2,7 +2,6 @@
 #include <fstream>
 #include <string>
 
-
 ProblemReport::ProblemReport(std::string reportID, std::string reportAuthor, std::string content, std::string typeOfProblem) : typeOfProblem(typeOfProblem), Report(reportID, reportAuthor, content) {};
 
 void ProblemReport::setTypeOfProblem(std::string problemType) noexcept(true)
