@@ -19,6 +19,8 @@ private:
 public:
 	BusTicket(std::string rideID, size_t seatNumber, std::string startLocation, std::string endLocation, double price = 0, bool hasBaggage = false);
 	
+	// TODO we have to check if there is room on the bus
+
 	void generatePrice();
 	void addBaggage();
 };

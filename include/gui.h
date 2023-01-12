@@ -39,13 +39,15 @@ namespace {
 
 namespace gui {
 
-	void login_interface();
-	void register_interface(int number);
+	void loginInterface();
+	void registerInterface(int number);
 	void changePassword(std::string username);
 	void administrator_interface(std::string username);
 	void accountSettingsInterface(std::string username);
-	/*void selling_items_interface(Database& db);
-	void supervisor_interface(Database& db);
+
+	void scheduleSettings(std::string username);
+	void reportsSettings(std::string username);
+	/*void supervisor_interface(Database& db);
 	void employee_overview(Database& db);
 	void create_employee_interface(Database& db);
 	void items_overview(Database& db);

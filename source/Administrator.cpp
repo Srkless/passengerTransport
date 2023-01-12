@@ -332,10 +332,6 @@ bool Administrator::ModificationCodeBoks()
     return true;
 }
 
-
-
-
-
 bool Administrator::CreateCodeBook()
 {
     std::filesystem::path word1 = std::filesystem::current_path();
@@ -453,6 +449,7 @@ bool Administrator::CreateCodeBook()
             std::string model;
             std::string yearProduction;
             std::string Registration;
+            int numberOfSeats;
 
             std::cout << "Enter bus brand " << std::endl;
 

@@ -3,11 +3,11 @@
 void choiceAccountInterface(std::string username)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string bannerMessage = "account types";
+	std::string bannerMessage = "Account types";
 	ftxui::Color bannerMessageColor = blue;
-	auto createAdministratorAccount = ftxui::Button("Create administrator account", [&] {gui::register_interface(1); });
-	auto createDriverAccount = ftxui::Button("Create driver account", [&] {gui::register_interface(2); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(username); });
+	auto createAdministratorAccount = ftxui::Button("Create administrator account", [&] {gui::registerInterface(1); });
+	auto createDriverAccount = ftxui::Button("Create driver account", [&] {gui::registerInterface(2); });
+	auto backButton = ftxui::Button("Back", [&] {gui::accountSettingsInterface(username); });
 	auto component = ftxui::Container::Vertical({ createAdministratorAccount,  createDriverAccount, backButton });
 	
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -18,7 +18,6 @@ void choiceAccountInterface(std::string username)
 		   center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) })| hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	screen.Loop(renderer);
 };
-
 void editAccountInterface(int value, std::string currUsername)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -67,8 +66,6 @@ void editAccountInterface(int value, std::string currUsername)
 				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	screen.Loop(renderer);
 }
-
-
 void gui::accountSettingsInterface(std::string username)
 {
 	
@@ -107,3 +104,95 @@ void gui::accountSettingsInterface(std::string username)
 
 	screen.Loop(renderer);
 }
+
+void addRideInterface() // TODO
+{
+	exit(0);
+}
+void deleteRideInterface() // TODO
+{
+	exit(0);
+}
+
+void gui::scheduleSettings(std::string username)
+{
+	ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = username + "'s account Settings";
+
+	auto addRide = ftxui::Button("Add ride", [&] {addRideInterface(); });
+	auto deleteRide = ftxui::Button("Delete ride", [&] {deleteRideInterface(); });
+	auto backButton = ftxui::Button("Back", [&] {gui::administrator_interface(username); });
+	auto component = ftxui::Container::Vertical({ addRide, deleteRide, backButton });
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+			separatorDouble(), vbox({
+				center(hbox(addRide->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray))),
+				center(hbox(deleteRide->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray))),
+				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		});
+
+	screen.Loop(renderer);
+}
+
+void viewReportInterface(std::string username)
+{
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+
+	std::unordered_map<std::string, Report> reportDatabase;
+	//reportDatabase = db::loadReportsFromFile();
+	std::vector<std::string> entries;
+
+	std::string bannerMessage = username + "'s account settings";
+	ftxui::Color bannerMessageColor = blue;
+
+	/*for (auto& elem : reportDatabase)
+		entries.push_back(elem.first);*/
+	int selected = -1;
+	auto menu = Radiobox(&entries, &selected);
+	auto backButton = ftxui::Button("Back", [&] {gui::reportsSettings(username); });
+	auto acceptButton = ftxui::Button("Accept", [&] {});
+	auto component = ftxui::Container::Vertical({ menu, backButton, acceptButton });
+	auto renderer = ftxui::Renderer(component, [&] {
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+			separatorDouble(), vbox({
+				//center(hbox(menu->Render())),
+				center(hbox(acceptButton->Render() | size(WIDTH, EQUAL, 25) | ftxui::color(light_gray))),
+				/*center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 25) | ftxui::color(bright_green)))})*/ })// | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+			}); });
+	screen.Loop(renderer);
+}
+void viewPassengerProblemsInterface(std::string username)
+{
+	exit(0);
+}
+void viewRideProblemsInterface(std::string username)
+{
+	exit(0);
+}
+void gui::reportsSettings(std::string username)
+{
+	ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = username + "'s account Settings";
+
+	auto viewReport = ftxui::Button("View reports", [&] { viewReportInterface(username); });
+	auto viewPassengerProblems = ftxui::Button("View passenger problems", [&] {viewPassengerProblemsInterface(username); });
+	auto viewRideProblems = ftxui::Button("View ride problems", [&] {viewRideProblemsInterface(username); });
+	auto backButton = ftxui::Button("Back", [&] {gui::administrator_interface(username); });
+
+	auto component = ftxui::Container::Vertical({ viewReport, viewPassengerProblems, viewRideProblems, backButton});
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+			separatorDouble(), vbox({
+				center(hbox(viewReport->Render() | size(WIDTH, EQUAL, 25) | ftxui::color(light_gray))),
+				center(hbox(viewPassengerProblems->Render() | size(WIDTH, EQUAL, 25) | ftxui::color(light_gray))),
+				center(hbox(viewRideProblems->Render() | size(WIDTH, EQUAL, 25) | ftxui::color(light_gray))),
+				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 25) | ftxui::color(bright_green)))}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		});
+
+	screen.Loop(renderer);
+}
+
