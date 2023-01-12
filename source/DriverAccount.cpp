@@ -7,6 +7,33 @@
 #include "Ride.h"
 #include "Report.h"
 #include "ProblemReport.h"
+#include "database.h"
+
+inline bool checkName(std::string fileArray, std::string fileName)
+{
+	std::vector<std::string> fileData;
+	std::filesystem::path path1 = std::filesystem::current_path();
+	path1 += "\\data";
+	std::filesystem::create_directories(path1);
+	path1 += fileArray;
+	path1 += "\\.txt";
+	std::string word;
+	std::ifstream file(path1);
+
+	while (file >> word)
+	{
+		fileData.push_back(word);
+	};
+
+	file.close();
+	std::string name;
+	for (int i = 0; i < fileData.size(); i++)
+	{
+		if (fileName == fileData[i])
+			return true;
+	}
+	return false;
+}
 
 Ride& DriverAccount::routeOverview(const std::string& fileName, std::unordered_map<std::string, Ride>& map) const noexcept(false)
 {
@@ -30,11 +57,12 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 
 	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
 	{
-		fileArray << fileName << std::endl;
-		//file << report;
+		if (!checkName("AllReports.txt", fileName))
+		{
+			fileArray << fileName << std::endl;
+			file << report;
+		}
 	}
-	else
-		throw std::runtime_error("File could not open!");
 }
 
 void DriverAccount::problemReport(const std::string& fileName, ProblemReport& report) const noexcept(false)
@@ -52,86 +80,23 @@ void DriverAccount::problemReport(const std::string& fileName, ProblemReport& re
 	path2 += "\\AllProblemReports.txt";
 	fileArray.open(path2, std::ios::app);
 
-	fileArray << fileName << std::endl;
 
-
-	//if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
-	//{
-	//	if (!checkName("AllProblemReports.txt", fileName))
-	//		fileArray << fileName << std::endl;
-	//	file << report;
-	//}
-	//else
-	//	throw std::runtime_error("File could not open!");
-
-
-
-
-	/*std::ofstream file(fileName); /// KAKO ZNATI KOJI JE PROBLEM AKO SAMO UPISUJEM #
-
-	if (file.good())
+	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
 	{
-		int option;
-
-		do {
-			std::cout << "Select the problem type, Passenger[1], Bus[2]: ";
-			std::cin >> option;
-			if (option != 1 && option != 2)
-				std::cout << "Invald option, try again!" << std::endl;
-		} while (option != 1 && option != 2);
-
-		
-
-		std::string problem;
-		std::getchar();
-		report.setReportAuthor(this->getUsername());
-
-		file << report.getRideID() << "#";
-		file << report.getAuthor() << "#";
-		
-		if (option == 1)
-			file << "Passenger problem" << "#";
-		else
-			file << "Bus problem" << "#";
-
-		std::cout << "Make ride report: " << std::endl;
-		std::getline(std::cin, problem);
-
-		report.setContent(problem);
-
-		file << report.getContent() << "#";
+		if (!checkName("AllProblemReports.txt", fileName))
+		{
+			fileArray << fileName << std::endl;
+			file << report;
+		}
 	}
-	else
-		throw std::runtime_error("File could not open!");*/
 }
 
-std::string DriverAccount::overview(const std::string& fileName) const noexcept(false)
+std::unordered_map<std::string, Report> DriverAccount::overviewReports() const noexcept(false)
 {
-	return std::string();
+	return db::loadReportsFromFile();
 }
 
-//inline bool checkName(std::string fileArray, std::string fileName)
-//{
-//	std::vector<std::string> fileData;
-//	std::filesystem::path path1 = std::filesystem::current_path();
-//	path1 += "\\data";
-//	std::filesystem::create_directories(path1);
-//	path1 += fileArray;
-//	path1 += "\\.txt";
-//	std::string word;
-//	std::ifstream file(path1);
-//
-//	while (file >> word)
-//	{
-//		fileData.push_back(word);
-//	};
-//
-//	file.close();
-//	std::string name;
-//	for (int i = 0; i < fileData.size(); i++)
-//	{
-//		if (fileName == fileData[i])
-//			return true;
-//	}
-//	return false;
-//}
+std::unordered_map<std::string, ProblemReport> DriverAccount::overviewProblemReports() const noexcept(false)
+{
+	return db::loadProblemReportsFromFile();
+}

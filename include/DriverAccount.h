@@ -4,6 +4,7 @@
 #include "Ride.h"
 #include "Report.h"
 #include "ProblemReport.h"
+#include <unordered_map>
 
 class DriverAccount : public UserAccount
 {
@@ -12,5 +13,6 @@ public:
 	Ride& routeOverview(const std::string& fileName, std::unordered_map<std::string, Ride>& map) const noexcept(false); //TODO VODNJA.H
 	void writeReport(const std::string& fileName, Report& report) const noexcept(false); /// sve ok
 	void problemReport(const std::string& fileName, ProblemReport& report) const noexcept(false);	// problemi
-	std::string overview(const std::string& fileName) const noexcept(false);
+	std::unordered_map <std::string, Report> overviewReports() const noexcept(false);
+	std::unordered_map<std::string, ProblemReport> overviewProblemReports() const noexcept(false);
 };
