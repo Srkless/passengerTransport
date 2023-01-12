@@ -59,7 +59,7 @@ bool Administrator::SuspendingUserAccount()
     std::cout << "Enter username of the user you want to suspend!" << std::endl;
     std::cin >> username;
 
-    myMap[username].changeSuspensionStatusTo(true);
+    myMap[username].changeSuspensionStatus();
 
     return false;
 };
