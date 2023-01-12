@@ -173,6 +173,7 @@ void gui::login_interface()
 	path += "\\data";
 	std::filesystem::create_directories(path);
 	path += "\\config.txt";
+
 	std::ifstream config(path);
 
 	int configNum;
