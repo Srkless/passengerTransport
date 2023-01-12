@@ -169,6 +169,18 @@ void gui::login_interface()
 	int wrongUsername = 0;
 	int suspended = 0;
 
+	std::filesystem::path path = std::filesystem::current_path();
+	path += "\\data";
+	std::filesystem::create_directories(path);
+	path += "\\config.txt";
+
+	std::ifstream config(path);
+
+	int configNum;
+	config >> configNum;
+
+	config.close();
+
 	std::unordered_map<std::string, UserAccount> userDatabase;
 	userDatabase = db::loadUsersFromFile();
 
@@ -184,14 +196,19 @@ void gui::login_interface()
 	ftxui::Color usernameColor = light_gray;
 	ftxui::Color passwordColor = light_gray;
 
-	
-
 	auto logInButton = ftxui::Button("PRIJAVI SE", [&] {
 		if (userDatabase[username].getUsername() != "" && Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(password) && !userDatabase[username].getSuspendInfo()) {
 			bannerMessage = "USPJESNA PRIJAVA";
 			bannerMessageColor = bright_green;
 			wrongPassword = 0;
 			wrongUsername = 0;
+			if (userDatabase[username].getUsername() == "admin" && configNum == 0)
+			{
+				std::ofstream config(path);
+				config << 1;
+				config.close();
+				change_password(userDatabase[username].getUsername());
+			}
 			if (userDatabase[username].getNumOfLogins() >= loginNums)
 			{
 				change_password(userDatabase[username].getUsername());
@@ -247,7 +264,7 @@ void gui::login_interface()
 			center(hbox(ftxui::text(""), passwordInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(passwordColor))) | ftxui::borderRounded}),
 			center(hbox({ftxui::hbox({center(logInButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green),
 			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})), 
-			center(hbox(center(registerButton->Render()) | size(WIDTH, EQUAL, 15) | ftxui::color(orange))) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+			(configNum == 1)?(center(hbox(center(registerButton->Render()) | size(WIDTH, EQUAL, 15) | ftxui::color(orange)))):(center(hbox()))}) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 
 
 	auto agreeUsernameButton = [&]() { wrongUsername = 0; wrongPassword = 0; suspended = 0; };
@@ -335,6 +352,7 @@ void gui::change_password(std::string username)
 			userDatabase[username].setPassword(confirmPassword);
 			userDatabase[username].resetNumOfLogins();
 			db::writeUsersToFile(userDatabase);
+			login_interface();
 		}
 		else
 		{
