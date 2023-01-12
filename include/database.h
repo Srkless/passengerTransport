@@ -16,17 +16,17 @@ namespace db
 
 	// loads users from database into an unordered map
 
-	std::unordered_map<std::string, UserAccount> loadUsersFromFile()
+	inline std::unordered_map<std::string, UserAccount> loadUsersFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\users";
 		std::filesystem::create_directories(path);
 		path += "\\userdata.txt";
 		std::ifstream iFile(path);
-;
+		;
 		std::unordered_map<std::string, UserAccount> users;
 
-		while(!iFile.eof())
+		while (!iFile.eof())
 		{
 			UserAccount acc;
 			iFile >> acc;
@@ -39,7 +39,7 @@ namespace db
 	// adds user to database
 	// should only be used during registration 
 
-	void addUserToFile(const UserAccount& usr)
+	inline void addUserToFile(const UserAccount& usr)
 	{
 		std::ofstream oFile;
 		std::filesystem::path path = std::filesystem::current_path();
@@ -62,13 +62,13 @@ namespace db
 	// function for reading a specified type from a file
 	// assumes that the '#' symbol terminates the data type
 	// default type is string
-	template<typename T = std::string>
-	requires Readable<T> && (std::copy_constructible<T> || std::copyable<T>)
+	 template<typename T = std::string>
+		requires Readable<T> && (std::copy_constructible<T> || std::copyable<T>)
 	T readItem(std::ifstream& is)
 	{
 		std::string line;
 		std::getline(is, line, '#');
-		
+
 		std::stringstream stream(line);
 
 		T tmp;
@@ -111,6 +111,6 @@ namespace db
 		return returnVal;
 	}*/
 
-	
-}
+
+};
 

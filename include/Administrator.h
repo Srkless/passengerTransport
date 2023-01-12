@@ -3,15 +3,17 @@
 #include<iostream>
 #include<vector>
 
+
 bool is_equal(std::string name);
 bool modify(std::string,std::ofstream& file);
 
 class Administrator
 {
 
-	int admin = 1;
 public:
 
+	void ViewUserAccount();
+	bool SuspendingUserAccount();
 	bool CreateCodeBook();
 	bool DeleteCodeBook();
 	bool ModificationCodeBoks();

@@ -2,10 +2,42 @@
 #include<fstream>
 #include<iostream>
 #include <cstdio>
+#include"database.h"
 #include <filesystem>
+
 
 std::vector<std::string> CodeBooks;
 
+using namespace db;
+
+void Administrator::ViewUserAccount()
+{
+    std::cout << "User Accounts!" << std::endl;
+    std::unordered_map<std::string, UserAccount> myMap = db::loadUsersFromFile();
+    int i = 1;
+    for (auto const& x : myMap)
+    {
+        std::cout <<i++<<". " << x.first << std::endl;
+    };
+   
+}
+
+bool Administrator::SuspendingUserAccount()
+{
+    std::string username;
+    std::unordered_map<std::string, UserAccount> myMap = db::loadUsersFromFile();
+    int i = 1;
+    for (auto const& x : myMap)
+    {
+        std::cout << x.first << std::endl;
+    };
+    std::cout << "Enter username of the user you want to suspend!" << std::endl;
+    std::cin >> username;
+
+    myMap[username].changeSuspensionStatusTo(true);
+
+    return false;
+};
 
 
 bool Administrator::DeleteCodeBook()
@@ -69,8 +101,11 @@ bool Administrator::DeleteCodeBook()
                 DATA << CodeBooks2[i] << std::endl;
             };
             DATA.close();
-
-            if (remove(a))
+            std::filesystem::path path = std::filesystem::current_path();
+            path += "\\data\\codebooks\\";
+            path += DeleteFile;
+            path += ".txt";
+            if (remove(path))
                 return true;
             else
                 return false;
