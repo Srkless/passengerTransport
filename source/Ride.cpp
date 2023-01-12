@@ -76,3 +76,58 @@ std::string Ride::geEndLocation() const
 	return m_EndLocation;
 }
 
+std::istream& operator>>(std::istream& is, Ride& ride)
+{
+	std::string line;
+	std::getline(is, line);
+	std::stringstream sstream(line);
+	std::time_t timeItem;
+	std::vector<std::string> items;
+	std::vector<time_t> timeItems;
+	std::string item;
+	std::vector<std::string> pathLocationItems;
+	size_t count = 0;
+	while (std::getline(sstream, item, '#') && count < 2)
+	{
+		items.push_back(item);
+		count++;
+	}
+	while (std::getline(sstream, timeItem, '#') && count < 4)
+	{
+		timeItems.push_back(timeItem);
+		count++;
+	}
+
+	std::getline(sstream, item, '#');
+	items.push_back(item);
+
+	while (std::getline(sstream, item, '!'))
+	{
+		pathLocationItems.push_back(item);
+	}
+
+	std::getline(sstream, item, '#');
+	items.push_back(item);
+
+	ride.m_RideID = items[0];
+	ride.m_Driver = items[1];
+	ride.m_StartTime = timeItems[0];
+	ride.m_EndTime = timeItems[1];
+	ride.m_StartLocation = timeItems[2];
+	ride.m_EndLocation = timeItems[3];
+	ride.m_PathLocations = pathLocationItems;
+
+	return is;
+}
+
+std::ostream& operator<<(std::ostream& os, const Ride& ride)
+{
+	os << ride.m_RideID << "#" << ride.m_Driver << "#" << ride.m_StartTime << "#" << ride.m_EndLocation << "#" << ride.m_StartLocation << "#" << ride.m_EndLocation << "#";
+	for (size_t i = 0; i < ride.m_PathLocations.size(); i++)
+	{
+			os << ride.m_PathLocations[i] << "!";
+	}
+	os << ride.m_EndLocation;
+	return os;
+}
+

@@ -9,13 +9,54 @@
 #include <fstream>
 #include <sstream>
 #include <type_traits>
+#include "Ride.h"
 #include "UserAccount.h"
 
 namespace db
 {
 
-	// loads users from database into an unordered map
+	// read rides from file into an unordered map
+	std::unordered_map<std::string, Ride> loadRideFromFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides";
+		std::filesystem::create_directories(path);
+		path += "\\ridedata.txt";
+		std::ifstream iFile(path);
+		std::unordered_map<std::string, Ride> rides;
 
+		while (!iFile.eof())
+		{
+			Ride newRide;
+			iFile >> newRide;
+			rides[newRide.getRideID()] = newRide;
+		}
+		iFile.close();
+		return rides;
+	}
+	
+	// add Ride to a file
+	void addRideToFile(const Ride& ride)
+	{
+		std::ofstream oFile;
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides";
+		std::filesystem::create_directories(path);
+		path += "\\ridedata.txt";
+		oFile.open(path, std::ios::app);
+
+		oFile.seekp(0, std::ios::end);
+		if (oFile.tellp() == 0)
+		{
+			oFile  << ride;
+		}
+		else
+		{
+			oFile << std::endl << ride;
+		}
+	}
+
+	// loads users from database into an unordered map
 	inline std::unordered_map<std::string, UserAccount> loadUsersFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
@@ -23,7 +64,6 @@ namespace db
 		std::filesystem::create_directories(path);
 		path += "\\userdata.txt";
 		std::ifstream iFile(path);
-		;
 		std::unordered_map<std::string, UserAccount> users;
 
 		while (!iFile.eof())
