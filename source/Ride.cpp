@@ -109,6 +109,7 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 	ride.m_EndTime = items[4];
 	ride.m_StartLocation = items[5];
 	ride.m_EndLocation = item;
+	pathLocationItems.pop_back();
 	ride.m_PathLocations = pathLocationItems;
 
 	return is;
