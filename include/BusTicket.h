@@ -23,4 +23,6 @@ public:
 
 	void generatePrice();
 	void addBaggage();
+	size_t getAvailableTickets();
+	void buyTicket();
 };

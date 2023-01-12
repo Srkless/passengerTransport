@@ -32,8 +32,6 @@ void Administrator::generatingTravelOrder(const std::string& fileName, const Rid
         fileArray << fileName << std::endl;
         //file << report;
     }
-    else
-        throw std::runtime_error("File could not open!");
 }
 
 void Administrator::ViewUserAccount()

@@ -46,4 +46,9 @@ void BusTicket::addBaggage()
 {
 	m_hasBaggage = true;
 }
+
+size_t BusTicket::getAvailableTickets()
+{
+	std::unordered_map;
+}
 	
