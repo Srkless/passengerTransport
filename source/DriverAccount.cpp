@@ -15,7 +15,7 @@ inline bool checkName(std::string fileDirectory, std::string fileArray, std::str
 	std::filesystem::path path1 = std::filesystem::current_path();
 	path1 += "\\data";
 	std::filesystem::create_directories(path1);
-	path1 += fileDirectory;
+	path1 += fileDirectory; 
 	path1 += fileArray;
 	std::string word;
 	std::ifstream file(path1);
