@@ -133,7 +133,7 @@ namespace db
 			oFile.close();
 		}
 		else
-			std::invalid_argument("File allready exists!");
+			throw std::invalid_argument("File allready exists!");
 
 	}
 
