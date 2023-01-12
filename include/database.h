@@ -48,7 +48,7 @@ namespace db
 	}
 
 	// read rides from file into an unordered map
-	std::unordered_map<std::string, Ride> loadRidesFromFile()
+	inline std::unordered_map<std::string, Ride> loadRidesFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
