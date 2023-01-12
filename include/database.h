@@ -11,12 +11,44 @@
 #include <type_traits>
 #include "Ride.h"
 #include "UserAccount.h"
+#include "Schedule.h"
 
 namespace db
 {
+	inline Schedule readScheduleFromFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides\\schedule.txt";
+		std::ifstream iFile(path);
+		iFile.open(path, std::ios::app);
+
+		Schedule tmp;
+		iFile >> tmp;
+		return tmp;
+	}
+
+	inline void editScheduleFile(const Schedule& schedule)
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides";
+		std::filesystem::create_directories(path);
+		path += "\\schedule.txt";
+		std::ofstream oFile(path);
+		oFile.open(path, std::ios::app);
+
+		oFile.seekp(0, std::ios::end);
+		if (oFile.tellp() == 0)
+		{
+			oFile << schedule;
+		}
+		else
+		{
+			oFile << std::endl << schedule;
+		}
+	}
 
 	// read rides from file into an unordered map
-	inline std::unordered_map<std::string, Ride> loadRideFromFile()
+	std::unordered_map<std::string, Ride> loadRidesFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
