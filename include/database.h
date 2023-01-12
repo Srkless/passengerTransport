@@ -10,6 +10,7 @@
 #include <sstream>
 #include <type_traits>
 #include "Ride.h"
+#include "Bus.h"
 #include "UserAccount.h"
 #include "Schedule.h"
 #include "Report.h"
@@ -17,14 +18,47 @@
 
 namespace db
 {
-	inline bool checkName(std::string fileArray, std::string fileName)
+
+	inline std::unordered_map<std::string, bus> readBusFromFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\codebooks";
+		std::filesystem::create_directories(path);
+		path += "\\Bus.txt";
+		std::ifstream iFile(path);
+		std::unordered_map<std::string, bus> busMap;
+
+		while (!iFile.eof())
+		{
+			std::filesystem::path path = std::filesystem::current_path();
+			path += "\\data\\codebooks\\";
+
+			std::string name;
+			std::getline(iFile, name);
+			path += name;
+
+			bus tmpBus;
+
+			std::ifstream iFile2(path);
+			iFile2 >> tmpBus;
+
+			busMap[tmpBus.getRegistraion()] = tmpBus;
+			iFile2.close();
+		}
+		iFile.close();
+
+		return busMap;
+	}
+
+	// used to make sure no duplicates exist
+	inline bool checkName(std::string fileDirectory, std::string fileArray, std::string fileName)
 	{
 		std::vector<std::string> fileData;
 		std::filesystem::path path1 = std::filesystem::current_path();
-		path1 += "\\data";
+		path1 += "\\data\\";
 		std::filesystem::create_directories(path1);
+		path1 += fileDirectory;
 		path1 += fileArray;
-		path1 += "\\.txt";
 		std::string word;
 		std::ifstream file(path1);
 
@@ -112,30 +146,33 @@ namespace db
 		path += "\\ridedata.txt";
 		oFile.open(path, std::ios::app);
 
-		oFile.seekp(0, std::ios::end);
-		if (oFile.tellp() == 0)
-		{
-			oFile << ride.getRideID() << ".txt";
-		}
-
-
-		oFile.close();
-
+		std::ofstream oFile2;
 		path = std::filesystem::current_path();
 		path += "\\data\\rides\\";
 		path += ride.getRideID();
 		path += ".txt";
-		std::string cmpName = ride.getRideID() + ".txt";
-		if (!checkName("ridedata.txt", cmpName))
+
+		oFile.seekp(0, std::ios::end);
+		if (oFile.tellp() == 0)
 		{
-			oFile << std::endl << ride.getRideID() << ".txt";
-			oFile.open(path);
-			oFile << ride;
-			oFile.close();
+			oFile << ride.getRideID() << ".txt";
+			oFile2.open(path);
+			oFile2 << ride;
+			oFile2.close();
 		}
 		else
-			std::invalid_argument("File allready exists!");
-
+		{
+			
+			std::string cmpName = ride.getRideID() + ".txt";
+			if (!checkName("rides","\\ridedata.txt", cmpName))
+			{
+				oFile << std::endl << ride.getRideID() << ".txt";
+				oFile2.open(path);
+				oFile2 << ride;
+				oFile2.close();
+			}
+		}
+		oFile.close();
 	}
 
 	// loads users from database into an unordered map
@@ -321,46 +358,10 @@ namespace db
 		{
 			Ride tmpRide;
 			iFile >> tmpRide;
-
-
+			rides[tmpRide.getRideID()];
 		}
 		iFile.close();
 		return rides;
 	}
-
-	// function for reading the whole file
-	// can only read one type of data, specified by T
-	// accepts two std::function wrappers
-	// the first argument takes the path of the file which will be read from
-	// the second argument takes a function which will define what will be done with the output
-	// the third argument takes a function which defines the method of reading from the file and can be omitted - by default will read one string from the file
-	// here is an example of how to call this function from main
-	// 
-	// this will print out the first word from the test.txt file located in the Documents folder
-	// 
-	// db::readFileCustom<std::string>("C:/Users/urnm/Documents/test.txt", [](std::string str) {std::cout << str; });
-	//
-	// template parameters:
-	// T is the type of data being read from file
-	// O is the return type of the specified work function, if the function returns nothing, shoule be void
-	//
-	/*template<typename T, typename O = void>
-	O readFileCustom(std::filesystem::path path, std::function<O(T& a)> outputFunction, std::function<T(std::ifstream& is)> inputFunction = [](std::ifstream& is) {return readItem<T>(is); })
-	{
-		std::ifstream inputFile(path);
-		T workData;
-		std::stringstream sstream;
-		std::getline(inputFile, sstream);
-		while(!inputFile.eof())
-		{
-			workData = inputFunction(inputFile);
-			O returnVal = outputFunction(workData);
-		}
-		O returnVal = outputFunction(workData);
-		inputFile.close();
-		return returnVal;
-	}*/
-
-
 };
 
