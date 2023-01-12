@@ -46,6 +46,11 @@ void Ride::setPathLocationos(std::vector<std::string> pathLocations)
 	m_PathLocations = pathLocations;
 }
 
+void Ride::changeDrivenStatus()
+{
+	m_drivenStatus = true;
+}
+
 std::string Ride::getRideID() const
 {
 	return m_RideID;
@@ -79,6 +84,11 @@ std::vector<std::string> Ride::getPathLocations() const
 std::string Ride::geEndLocation() const
 {
 	return m_EndLocation;
+}
+
+bool Ride::getDrivenStatus() const
+{
+	return m_drivenStatus;
 }
 
 std::istream& operator>>(std::istream& is, Ride& ride)
@@ -118,7 +128,7 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 
 std::ostream& operator<<(std::ostream& os, const Ride& ride)
 {
-	os << ride.m_RideID << "#" << ride.m_Driver << "#" << ride.m_BusRegistration << "#" << ride.m_StartTime << "#" << ride.m_EndTime << "#" << ride.m_StartLocation << "#";
+	os << ride.m_RideID << "#" << ride.m_Driver << "#" << ride.m_BusRegistration << "#" << ride.m_StartTime << "#" << ride.m_EndTime << "#" << ride.m_StartLocation << "#" << ride.m_drivenStatus;
 	for (size_t i = 0; i < ride.m_PathLocations.size(); i++)
 	{
 		os << ride.m_PathLocations[i] << "!";
