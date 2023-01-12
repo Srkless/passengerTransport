@@ -47,7 +47,7 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	path1 += "\\data\\reports\\";
 	std::filesystem::create_directories(path1);
 	path1 += fileName;
-	file.open(path1);
+	file.open(path1, std::ios::app);
 
 	std::ofstream fileArray;
 	std::filesystem::path path2 = std::filesystem::current_path();
@@ -67,14 +67,14 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	}
 }
 
-void DriverAccount::problemReport(const std::string& fileName, ProblemReport& report) const noexcept(false)
+void DriverAccount::writeProblemReport(const std::string& fileName, ProblemReport& report) const noexcept(false)
 {
 	std::ofstream file;
 	std::filesystem::path path1 = std::filesystem::current_path();
 	path1 += "\\data\\problemReports\\";
 	std::filesystem::create_directories(path1);
 	path1 += fileName;
-	file.open(path1);
+	file.open(path1, std::ios::app);
 
 	std::ofstream fileArray;
 	std::filesystem::path path2 = std::filesystem::current_path();
@@ -85,7 +85,7 @@ void DriverAccount::problemReport(const std::string& fileName, ProblemReport& re
 
 	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
 	{
-		if (!checkName("problemReports\\", "AllProblemReports.txt", fileName))
+		if (!checkName("\\problemReports\\", "AllProblemReports.txt", fileName))
 		{
 			fileArray << fileName << std::endl;
 			file << report;
