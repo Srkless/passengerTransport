@@ -10,6 +10,7 @@ private:
 	std::string accountType;
 	int numOfLogins;
 	bool isSuspended = true;
+	double balance = 500;
 public:
 	UserAccount();
 	UserAccount(std::string username, std::string password, std::string accountType, int numOfLogins);
@@ -20,12 +21,16 @@ public:
 	std::string getAccountType() const;
 	int getNumOfLogins() const;
 	bool getSuspendInfo() const;
+	double getBalance() const;
 
 	void setPassword(std::string newPassword);
 	UserAccount createAccount(std::string username, std::string password, std::string accountType);
 	void increaseNumOfLogins();
 	void resetNumOfLogins();
 	void changeSuspensionStatus();
+	void addBalance(double);
+	void setBalance(double);
+	
 
 	friend std::ostream& operator<<(std::ostream& os, const UserAccount& account);
 	friend std::istream& operator>>(std::istream& is, UserAccount& account);

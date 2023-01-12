@@ -45,6 +45,11 @@ bool UserAccount::getSuspendInfo() const
 	return this->isSuspended;
 }
 
+double UserAccount::getBalance() const
+{
+	return balance;
+}
+
 void UserAccount::setPassword(std::string newPassword)
 {
 	this->password = newPassword;
@@ -70,6 +75,16 @@ void UserAccount::resetNumOfLogins()
 void UserAccount::changeSuspensionStatus()
 {
 	this->isSuspended = !this->isSuspended;
+}
+
+void UserAccount::addBalance(double value)
+{
+	balance += value;
+}
+
+void UserAccount::setBalance(double newBal)
+{
+	balance = newBal;
 }
 
 std::istream& operator>>(std::istream& is, UserAccount& account)
@@ -104,6 +119,6 @@ std::istream& operator>>(std::istream& is, UserAccount& account)
 
 std::ostream& operator<<(std::ostream& os, const UserAccount& account)
 {
-	os << account.username << "#" << account.accountType << "#" << Utility::encrypt(account.password) << "#" << account.numOfLogins << "#" << account.isSuspended;
+	os << account.username << "#" << account.accountType << "#" << Utility::encrypt(account.password) << "#" << account.numOfLogins << "#" << account.isSuspended << "#" << account.balance << "#";
 	return os;
 }

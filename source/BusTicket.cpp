@@ -1,10 +1,10 @@
 #include "BusTicket.h"
 
-BusTicket::BusTicket(std::string rideID, size_t seatNumber, std::string startLocation, std::string endLocation, double price, bool hasBaggageb)
+BusTicket::BusTicket(std::string rideID, size_t seatNumber, std::string startLocation, std::string endLocation, bool hasBaggageb)
 	: m_rideID(rideID), m_seatNumber(seatNumber), m_startLocation(startLocation), m_endLocation(endLocation)
 {}
 
-void BusTicket::generatePrice()
+double BusTicket::generatePrice()
 {
 	Schedule schedule;
 	schedule = db::readScheduleFromFile();
@@ -39,7 +39,7 @@ void BusTicket::generatePrice()
 		}
 	}
 
-	m_price = (5 * route.size() + (2*m_hasBaggage));
+	return (5 * route.size() + (2 * m_hasBaggage));
 }
 
 void BusTicket::addBaggage()
@@ -96,15 +96,17 @@ int BusTicket::getAvailableTickets()
 	oFile.close();
 }
 
-bool BusTicket::buyTicket()
+bool BusTicket::buyTicket(UserAccount& usr)
 {
+	double price = generatePrice();
 	int availableTickets = getAvailableTickets();
-	if (availableTickets > 0)
+	if (availableTickets > 0 && price <= usr.getBalance())
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\tickets\\" + m_rideID + ".txt";
 		std::ofstream oFile(path);
 		oFile << availableTickets - 1;
+		usr.setBalance(usr.getBalance() - price);
 		return true;
 	}
 	else
