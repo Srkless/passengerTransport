@@ -12,6 +12,8 @@
 #include "Ride.h"
 #include "UserAccount.h"
 #include "Schedule.h"
+#include "Report.h"
+#include "ProblemReport.h"
 
 namespace db
 {
@@ -107,6 +109,68 @@ namespace db
 		}
 		iFile.close();
 		return users;
+	}
+
+	inline std::unordered_map<std::string, Report> loadReportsFromFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\reports";
+		std::filesystem::create_directories(path);
+		path += "\\AllReports.txt";
+		std::ifstream iFile(path);
+		std::unordered_map<std::string, Report> reports;
+
+		while (!iFile.eof())
+		{
+			std::filesystem::path path = std::filesystem::current_path();
+			path += "\\data\\reports";
+
+			std::string name;
+			std::getline(iFile, name);
+			path += name;
+
+			Report rep;
+
+			std::ifstream iFile2(path);
+			iFile2 >> rep;
+
+			reports[rep.getRideID()] = rep;
+			iFile2.close();
+		}
+		iFile.close();
+
+		return reports;
+	}
+
+	inline std::unordered_map<std::string, ProblemReport> loadProblemReportsFromFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\reports";
+		std::filesystem::create_directories(path);
+		path += "\\AllProblemReports.txt";
+		std::ifstream iFile(path);
+		std::unordered_map<std::string, ProblemReport> problemReports;
+
+		while (!iFile.eof())
+		{
+			std::filesystem::path path = std::filesystem::current_path();
+			path += "\\data\\reports";
+
+			std::string name;
+			std::getline(iFile, name);
+			path += name;
+			
+			ProblemReport probRep;
+
+			std::ifstream iFile2(path);
+			iFile2 >> probRep;
+
+			problemReports[probRep.getRideID()] = probRep;
+			iFile2.close();
+		}
+		iFile.close();
+
+		return problemReports;
 	}
 
 	// adds user to database

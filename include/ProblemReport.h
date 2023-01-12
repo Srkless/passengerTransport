@@ -5,8 +5,9 @@
 class ProblemReport : public Report
 {
 private:
-	std::string typeOfProblem;
+	std::string typeOfProblem = "";
 public:
+	ProblemReport() {};
 	ProblemReport(std::string reportID, std::string reportAuthor, std::string content, std::string typeOfProblem);
 
 	void setTypeOfProblem(std::string problemType) noexcept(true);

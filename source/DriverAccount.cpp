@@ -77,7 +77,7 @@ void DriverAccount::problemReport(const std::string& fileName, ProblemReport& re
 	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
 	{
 		fileArray << fileName << std::endl;
-		//file << report;
+		file << report;
 	}
 	else
 		throw std::runtime_error("File could not open!");
