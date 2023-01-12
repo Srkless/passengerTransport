@@ -162,7 +162,6 @@ namespace db
 		}
 		else
 		{
-			
 			std::string cmpName = ride.getRideID() + ".txt";
 			if (!checkName("rides","\\ridedata.txt", cmpName))
 			{
