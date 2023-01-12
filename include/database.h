@@ -51,12 +51,13 @@ namespace db
 	}
 
 	// used to make sure no duplicates exist
-	inline bool checkName(std::string fileArray, std::string fileName)
+	inline bool checkName(std::string fileDirectory, std::string fileArray, std::string fileName)
 	{
 		std::vector<std::string> fileData;
 		std::filesystem::path path1 = std::filesystem::current_path();
 		path1 += "\\data\\";
 		std::filesystem::create_directories(path1);
+		path1 += fileDirectory;
 		path1 += fileArray;
 		std::string word;
 		std::ifstream file(path1);
@@ -163,15 +164,13 @@ namespace db
 		{
 			
 			std::string cmpName = ride.getRideID() + ".txt";
-			if (!checkName("ridedata.txt", cmpName))
+			if (!checkName("rides","\\ridedata.txt", cmpName))
 			{
 				oFile << std::endl << ride.getRideID() << ".txt";
 				oFile2.open(path);
 				oFile2 << ride;
 				oFile2.close();
 			}
-			else
-				throw std::invalid_argument("File allready exists!");
 		}
 		oFile.close();
 	}
@@ -365,40 +364,5 @@ namespace db
 		iFile.close();
 		return rides;
 	}
-
-	// function for reading the whole file
-	// can only read one type of data, specified by T
-	// accepts two std::function wrappers
-	// the first argument takes the path of the file which will be read from
-	// the second argument takes a function which will define what will be done with the output
-	// the third argument takes a function which defines the method of reading from the file and can be omitted - by default will read one string from the file
-	// here is an example of how to call this function from main
-	// 
-	// this will print out the first word from the test.txt file located in the Documents folder
-	// 
-	// db::readFileCustom<std::string>("C:/Users/urnm/Documents/test.txt", [](std::string str) {std::cout << str; });
-	//
-	// template parameters:
-	// T is the type of data being read from file
-	// O is the return type of the specified work function, if the function returns nothing, shoule be void
-	//
-	/*template<typename T, typename O = void>
-	O readFileCustom(std::filesystem::path path, std::function<O(T& a)> outputFunction, std::function<T(std::ifstream& is)> inputFunction = [](std::ifstream& is) {return readItem<T>(is); })
-	{
-		std::ifstream inputFile(path);
-		T workData;
-		std::stringstream sstream;
-		std::getline(inputFile, sstream);
-		while(!inputFile.eof())
-		{
-			workData = inputFunction(inputFile);
-			O returnVal = outputFunction(workData);
-		}
-		O returnVal = outputFunction(workData);
-		inputFile.close();
-		return returnVal;
-	}*/
-
-
 };
 
