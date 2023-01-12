@@ -141,14 +141,14 @@ void viewReportInterface(std::string username)
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 
 	std::unordered_map<std::string, Report> reportDatabase;
-	//reportDatabase = db::loadReportsFromFile();
+	reportDatabase = db::loadReportsFromFile();
 	std::vector<std::string> entries;
 
 	std::string bannerMessage = username + "'s account settings";
 	ftxui::Color bannerMessageColor = blue;
 
-	/*for (auto& elem : reportDatabase)
-		entries.push_back(elem.first);*/
+	for (auto& elem : reportDatabase)
+		entries.push_back(elem.first);
 	int selected = -1;
 	auto menu = Radiobox(&entries, &selected);
 	auto backButton = ftxui::Button("Back", [&] {gui::reportsSettings(username); });
@@ -157,7 +157,7 @@ void viewReportInterface(std::string username)
 	auto renderer = ftxui::Renderer(component, [&] {
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(), vbox({
-				//center(hbox(menu->Render())),
+				center(hbox(menu->Render())),
 				center(hbox(acceptButton->Render() | size(WIDTH, EQUAL, 25) | ftxui::color(light_gray))),
 				/*center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 25) | ftxui::color(bright_green)))})*/ })// | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 			}); });
