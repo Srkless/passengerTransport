@@ -10,6 +10,11 @@ void Schedule::removeRideFromSchedule(const std::string& rideID)
 	m_Schedule.erase(rideID);
 }
 
+Ride& Schedule::getRide(std::string rideID)
+{
+	return m_Schedule[rideID];
+}
+
 std::ostream& operator<<(std::ostream& os, const Schedule& schedule)
 {
 	for (const auto& item : schedule.m_Schedule)

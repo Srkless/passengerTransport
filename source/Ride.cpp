@@ -123,7 +123,7 @@ std::ostream& operator<<(std::ostream& os, const Ride& ride)
 	{
 		os << ride.m_PathLocations[i] << "!";
 	}
-	os << ride.m_EndLocation;
+	os << ride.m_EndLocation << "#";
 	return os;
 }
 
