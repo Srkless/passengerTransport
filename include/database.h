@@ -99,7 +99,7 @@ namespace db
 		oFile.close();
 		
 		std::filesystem::path path = std::filesystem::current_path();
-		path += "\\data\\rides";
+		path += "\\data\\rides\\";
 		path += ride.getRideID();
 		path += ".txt";
 		std::ofstream oFile(path);
