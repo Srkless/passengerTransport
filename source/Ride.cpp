@@ -116,7 +116,7 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 
 std::ostream& operator<<(std::ostream& os, const Ride& ride)
 {
-	os << ride.m_RideID << "#" << ride.m_Driver << "#" << ride.m_BusRegistration << "#" << ride.m_StartTime << "#" << ride.m_EndLocation << "#" << ride.m_StartLocation << "#" << ride.m_EndLocation << "#";
+	os << ride.m_RideID << "#" << ride.m_Driver << "#" << ride.m_BusRegistration << "#" << ride.m_StartTime << "#" << ride.m_StartLocation << "#";
 	for (size_t i = 0; i < ride.m_PathLocations.size(); i++)
 	{
 			os << ride.m_PathLocations[i] << "!";
