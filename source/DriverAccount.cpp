@@ -2,34 +2,15 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "DriverAccount.h"
 #include "Ride.h"
 #include "Report.h"
 #include "ProblemReport.h"
 
-std::vector<std::string> DriverAccount::routeOverview(const std::string& fileName) const noexcept(false)
+Ride& DriverAccount::routeOverview(const std::string& fileName, std::unordered_map<std::string, Ride>& map) const noexcept(false)
 {
-	std::ifstream file(fileName);
-
-	if (file.good())
-
-	{
-		std::vector<std::string> locationArray;
-
-		std::string location;
-		while (std::getline(file, location, '#'))
-			locationArray.push_back(location);
-
-		std::string startLocation = locationArray.front();
-		std::string endLocation = locationArray.back();
-
-		for (auto& string : locationArray)
-			std::cout << string << " ";
-
-		return locationArray;
-	}
-	else
-		throw std::runtime_error("File not found!");
+	return map[fileName];
 }
 
 void DriverAccount::writeReport(const std::string& fileName, Report& report) const noexcept(false)

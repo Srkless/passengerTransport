@@ -75,7 +75,7 @@ namespace db
 		iFile.close();
 		return rides;
 	}
-	
+
 	// add Ride to a file
 	inline void addRideToFile(const Ride& ride)
 	{
@@ -89,7 +89,7 @@ namespace db
 		oFile.seekp(0, std::ios::end);
 		if (oFile.tellp() == 0)
 		{
-			oFile  << ride.getRideID() << ".txt";
+			oFile << ride.getRideID() << ".txt";
 		}
 		else
 		{
@@ -97,12 +97,12 @@ namespace db
 		}
 
 		oFile.close();
-		
-		std::filesystem::path path = std::filesystem::current_path();
+
+		path = std::filesystem::current_path();
 		path += "\\data\\rides";
 		path += ride.getRideID();
 		path += ".txt";
-		std::ofstream oFile(path);
+		oFile.open(path);
 		oFile << ride;
 		oFile.close();
 	}
@@ -176,7 +176,7 @@ namespace db
 			std::string name;
 			std::getline(iFile, name);
 			path += name;
-			
+
 			ProblemReport probRep;
 
 			std::ifstream iFile2(path);
@@ -214,7 +214,7 @@ namespace db
 		std::filesystem::create_directories(path);
 		path += "\\userdata.txt";
 		std::ofstream oFile(path);
-		
+
 		for (auto& user : map)
 		{
 			if (user.second.getUsername() != "")
@@ -238,7 +238,7 @@ namespace db
 	// function for reading a specified type from a file
 	// assumes that the '#' symbol terminates the data type
 	// default type is string
-	 template<typename T = std::string>
+	template<typename T = std::string>
 		requires Readable<T> && (std::copy_constructible<T> || std::copyable<T>)
 	T readItem(std::ifstream& is)
 	{
@@ -271,7 +271,7 @@ namespace db
 			{
 				drivers[acc.getUsername()] = acc;
 			}
-			
+
 		}
 		iFile.close();
 		return drivers;
@@ -290,7 +290,7 @@ namespace db
 		{
 			Ride tmpRide;
 			iFile >> tmpRide;
-			
+
 
 		}
 		iFile.close();
