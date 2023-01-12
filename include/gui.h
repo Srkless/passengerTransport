@@ -42,9 +42,9 @@ namespace gui {
 	void login_interface();
 	void register_interface(int number);
 	void change_password(std::string username);
-	void administrator_interface();
+	void administrator_interface(std::string username);
 
-	void accountSettingsInterface();
+	void accountSettingsInterface(std::string username);
 	/*void selling_items_interface(Database& db);
 	void supervisor_interface(Database& db);
 	void employee_overview(Database& db);
