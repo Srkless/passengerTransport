@@ -27,10 +27,9 @@ void Administrator::generatingTravelOrder(const Ride& ride) const noexcept(false
     fileArray.open(path2, std::ios::app);
 
 
-    if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
+    if (fileArray.good() && file.good())
     {
         fileArray << ride << std::endl;
-        //file << report;
     }
 }
 
