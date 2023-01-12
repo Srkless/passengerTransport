@@ -9,14 +9,14 @@
 #include "ProblemReport.h"
 #include "database.h"
 
-inline bool checkName(std::string fileArray, std::string fileName)
+inline bool checkName(std::string fileDirectory, std::string fileArray, std::string fileName)
 {
 	std::vector<std::string> fileData;
 	std::filesystem::path path1 = std::filesystem::current_path();
 	path1 += "\\data";
 	std::filesystem::create_directories(path1);
+	path1 += fileDirectory;
 	path1 += fileArray;
-	path1 += "\\.txt";
 	std::string word;
 	std::ifstream file(path1);
 
@@ -44,24 +44,26 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 {
 	std::ofstream file;
 	std::filesystem::path path1 = std::filesystem::current_path();
-	path1 += "\\data\\rides";
+	path1 += "\\data\\reports\\";
 	std::filesystem::create_directories(path1);
 	path1 += fileName;
-	file.open(path1, std::ios::app);
+	file.open(path1);
 
 	std::ofstream fileArray;
 	std::filesystem::path path2 = std::filesystem::current_path();
-	path2 += "\\data\\rides";
+	path2 += "\\data\\reports";
 	path2 += "\\AllReports.txt";
 	fileArray.open(path2, std::ios::app);
 
 	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
 	{
-		if (!checkName("AllReports.txt", fileName))
+		if (!checkName("\\reports\\", "AllReports.txt", fileName))
 		{
 			fileArray << fileName << std::endl;
 			file << report;
 		}
+		fileArray.close();
+		file.close();
 	}
 }
 
@@ -69,21 +71,21 @@ void DriverAccount::problemReport(const std::string& fileName, ProblemReport& re
 {
 	std::ofstream file;
 	std::filesystem::path path1 = std::filesystem::current_path();
-	path1 += "\\data\\rides";
+	path1 += "\\data\\problemReports\\";
 	std::filesystem::create_directories(path1);
 	path1 += fileName;
-	file.open(path1, std::ios::app);
+	file.open(path1);
 
 	std::ofstream fileArray;
 	std::filesystem::path path2 = std::filesystem::current_path();
-	path2 += "\\data\\rides";
+	path2 += "\\data\\problemReports";
 	path2 += "\\AllProblemReports.txt";
 	fileArray.open(path2, std::ios::app);
 
 
 	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
 	{
-		if (!checkName("AllProblemReports.txt", fileName))
+		if (!checkName("problemReports\\", "AllProblemReports.txt", fileName))
 		{
 			fileArray << fileName << std::endl;
 			file << report;
