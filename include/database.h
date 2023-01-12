@@ -117,24 +117,25 @@ namespace db
 		{
 			oFile << ride.getRideID() << ".txt";
 		}
-
-		oFile.close();
-
-		path = std::filesystem::current_path();
-		path += "\\data\\rides\\";
-		path += ride.getRideID();
-		path += ".txt";
-		std::string cmpName = ride.getRideID() + ".txt";
-		if (!checkName("ridedata.txt", cmpName))
-		{
-			oFile << std::endl << ride.getRideID() << ".txt";
-			oFile.open(path);
-			oFile << ride;
-			oFile.close();
-		}
 		else
-			throw std::invalid_argument("File allready exists!");
-
+		{
+			std::ofstream oFile2;
+			path = std::filesystem::current_path();
+			path += "\\data\\rides\\";
+			path += ride.getRideID();
+			path += ".txt";
+			std::string cmpName = ride.getRideID() + ".txt";
+			if (!checkName("ridedata.txt", cmpName))
+			{
+				oFile << std::endl << ride.getRideID() << ".txt";
+				oFile2.open(path);
+				oFile2 << ride;
+				oFile2.close();
+			}
+			else
+				throw std::invalid_argument("File allready exists!");
+		}
+		oFile.close();
 	}
 
 	// loads users from database into an unordered map
