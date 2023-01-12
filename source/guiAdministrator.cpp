@@ -16,7 +16,11 @@ void gui::accountSettingsInterface()
 	auto changePassword = ftxui::Button("Change password", [&] {exit(0); });
 	auto backButton = ftxui::Button("Back", [&] {gui::administrator_interface(); });
 
-	auto component = ftxui::Container::Vertical({ createAccount, activateAccount, suspendAccount, deleteAccount, viewAccounts, suspendPassword, changePassword, backButton });
+	std::vector<std::string> entries = {"Administrator", "Vozac"};
+	int selected = 0;
+	auto menu = Radiobox(&entries, &selected);
+
+	auto component = ftxui::Container::Vertical({ createAccount, activateAccount, suspendAccount, deleteAccount, viewAccounts, suspendPassword, changePassword, backButton, menu});
 
 	auto renderer = ftxui::Renderer(component, [&] {
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
@@ -28,7 +32,8 @@ void gui::accountSettingsInterface()
 				center(hbox(viewAccounts->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray))),
 				center(hbox(suspendPassword->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray))),
 				center(hbox(changePassword->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray))),
-				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);;
+				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))}),
+				center(menu->Render())}) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
 
 	screen.Loop(renderer);
