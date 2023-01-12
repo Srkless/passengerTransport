@@ -11,29 +11,41 @@ std::vector<std::string> CodeBooks;
 
 using namespace db;
 
-void Administrator::generatingTravelOrder(const std::string& fileName, const Ride& ride) const noexcept(false)
+void Administrator::generatingTravelOrder(const Ride& ride) const noexcept(false)
 {
+    std::ofstream fileArray;
+    std::filesystem::path path = std::filesystem::current_path();
+    path += "\\data\\rides";
+    path += "\\AllTravelOrders.txt";
+    fileArray.open(path, std::ios::app);
+
+    fileArray.seekp(0, std::ios::end);
+    if (fileArray.tellp() == 0)
+    {
+        fileArray << ride.getRideID();
+    }
+    else
+    {
+        fileArray << std::endl << ride.getRideID();
+    }
+    fileArray.close();
+
+    std::string cmpName = ride.getRideID() + ".txt";
+    if (!checkName("rides", "\\ridedata.txt", cmpName))
+    {
+        path = std::filesystem::current_path();
+        path += ride.getRideID() + ".txt";
+        fileArray.open(path);
+        fileArray << ride;
+        fileArray.close();
+    }
+
     std::ofstream file;
     std::filesystem::path path1 = std::filesystem::current_path();
     path1 += "\\data\\rides";
     std::filesystem::create_directories(path1);
-    path1 += fileName;
+    path1 += ride.getRideID() + ".txt";
     file.open(path1, std::ios::app);
-
-    std::ofstream fileArray;
-    std::filesystem::path path2 = std::filesystem::current_path();
-    path2 += "\\data\\rides";
-    path2 += "\\AllTravelOrders.txt";
-    fileArray.open(path2, std::ios::app);
-
-
-    if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
-    {
-        fileArray << fileName << std::endl;
-        //file << report;
-    }
-    else
-        throw std::runtime_error("File could not open!");
 }
 
 void Administrator::ViewUserAccount()

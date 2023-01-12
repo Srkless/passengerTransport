@@ -162,7 +162,6 @@ namespace db
 		}
 		else
 		{
-			
 			std::string cmpName = ride.getRideID() + ".txt";
 			if (!checkName("rides","\\ridedata.txt", cmpName))
 			{
@@ -348,23 +347,36 @@ namespace db
 		return drivers;
 	}
 
-	inline std::unordered_map<std::string, Ride> loadDriverRides()
+	inline std::unordered_map<std::string, Ride> loadDriverRides(std::string username)
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
-		path += "\\userdata.txt";
-		std::ifstream iFile(path);
+		path += "\\ridedata.txt";
+		
 		std::unordered_map<std::string, Ride> rides;
-
-		while (!iFile.eof())
+		if(std::filesystem::exists(path))
 		{
-			Ride tmpRide;
-			iFile >> tmpRide;
-			rides[tmpRide.getRideID()];
+			std::ifstream iFile(path);
+			while (!iFile.eof())
+			{
+				path = std::filesystem::current_path();
+				path += "\\data\\rides\\";
+				std::string name;
+				std::getline(iFile, name);
+				path += name;
+				std::ifstream iFile2(path);
+				Ride newRide;
+				iFile2 >> newRide;
+				if(newRide.getDriver() == username)
+				{
+					rides[newRide.getRideID()] = newRide;
+				}
+				iFile2.close();
+				iFile.close();
+			}
+			return rides;
 		}
-		iFile.close();
-		return rides;
 	}
 };
 
