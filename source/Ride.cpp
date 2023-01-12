@@ -61,6 +61,11 @@ std::string Ride::getDriver() const
 	return m_Driver;
 }
 
+std::string Ride::getBusReg() const
+{
+	return m_BusRegistration;
+}
+
 std::string Ride::getStartTime() const
 {
 	return m_StartTime;

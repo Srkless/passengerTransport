@@ -15,7 +15,7 @@ private:
 	std::string m_startLocation;
 	std::string m_endLocation;
 	bool m_hasBaggage = false;
-	double m_price;
+	double m_price = 0;
 public:
 	BusTicket(std::string rideID, size_t seatNumber, std::string startLocation, std::string endLocation, double price = 0, bool hasBaggage = false);
 	
@@ -23,6 +23,6 @@ public:
 
 	void generatePrice();
 	void addBaggage();
-	size_t getAvailableTickets();
-	void buyTicket();
+	int getAvailableTickets();
+	bool buyTicket();
 };

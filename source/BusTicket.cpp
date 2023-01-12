@@ -47,8 +47,69 @@ void BusTicket::addBaggage()
 	m_hasBaggage = true;
 }
 
-size_t BusTicket::getAvailableTickets()
+int BusTicket::getAvailableTickets()
 {
-	std::unordered_map;
+	std::unordered_map<std::string, Ride> rides;
+	rides = db::loadRidesFromFile();
+	std::unordered_map<std::string, bus> buses;
+	buses = db::readBusFromFile();
+
+	std::ofstream oFile;
+	std::filesystem::path path = std::filesystem::current_path();
+	path += "\\data\\tickets";
+	std::filesystem::create_directories(path);
+	path += "\\ticketdata.txt";
+	oFile.open(path, std::ios::app);
+
+	std::ofstream oFile2;
+	path = std::filesystem::current_path();
+	path += "\\data\\tickets\\";
+	path += m_rideID;
+	path += ".txt";
+
+	oFile.seekp(0, std::ios::end);
+	if (oFile.tellp() == 0)
+	{
+		oFile << m_rideID << ".txt";
+		oFile2.open(path);
+		oFile2 << buses[rides[m_rideID].getBusReg()].getNumberOfSeats();
+		oFile2.close();
+		return buses[rides[m_rideID].getBusReg()].getNumberOfSeats();
+	}
+	else
+	{
+		std::string cmpName = m_rideID + ".txt";
+		if (std::filesystem::exists(path))
+		{
+			int numOfSeats;
+			std::ifstream iFile(path);
+			iFile >> numOfSeats;
+		}
+		else
+		{
+			oFile2.open(path);
+			oFile2 << buses[rides[m_rideID].getBusReg()].getNumberOfSeats();
+			oFile.close();
+			return buses[rides[m_rideID].getBusReg()].getNumberOfSeats();
+		}
+	}
+	oFile.close();
+}
+
+bool BusTicket::buyTicket()
+{
+	int availableTickets = getAvailableTickets();
+	if (availableTickets > 0)
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\tickets\\" + m_rideID + ".txt";
+		std::ofstream oFile(path);
+		oFile << availableTickets - 1;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 	

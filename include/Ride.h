@@ -33,6 +33,7 @@ public:
 
 	std::string getRideID() const;
 	std::string getDriver() const;
+	std::string getBusReg() const;
 	std::string getStartTime() const;
 	std::string getEndTime() const;
 	std::string getStartLocation() const;
