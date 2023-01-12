@@ -61,9 +61,16 @@ namespace db
 
 		while (!iFile.eof())
 		{
+			path = std::filesystem::current_path();
+			path += "\\data\\rides";
+			std::string name;
+			std::getline(iFile, name);
+			path += name;
+			std::ifstream iFile2(path);
 			Ride newRide;
-			iFile >> newRide;
+			iFile2 >> newRide;
 			rides[newRide.getRideID()] = newRide;
+			iFile2.close();
 		}
 		iFile.close();
 		return rides;
@@ -82,12 +89,22 @@ namespace db
 		oFile.seekp(0, std::ios::end);
 		if (oFile.tellp() == 0)
 		{
-			oFile  << ride;
+			oFile  << ride.getRideID() << ".txt";
 		}
 		else
 		{
-			oFile << std::endl << ride;
+			oFile << std::endl << ride.getRideID() << ".txt";
 		}
+
+		oFile.close();
+		
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides";
+		path += ride.getRideID();
+		path += ".txt";
+		std::ofstream oFile(path);
+		oFile << ride;
+		oFile.close();
 	}
 
 	// loads users from database into an unordered map
