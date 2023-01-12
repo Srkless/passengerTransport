@@ -4,7 +4,7 @@ Ride::Ride()
 	: m_Driver(""), m_StartTime(std::string()), m_EndTime(std::string()), m_StartLocation(""), m_PathLocations{}, m_EndLocation("") {}
 
 Ride::Ride(std::string rideID, std::string driver, std::string busReg, std::string startTime, std::string endTime, std::string startLocation, std::vector<std::string> pathLocations, std::string endLocation)
-	: m_RideID(rideID), m_Driver(driver), m_StartTime(startTime), m_EndTime(endTime), m_StartLocation(startLocation), m_PathLocations(pathLocations), m_EndLocation(endLocation) {}
+	: m_RideID(rideID), m_Driver(driver), m_BusRegistration(busReg), m_StartTime(startTime), m_EndTime(endTime), m_StartLocation(startLocation), m_PathLocations(pathLocations), m_EndLocation(endLocation) {}
 
 void Ride::setRideID(std::string RideID)
 {
@@ -109,6 +109,7 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 	ride.m_EndTime = items[4];
 	ride.m_StartLocation = items[5];
 	ride.m_EndLocation = item;
+	pathLocationItems.resize(pathLocationItems.size() - 1);
 	ride.m_PathLocations = pathLocationItems;
 
 	return is;
@@ -117,7 +118,7 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 std::ostream& operator<<(std::ostream& os, const Ride& ride)
 {
 	os << ride.m_RideID << "#" << ride.m_Driver << "#" << ride.m_BusRegistration << "#" << ride.m_StartTime << "#" << ride.m_StartLocation << "#";
-	for (size_t i = 0; i < ride.m_PathLocations.size() - 1; i++)
+	for (size_t i = 0; i < ride.m_PathLocations.size(); i++)
 	{
 			os << ride.m_PathLocations[i] << "!";
 	}
