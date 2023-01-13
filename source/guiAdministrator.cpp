@@ -82,7 +82,7 @@ void gui::accountSettingsInterface(UserAccount& administrator)
 	auto viewAccounts = ftxui::Button("View accounts", [&] {editAccountInterface(0, administrator); });
 
 	auto suspendPassword = ftxui::Button("Suspend password", [&] {editAccountInterface(4, administrator); });
-	auto changePassword = ftxui::Button("Reset password", [&] {gui::changePassword(administrator.getUsername()); });
+	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(administrator.getUsername()); });
 	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(administrator); });
 
 	auto component = ftxui::Container::Vertical({ createAccount, activateAccount, suspendAccount, deleteAccount, viewAccounts, suspendPassword, changePassword, backButton });
