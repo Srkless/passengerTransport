@@ -128,27 +128,35 @@ namespace db
 		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
 		path += "\\AllRides.txt";
-		std::ifstream iFile(path);
 		std::unordered_map<std::string, Ride> rides;
-
-		while (!iFile.eof())
+		if(std::filesystem::exists(path))
 		{
-			path = std::filesystem::current_path();
-			path += "\\data\\rides\\";
+			std::ifstream iFile;
+			iFile.open(path);
+			while (!iFile.eof())
+			{
+				path = std::filesystem::current_path();
+				path += "\\data\\rides\\";
 
-			std::string name;
-			std::getline(iFile, name);
-			path += name;
+				std::string name;
+				std::getline(iFile, name);
+				path += name;
 
-			std::ifstream iFile2(path);
-			Ride newRide;
+				std::ifstream iFile2(path);
+				Ride newRide;
 
-			iFile2 >> newRide;
-			rides[newRide.getRideID()] = newRide;
-			iFile2.close();
+				iFile2 >> newRide;
+				rides[newRide.getRideID()] = newRide;
+				iFile2.close();
+			}
+			iFile.close();
 		}
-		iFile.close();
-		
+		else
+		{
+			std::ofstream oFile(path);
+			oFile << "hi";
+			oFile.close();
+		}
 		return rides;
 	}
 
@@ -410,8 +418,8 @@ namespace db
 				iFile2.close();
 				iFile.close();
 			}
-			return rides;
 		}
+		return rides;
 	}
 };
 
