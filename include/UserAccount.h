@@ -10,6 +10,7 @@ private:
 	std::string accountType;
 	int numOfLogins;
 	bool isSuspended = true;
+	bool notificationAlert = false;
 	double balance = 500;
 public:
 	UserAccount();
@@ -20,6 +21,7 @@ public:
 	std::string getPassword() const;
 	std::string getAccountType() const;
 	int getNumOfLogins() const;
+	bool getNotificationAlert() const;
 	bool getSuspendInfo() const;
 	double getBalance() const;
 
@@ -28,9 +30,9 @@ public:
 	void increaseNumOfLogins();
 	void resetNumOfLogins();
 	void changeSuspensionStatus();
+	void changeNotificationAlert();
 	void addBalance(double);
 	void setBalance(double);
-	
 
 	friend std::ostream& operator<<(std::ostream& os, const UserAccount& account);
 	friend std::istream& operator>>(std::istream& is, UserAccount& account);

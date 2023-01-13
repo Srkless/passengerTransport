@@ -127,29 +127,36 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
-		path += "\\allRides.txt";
-
+		path += "\\AllRides.txt";
 		std::unordered_map<std::string, Ride> rides;
-		std::ifstream iFile;
-
-		iFile.open(path);
-		while (!iFile.eof())
+		if(std::filesystem::exists(path))
 		{
-			path = std::filesystem::current_path();
-			path += "\\data\\rides\\";
+			std::ifstream iFile;
+			iFile.open(path);
+			while (!iFile.eof())
+			{
+				path = std::filesystem::current_path();
+				path += "\\data\\rides\\";
 
-			std::string name;
-			std::getline(iFile, name);
-			path += name;
+				std::string name;
+				std::getline(iFile, name);
+				path += name;
 
-			std::ifstream iFile2(path);
-			Ride newRide;
+				std::ifstream iFile2(path);
+				Ride newRide;
 
-			iFile2 >> newRide;
-			rides[newRide.getRideID()] = newRide;
-			iFile2.close();
+				iFile2 >> newRide;
+				rides[newRide.getRideID()] = newRide;
+				iFile2.close();
+			}
+			iFile.close();
 		}
-		iFile.close();
+		else
+		{
+			std::ofstream oFile(path);
+			oFile << "hi";
+			oFile.close();
+		}
 		return rides;
 	}
 
@@ -160,7 +167,7 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
-		path += "\\allRides.txt";
+		path += "\\AllRides.txt";
 		oFile.open(path, std::ios::app);
 
 		std::ofstream oFile2;
@@ -180,7 +187,7 @@ namespace db
 		else
 		{
 			std::string cmpName = ride.getRideID() + ".txt";
-			if (!checkName("rides", "\\allRides.txt", cmpName))
+			if (!checkName("rides", "\\AllRides.txt", cmpName))
 			{
 				oFile << std::endl << ride.getRideID() << ".txt";
 				oFile2.open(path);
@@ -202,7 +209,7 @@ namespace db
 
 
 		std::string cmpName = ride.getRideID() + ".txt";
-		if (checkName("rides", "\\allRides.txt", cmpName))
+		if (checkName("rides", "\\AllRides.txt", cmpName))
 		{
 			file.open(path, std::ios::out);
 			file << ride;
@@ -215,7 +222,7 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\users";
 		std::filesystem::create_directories(path);
-		path += "\\userData.txt";
+		path += "\\userdata.txt";
 		std::ifstream iFile(path);
 		std::unordered_map<std::string, UserAccount> users;
 
@@ -234,7 +241,7 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\reports";
 		std::filesystem::create_directories(path);
-		path += "\\allReports.txt";
+		path += "\\AllReports.txt";
 		std::ifstream iFile(path);
 		std::unordered_map<std::string, Report> reports;
 
@@ -265,7 +272,7 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\reports";
 		std::filesystem::create_directories(path);
-		path += "\\allProblemReports.txt";
+		path += "\\AllProblemReports.txt";
 		std::unordered_map<std::string, ProblemReport> problemReports;
 
 		if (std::filesystem::exists(path))
@@ -303,7 +310,7 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\users";
 		std::filesystem::create_directories(path);
-		path += "\\userData.txt";
+		path += "\\userdata.txt";
 		oFile.open(path, std::ios::app);
 
 		oFile << std::endl << usr;
@@ -316,7 +323,7 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\users";
 		std::filesystem::create_directories(path);
-		path += "\\userData.txt";
+		path += "\\userdata.txt";
 		std::ofstream oFile(path);
 
 		for (auto& user : map)
@@ -363,7 +370,7 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\users";
 		std::filesystem::create_directories(path);
-		path += "\\userData.txt";
+		path += "\\userdata.txt";
 		std::ifstream iFile(path);
 		std::unordered_map<std::string, UserAccount> drivers;
 
@@ -381,56 +388,12 @@ namespace db
 		return drivers;
 	}
 
-	inline std::unordered_map<std::string, Ride> loadDriverRides(const std::string& driverName)
+	inline std::unordered_map<std::string, Ride> loadDriverRides(std::string username)
 	{
-
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
-		path += "\\allRides.txt";
-
-		std::unordered_map<std::string, Ride> rides;
-		std::ifstream iFile;
-
-		iFile.open(path);
-		while (!iFile.eof())
-		{
-			path = std::filesystem::current_path();
-			path += "\\data\\rides\\";
-
-			std::string name;
-			std::getline(iFile, name);
-			path += name;
-
-			std::ifstream iFile2(path);
-			Ride newRide;
-
-			iFile2 >> newRide;
-			if (newRide.getDriver() == driverName)
-				rides[newRide.getRideID()] = newRide;
-
-			iFile2.close();
-		}
-		iFile.close();
-
-		return rides;
-
-
-
-
-
-
-
-
-
-
-
-
-
-		/*std::filesystem::path path = std::filesystem::current_path();
-		path += "\\data\\rides";
-		std::filesystem::create_directories(path);
-		path += "\\allRides.txt";
+		path += "\\AllRides.txt";
 
 		std::unordered_map<std::string, Ride> rides;
 		if (std::filesystem::exists(path))
@@ -443,10 +406,8 @@ namespace db
 				std::string name;
 				std::getline(iFile, name);
 				path += name;
-
 				std::ifstream iFile2(path);
 				Ride newRide;
-
 				iFile2 >> newRide;
 				if (newRide.getDriver() == username)
 				{
@@ -454,7 +415,9 @@ namespace db
 				}
 				iFile2.close();
 				iFile.close();
-			}*/
+			}
+		}
+		return rides;
 	}
 };
 
