@@ -244,27 +244,30 @@ namespace db
 		path += "\\data\\reports";
 		std::filesystem::create_directories(path);
 		path += "\\AllProblemReports.txt";
-		std::ifstream iFile(path);
 		std::unordered_map<std::string, ProblemReport> problemReports;
 
-		while (!iFile.eof())
+		if(std::filesystem::exists(path))
 		{
-			std::filesystem::path path = std::filesystem::current_path();
-			path += "\\data\\reports";
+			std::ifstream iFile(path);
+			while (!iFile.eof())
+			{
+				std::filesystem::path path = std::filesystem::current_path();
+				path += "\\data\\reports";
 
-			std::string name;
-			std::getline(iFile, name);
-			path += name;
+				std::string name;
+				std::getline(iFile, name);
+				path += name;
 
-			ProblemReport probRep;
+				ProblemReport probRep;
 
-			std::ifstream iFile2(path);
-			iFile2 >> probRep;
+				std::ifstream iFile2(path);
+				iFile2 >> probRep;
 
-			problemReports[probRep.getRideID()] = probRep;
-			iFile2.close();
+				problemReports[probRep.getRideID()] = probRep;
+				iFile2.close();
+			}
+			iFile.close();
 		}
-		iFile.close();
 
 		return problemReports;
 	}

@@ -9,7 +9,7 @@
 #include "ProblemReport.h"
 #include "database.h"
 
-inline bool checkName(std::string fileDirectory, std::string fileArray, std::string fileName)
+inline bool checkName(const std::string& fileDirectory, const std::string& fileArray, const std::string& fileName)
 {
 	std::vector<std::string> fileData;
 	std::filesystem::path path1 = std::filesystem::current_path();
@@ -35,19 +35,21 @@ inline bool checkName(std::string fileDirectory, std::string fileArray, std::str
 	return false;
 }
 
-Ride& DriverAccount::singleRouteOverview(const std::string& fileName, std::unordered_map<std::string, Ride>& map) const
+Ride& DriverAccount::singleRouteOverview(const std::string& fileName) const
 {
+	std::unordered_map<std::string, Ride> map = db::loadDriverRides(getUsername());
+
 	return map[fileName];
 }
 
 std::unordered_map<std::string, Ride> DriverAccount::allRoutesOverview() const
 {
-	std::unordered_map <std::string, Ride> map = db::loadDriverRides(this->getUsername());
+	return db::loadDriverRides(getUsername());
 }
 
 std::unordered_map<std::string, Ride> DriverAccount::allDrivenRides() const
 {
-	/*std::unordered_map<std::string, Ride> trueMap;
+	std::unordered_map<std::string, Ride> trueMap, map = db::loadDriverRides(getUsername());
 
 	for (auto& ride : map)
 	{
@@ -56,12 +58,12 @@ std::unordered_map<std::string, Ride> DriverAccount::allDrivenRides() const
 			trueMap[ride.first] = ride.second;
 		}
 	}
-	return trueMap;*/
+	return trueMap;
 }
 
 std::unordered_map<std::string, Ride> DriverAccount::allUndrivenRides() const
 {
-	/*std::unordered_map<std::string, Ride> falseMap;
+	std::unordered_map<std::string, Ride> falseMap, map = db::loadDriverRides(getUsername());
 
 	for (auto& ride : map)
 	{
@@ -70,7 +72,7 @@ std::unordered_map<std::string, Ride> DriverAccount::allUndrivenRides() const
 			falseMap[ride.first] = ride.second;
 		}
 	}
-	return falseMap;*/
+	return falseMap;
 }
 
 
@@ -143,7 +145,8 @@ std::unordered_map<std::string, ProblemReport> DriverAccount::overviewProblemRep
 	return db::loadProblemReportsFromFile();
 }
 
-void DriverAccount::driveRoute()
+void DriverAccount::driveRoute(const std::string& fileName)
 {
-	//TODO
+	std::unordered_map<std::string, Ride> falseMap, map = db::loadDriverRides(getUsername());
+
 }
