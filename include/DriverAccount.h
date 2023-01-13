@@ -19,5 +19,5 @@ public:
 	std::unordered_map <std::string, Report> overviewReports() const;
 	std::unordered_map<std::string, ProblemReport> overviewProblemReports() const;
 	void driveRoute(const std::string &fileName);
-	bool checkRoute() const;
+	bool checkRouteAndReport() const;
 };
