@@ -82,11 +82,23 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides\\schedule.txt";
 		std::ifstream iFile(path);
-		iFile.open(path, std::ios::app);
+		if(std::filesystem::exists(path))
+		{
+			iFile.open(path, std::ios::app);
+			Schedule tmp;
+			iFile >> tmp;
+			return tmp;
+		}
+		Schedule empty;
+		return empty;
+	}
 
-		Schedule tmp;
-		iFile >> tmp;
-		return tmp;
+	inline void writeScheduleToFile(const Schedule& schedule)
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\rides\\schedule.txt";
+		std::ofstream oFile(path);
+		oFile << schedule;
 	}
 
 	inline void editScheduleFile(const Schedule& schedule)
