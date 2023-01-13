@@ -77,7 +77,7 @@ std::unordered_map<std::string, Ride> DriverAccount::allUndrivenRides() const
 
 
 
-void DriverAccount::writeReport(const std::string& fileName, Report& report) const
+void DriverAccount::writeReport(const std::string& fileName, const Report& report) const
 {
 	std::ofstream file;
 	std::filesystem::path path1 = std::filesystem::current_path();
@@ -89,7 +89,7 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	std::ofstream fileArray;
 	std::filesystem::path path2 = std::filesystem::current_path();
 	path2 += "\\data\\reports";
-	path2 += "\\AllReports.txt";
+	path2 += "\\allReports.txt";
 	fileArray.open(path2, std::ios::app); 
 
 	fileArray.seekp(0, std::ios::end);
@@ -99,7 +99,7 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	}
 	else if (fileArray.good() && file.good())
 	{
-		if (!checkName("\\reports\\", "AllReports.txt", fileName))
+		if (!checkName("\\reports\\", "allReports.txt", fileName))
 		{
 			fileArray << std::endl << fileName;
 			file << report;
@@ -109,7 +109,7 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	}
 }
 
-void DriverAccount::writeProblemReport(const std::string& fileName, ProblemReport& report) const
+void DriverAccount::writeProblemReport(const std::string& fileName, const ProblemReport& report) const
 {
 	std::ofstream file;
 	std::filesystem::path path1 = std::filesystem::current_path();
@@ -121,13 +121,13 @@ void DriverAccount::writeProblemReport(const std::string& fileName, ProblemRepor
 	std::ofstream fileArray;
 	std::filesystem::path path2 = std::filesystem::current_path();
 	path2 += "\\data\\problemReports";
-	path2 += "\\AllProblemReports.txt";
+	path2 += "\\allProblemReports.txt";
 	fileArray.open(path2, std::ios::app);
 
 
 	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
 	{
-		if (!checkName("\\problemReports\\", "AllProblemReports.txt", fileName))
+		if (!checkName("\\problemReports\\", "allProblemReports.txt", fileName))
 		{
 			fileArray << fileName << std::endl;
 			file << report;
