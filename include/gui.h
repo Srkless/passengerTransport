@@ -42,6 +42,7 @@ namespace gui {
 	void loginInterface();
 	void registerInterface(int number);
 	void changePassword(std::string username);
+<<<<<<< HEAD
 	void administrator_interface(std::string username);
 	void accountSettingsInterface(std::string username);
 	void createCodeBooksInterface(std::string username);
@@ -50,6 +51,18 @@ namespace gui {
 	void createCodeLocation(std::string username);
 	void scheduleSettings(std::string username);
 	void reportsSettings(std::string username);
+=======
+	void administrator_interface(UserAccount& administrator);
+	void accountSettingsInterface(UserAccount& administrator);
+	void createCodeBooksInterface(UserAccount& administrator);
+	void EnterLocation(UserAccount& administrator, std::string name);
+	void createCodeBus(UserAccount& administrator);
+	void createCodeTour(UserAccount& administrator);
+	void createCodeLocation(UserAccount& administrator);
+	void scheduleSettings(UserAccount& administrator);
+	void reportsSettings(UserAccount& administrator);
+	void DeleteCodeBooks(UserAccount& administrator);
+>>>>>>> eaa3dc38aa465dba91b9081a5d709e46756ccb49
 	/*void supervisor_interface(Database& db);
 	void employee_overview(Database& db);
 	void create_employee_interface(Database& db);

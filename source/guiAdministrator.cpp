@@ -1,13 +1,13 @@
 #include "gui.h"
 
-void choiceAccountInterface(std::string username)
+void choiceAccountInterface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Account types";
 	ftxui::Color bannerMessageColor = blue;
 	auto createAdministratorAccount = ftxui::Button("Create administrator account", [&] {gui::registerInterface(1); });
 	auto createDriverAccount = ftxui::Button("Create driver account", [&] {gui::registerInterface(2); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(username); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(administrator); });
 	auto component = ftxui::Container::Vertical({ createAdministratorAccount,  createDriverAccount, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -18,10 +18,10 @@ void choiceAccountInterface(std::string username)
 		   center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	screen.Loop(renderer);
 };
-void editAccountInterface(int value, std::string currUsername)
+void editAccountInterface(int value, UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string bannerMessage = currUsername + "'s account settings";
+	std::string bannerMessage = administrator.getUsername() + "'s account settings";
 	ftxui::Color bannerMessageColor = blue;
 	std::unordered_map<std::string, UserAccount> userDatabase;
 	std::vector<std::string> entries;
@@ -30,15 +30,15 @@ void editAccountInterface(int value, std::string currUsername)
 	{
 		if (value == 1)
 		{
-			if (elem.second.getSuspendInfo() && elem.second.getUsername() != currUsername)
+			if (elem.second.getSuspendInfo() && elem.second.getUsername() != administrator.getUsername())
 				entries.push_back(elem.first);
 		}
 		else if (value == 2)
 		{
-			if (!elem.second.getSuspendInfo() && elem.second.getUsername() != currUsername)
+			if (!elem.second.getSuspendInfo() && elem.second.getUsername() != administrator.getUsername())
 				entries.push_back(elem.first);
 		}
-		else if (elem.second.getUsername() != currUsername)
+		else if (elem.second.getUsername() != administrator.getUsername())
 		{
 			entries.push_back(elem.first);
 		}			
@@ -46,9 +46,9 @@ void editAccountInterface(int value, std::string currUsername)
 
 	int selected = -1;
 	auto menu = Radiobox(&entries, &selected);
-	auto acceptButton = ftxui::Button("Accept", [&] {(value == 3 && selected != -1) ? (userDatabase.erase(entries[selected]), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(currUsername))
-		: (value == 4 && selected != -1) ? (userDatabase[entries[selected]].setPassword("admin"), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(currUsername)) : (userDatabase[entries[selected]].changeSuspensionStatus(), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(currUsername)); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(currUsername); });
+	auto acceptButton = ftxui::Button("Accept", [&] {(value == 3 && selected != -1) ? (userDatabase.erase(entries[selected]), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(administrator))
+		: (value == 4 && selected != -1) ? (userDatabase[entries[selected]].setPassword("admin"), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(administrator)) : (userDatabase[entries[selected]].changeSuspensionStatus(), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(administrator)); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(administrator); });
 	auto component = ftxui::Container::Vertical({ menu,acceptButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -66,26 +66,24 @@ void editAccountInterface(int value, std::string currUsername)
 				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	screen.Loop(renderer);
 }
-void gui::accountSettingsInterface(std::string username)
+void gui::accountSettingsInterface(UserAccount& administrator)
 {
 
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string currUsername = username;
+	std::string currUsername = administrator.getUsername();
 	std::string bannerMessage = currUsername + "'s account settings";
 
 	// Account Settings
-	auto createAccount = ftxui::Button("Create account", [&] {choiceAccountInterface(username); });
-	auto activateAccount = ftxui::Button("Activate account", [&] {editAccountInterface(1, username); });
-	auto suspendAccount = ftxui::Button("Suspend account", [&] {editAccountInterface(2, username); });
-	auto deleteAccount = ftxui::Button("Delete account", [&] {editAccountInterface(3, username); });
-	auto viewAccounts = ftxui::Button("View accounts", [&] {editAccountInterface(0, username); });
+	auto createAccount = ftxui::Button("Create account", [&] {choiceAccountInterface(administrator); });
+	auto activateAccount = ftxui::Button("Activate account", [&] {editAccountInterface(1, administrator); });
+	auto suspendAccount = ftxui::Button("Suspend account", [&] {editAccountInterface(2, administrator); });
+	auto deleteAccount = ftxui::Button("Delete account", [&] {editAccountInterface(3, administrator); });
+	auto viewAccounts = ftxui::Button("View accounts", [&] {editAccountInterface(0, administrator); });
 
-	auto suspendPassword = ftxui::Button("Suspend password", [&] {editAccountInterface(4, username); });
-	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(username); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(username); });
-
-
+	auto suspendPassword = ftxui::Button("Suspend password", [&] {editAccountInterface(4, administrator); });
+	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(administrator.getUsername()); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(administrator); });
 
 	auto component = ftxui::Container::Vertical({ createAccount, activateAccount, suspendAccount, deleteAccount, viewAccounts, suspendPassword, changePassword, backButton });
 
@@ -105,24 +103,62 @@ void gui::accountSettingsInterface(std::string username)
 	screen.Loop(renderer);
 }
 
-void addRideInterface() // TODO
+void addRideInterface(UserAccount& administrator) // TODO
 {
-	exit(0);
-}
-void deleteRideInterface() // TODO
-{
-	exit(0);
-}
-
-void gui::scheduleSettings(std::string username)
-{
-	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string bannerMessage = username + "'s account Settings";
+	ftxui::Color bannerMessageColor = blue;
+	std::string bannerMessage = "Add new ride";
+	std::string RideID, Driver, BusRegistration, StartTime, EndTime, Location;
 
-	auto addRide = ftxui::Button("Add ride", [&] {addRideInterface(); });
-	auto deleteRide = ftxui::Button("Delete ride", [&] {deleteRideInterface(); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(username); });
+	ftxui::Component RideIDComponent = ftxui::Input(&RideID, "RideID");
+	ftxui::Component DriverComponent = ftxui::Input(&Driver, "Driver");
+	ftxui::Component BusRegistrationComponent = ftxui::Input(&BusRegistration, "BusRegistration");
+	ftxui::Component StartTimeComponent = ftxui::Input(&StartTime, "StartTime");
+	ftxui::Component EndTimeComponent = ftxui::Input(&EndTime, "EndTime");
+	ftxui::Component LocationComponent = ftxui::Input(&Location, "Location");
+	/*std::vector<std::string> allLocations;
+	allLocations.push_back(Location);*/
+	auto backButton = ftxui::Button("Back", [&] {gui::scheduleSettings(administrator); });
+	auto exitButton = ftxui::Button("Exit", [&] {exit(0); });
+
+	ftxui::Color inputColor = light_gray;
+	auto component = ftxui::Container::Vertical({ RideIDComponent, DriverComponent, BusRegistrationComponent, StartTimeComponent, EndTimeComponent, LocationComponent , backButton ,exitButton });
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		
+		return  vbox({ center(ftxui::text(bannerMessage) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+				separatorDouble(),
+				center(hbox({hbox(center(RideIDComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray))) | ftxui::borderRounded,
+				center(hbox(center(DriverComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded,
+				center(hbox(center(BusRegistrationComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded})) | ftxui::borderRounded,
+				center(hbox({hbox(center(StartTimeComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray))) | ftxui::borderRounded,
+				center(hbox(center(EndTimeComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded,
+				center(hbox(center(LocationComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded})) | ftxui::borderRounded,
+				center(hbox({hbox(center(backButton->Render() | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green))),
+				center(hbox(center(exitButton->Render() | size(WIDTH, EQUAL, 12) | ftxui::color(red))))})) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+	/*auto start = allLocations.begin() + 1;
+	auto end = allLocations.end() - 1;
+	std::vector<std::string> locations(start, end);
+	Ride ride(RideID, Driver, BusRegistration, StartTime, EndTime, locations[0], locations, locations[locations.size() - 1]);
+	db::addRideToFile(ride);*/
+	screen.Loop(renderer);
+}
+	
+void deleteRideInterface(UserAccount& administrator) // TODO
+{
+	exit(0);
+}
+
+void gui::scheduleSettings(UserAccount& administrator)
+{
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	ftxui::Color bannerMessageColor = blue;
+	std::string bannerMessage = administrator.getUsername() + "'s schedule Settings";
+
+	auto addRide = ftxui::Button("Add ride", [&] {addRideInterface(administrator); });
+	auto deleteRide = ftxui::Button("Delete ride", [&] {deleteRideInterface(administrator); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(administrator); });
+
 	auto component = ftxui::Container::Vertical({ addRide, deleteRide, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -136,7 +172,7 @@ void gui::scheduleSettings(std::string username)
 	screen.Loop(renderer);
 }
 
-void viewReportInterface(std::string username)
+void viewReportInterface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 
@@ -144,7 +180,7 @@ void viewReportInterface(std::string username)
 	reportDatabase = db::loadReportsFromFile();
 	std::vector<std::string> entries;
 
-	std::string bannerMessage = username + "'s account settings";
+	std::string bannerMessage = administrator.getUsername() + "'s account settings";
 	ftxui::Color bannerMessageColor = blue;
 	int flag = 0;
 	for (auto& elem : reportDatabase)
@@ -155,7 +191,7 @@ void viewReportInterface(std::string username)
 	int selected = -1;
 	
 	auto menu = Radiobox(&entries, &selected);
-	auto backButton = ftxui::Button("BACK", [&] {gui::reportsSettings(username); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::reportsSettings(administrator); });
 	auto acceptButton = ftxui::Button("Accept", [&] {});
 	auto component = ftxui::Container::Vertical({ menu, backButton, acceptButton });
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -168,7 +204,7 @@ void viewReportInterface(std::string username)
 				| color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	screen.Loop(renderer);
 }
-void viewProblemsInterface(std::string username, int value)
+void viewProblemsInterface(UserAccount& administrator, int value)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 
@@ -176,7 +212,7 @@ void viewProblemsInterface(std::string username, int value)
 	problemDatabase = db::loadProblemReportsFromFile();
 	std::vector<std::string> entries;
 
-	std::string bannerMessage = username + "'s account settings";
+	std::string bannerMessage = administrator.getUsername() + "'s account settings";
 	ftxui::Color bannerMessageColor = blue;
 	int flag = 0;
 	for (auto& elem : problemDatabase)
@@ -192,7 +228,7 @@ void viewProblemsInterface(std::string username, int value)
 	
 	auto menu = Radiobox(&entries, &selected);
 
-	auto backButton = ftxui::Button("Back", [&] {gui::reportsSettings(username); });
+	auto backButton = ftxui::Button("Back", [&] {gui::reportsSettings(administrator); });
 	auto component = ftxui::Container::Vertical({ menu, backButton });
 	auto renderer = ftxui::Renderer(component, [&] {
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
@@ -205,16 +241,16 @@ void viewProblemsInterface(std::string username, int value)
 	screen.Loop(renderer);
 }
 
-void gui::reportsSettings(std::string username)
+void gui::reportsSettings(UserAccount& administrator)
 {
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string bannerMessage = username + "'s account Settings";
+	std::string bannerMessage = administrator.getUsername() + "'s account Settings";
 
-	auto viewReport = ftxui::Button("View reports", [&] { viewReportInterface(username); });
-	auto viewPassengerProblems = ftxui::Button("View passenger problems", [&] {viewProblemsInterface(username, 0); });
-	auto viewRideProblems = ftxui::Button("View ride problems", [&] {viewProblemsInterface(username, 1); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(username); });
+	auto viewReport = ftxui::Button("View reports", [&] { viewReportInterface(administrator); });
+	auto viewPassengerProblems = ftxui::Button("View passenger problems", [&] {viewProblemsInterface(administrator, 0); });
+	auto viewRideProblems = ftxui::Button("View ride problems", [&] {viewProblemsInterface(administrator, 1); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(administrator); });
 
 	auto component = ftxui::Container::Vertical({ viewReport, viewPassengerProblems, viewRideProblems, backButton });
 
@@ -321,6 +357,67 @@ void writeinFile(std::string name, std::ofstream& data)
 };
 
 
+<<<<<<< HEAD
+=======
+		std::vector<std::string>CodeBooks2;
+
+		std::filesystem::path word1 = std::filesystem::current_path();
+		word1 += "\\data\\codebooks";
+		std::filesystem::create_directories(word1);
+		word1 += "\\data.txt";
+		std::string word;
+		std::ifstream Data(word1);
+
+		while (Data >> word)
+		{
+			CodeBooks2.push_back(word);
+		};
+		Data.close();
+
+		std::ofstream Data1;
+		Data1.open(word1);
+		auto it = std::find(CodeBooks2.begin(), CodeBooks2.end(), name);
+		CodeBooks2.erase(it);
+		for (int i = 0; i < CodeBooks2.size(); i++)
+		{
+			Data1 << CodeBooks2[i] << std::endl;
+		}
+		Data1.close();
+
+		std::vector<std::string>Code;
+		std::filesystem::path location3 = std::filesystem::current_path();
+		location3 += "\\data\\codebooks";
+		std::filesystem::create_directories(location3);
+		location3 += "\\location.txt";
+
+void gui::EnterLocation(UserAccount& administrator, std::string name)
+		std::ifstream location33;
+		location33.open(location3);
+
+		while (location33 >> word)
+		{
+			Code.push_back(word);
+		};
+		location33.close();
+
+		std::ofstream Data2;
+		Data2.open(location3);
+
+		it = std::find(Code.begin(), Code.end(), name);
+		Code.erase(it);
+		for (int i = 0; i < Code.size(); i++)
+		{
+			Data2 << Code[i] << std::endl;
+		}
+		Data2.close();
+
+
+
+	};
+
+
+}
+>>>>>>> eaa3dc38aa465dba91b9081a5d709e46756ccb49
 
 void gui::EnterLocation(std::string username, std::string name)
 {
@@ -341,9 +438,15 @@ void gui::EnterLocation(std::string username, std::string name)
 	ftxui::Component countryInput = ftxui::Input(&country, "Enter Country");
 
 	int t = 0;
+<<<<<<< HEAD
 	auto backButton = ftxui::Button("Back", [&] { gui::createCodeLocation(username); });//Dodaj konju
 
 	auto Enter = ftxui::Button("Enter", [&] {writeLocation(country, location, data), gui::EnterLocation(username, name), t = 0; });
+=======
+	auto backButton = ftxui::Button("Back", [&] { gui::createCodeLocation(administrator); });//Dodaj konju
+
+	auto Enter = ftxui::Button("Enter", [&] {writeLocation(country, location, data), gui::EnterLocation(administrator, name), t = 0; });
+>>>>>>> eaa3dc38aa465dba91b9081a5d709e46756ccb49
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
@@ -375,7 +478,7 @@ void gui::EnterLocation(std::string username, std::string name)
 
 };
 
-void gui::createCodeLocation(std::string username)
+void gui::createCodeLocation(UserAccount& administrator)
 {
 	std::filesystem::path word1 = std::filesystem::current_path();
 	word1 += "\\data\\codebooks";
@@ -410,7 +513,7 @@ void gui::createCodeLocation(std::string username)
 	std::ofstream location33;
 	location33.open(location3, std::ios::app);
 
-	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(username); });
+	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(administrator); });
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 	/*
 	std::filesystem::path path = std::filesystem::current_path();
@@ -419,7 +522,7 @@ void gui::createCodeLocation(std::string username)
 	path += ".txt";
 	file.open(path, std::ios::app);*/
 	int t = 0;
-	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), EnterLocation(username, name), t = 1; });
+	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), gui::EnterLocation(administrator, name), t = 1; });
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -481,18 +584,578 @@ void createCodeBus()
 }
 void createCodeTour()
 {
+<<<<<<< HEAD
 	exit(0);
 };
 void gui::createCodeBooksInterface(std::string username)
+=======
+	ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Bus";
+	std::string brand, model, god, regis, Numseats;
+
+	std::filesystem::path path = std::filesystem::current_path();
+	path += "\\data\\codebooks\\";
+	path += name;
+	path += ".txt";
+	std::ofstream data;
+
+
+	ftxui::Component brandInput = ftxui::Input(&brand, "Enter brand");
+	ftxui::Component modelInput = ftxui::Input(&model, "Enter model");
+	ftxui::Component YearInput = ftxui::Input(&god, "Enter year of production");
+	ftxui::Component RegistrationInput = ftxui::Input(&regis, "Enter registration");
+	ftxui::Component SeatsInput = ftxui::Input(&Numseats, "Enter number of seats");
+
+
+	int t = 0;
+	auto backButton = ftxui::Button("Back", [&] {IsEqualBus(data, path, name), gui::createCodeBus(username); });
+
+	auto Enter = ftxui::Button("Enter", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), EnterBusInfo(username, name), t = 0; });
+
+
+	auto component = ftxui::Container::Vertical({ brandInput,backButton,Enter,modelInput,YearInput,RegistrationInput,SeatsInput });
+
+
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		{
+
+
+
+			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+				separatorDouble(), vbox({
+					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
+					center(hbox(modelInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
+					center(hbox(YearInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
+					center(hbox(RegistrationInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
+					center(hbox(SeatsInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
+					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+					center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		}});
+
+
+	screen.Loop(renderer);
+
+}
+
+//NOW YOU ARE DOING THIS!
+void gui::createCodeBus(std::string username)
+{
+	std::filesystem::path word1 = std::filesystem::current_path();
+	word1 += "\\data\\codebooks";
+	std::filesystem::create_directories(word1);
+	word1 += "\\data.txt";
+	std::string word;
+	std::ifstream Data(word1);
+
+	while (Data >> word)
+	{
+		CodeBook.push_back(word);
+	};
+
+	Data.close();
+
+	ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Bus";
+	std::string name;
+	std::ofstream data;
+	std::string type;
+	data.open(word1, std::ios::app);
+
+
+
+
+	std::filesystem::path location3 = std::filesystem::current_path();
+	location3 += "\\data\\codebooks";
+	std::filesystem::create_directories(location3);
+	location3 += "\\Bus.txt";
+
+	std::ofstream location33;
+	location33.open(location3, std::ios::app);
+
+	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(username); });
+	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
+
+	int t = 0;
+	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), EnterBusInfo(username, name), t = 1; });
+
+
+	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
+
+
+	auto renderer = ftxui::Renderer(component, [&] {
+
+
+		t = 0;
+	std::string bannerMessage = "Bus";
+	for (int i = 0; i < CodeBook.size(); i++)
+	{
+		if (name == CodeBook[i])
+		{
+			bannerMessageColor = red;
+			t = 1;
+		}
+	};
+
+
+	if (t == 0)
+	{
+		bannerMessageColor = blue;
+
+
+
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+			separatorDouble(), vbox({
+				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+				}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+	}
+	else
+	{
+		std::string bannerMessage = "Already Exist!";
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+		separatorDouble(), vbox({
+			center(hbox(usernameInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+			center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+			}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+
+	}
+		}
+	);
+	screen.Loop(renderer);
+
+
+
+
+
+
+
+}
+
+void IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string name)
+{
+	if (is_equalFile(name))
+	{
+		if (data.is_open())
+			data.close();
+		std::filesystem::remove(path);
+
+		std::vector<std::string>CodeBooks2;
+
+		std::filesystem::path word1 = std::filesystem::current_path();
+		word1 += "\\data\\codebooks";
+		std::filesystem::create_directories(word1);
+		word1 += "\\data.txt";
+		std::string word;
+		std::ifstream Data(word1);
+
+		while (Data >> word)
+		{
+			CodeBooks2.push_back(word);
+		};
+		Data.close();
+
+		std::ofstream Data1;
+		Data1.open(word1);
+		auto it = std::find(CodeBooks2.begin(), CodeBooks2.end(), name);
+		CodeBooks2.erase(it);
+		for (int i = 0; i < CodeBooks2.size(); i++)
+		{
+			Data1 << CodeBooks2[i] << std::endl;
+		}
+		Data1.close();
+
+		std::vector<std::string>Code;
+		std::filesystem::path location3 = std::filesystem::current_path();
+		location3 += "\\data\\codebooks";
+		std::filesystem::create_directories(location3);
+		location3 += "\\Tour.txt";
+
+		std::ifstream location33;
+		location33.open(location3);
+
+		while (location33 >> word)
+		{
+			Code.push_back(word);
+		};
+		location33.close();
+
+		std::ofstream Data2;
+		Data2.open(location3);
+
+		it = std::find(Code.begin(), Code.end(), name);
+		Code.erase(it);
+		for (int i = 0; i < Code.size(); i++)
+		{
+			Data2 << Code[i] << std::endl;
+		}
+		Data2.close();
+
+
+
+	};
+
+
+};
+
+
+void writeTour(std::string Location, std::filesystem::path path, std::ofstream& data)
+{
+	data.open(path, std::ios::app);
+	if (Location != "")
+		data << Location << "#";
+	data.close();
+};
+
+void EnterTourInfo(std::string username, std::string name)
+{
+	ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Tour";
+	std::string brand;
+
+	std::filesystem::path path = std::filesystem::current_path();
+	path += "\\data\\codebooks\\";
+	path += name;
+	path += ".txt";
+	std::ofstream data;
+
+
+	ftxui::Component brandInput = ftxui::Input(&brand, "Enter destination");
+
+
+
+	int t = 0;
+	auto backButton = ftxui::Button("Back", [&] {IsEqualTour(data, path, name), gui::createCodeTour(username); });//IS EQual
+	auto brandButton = ftxui::Button("Enter", [&] {writeTour(brand, path, data), EnterTourInfo(username, name), t = 0; });
+
+	//auto Enter = ftxui::Button("Exit", [&] { EnterBusInfo(username, name), t = 0; });//ENTER
+
+
+	auto component = ftxui::Container::Vertical({ brandInput,backButton,brandButton });
+
+
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		{
+
+
+
+			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+				separatorDouble(), vbox({
+					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
+					center(hbox(brandButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+					center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+
+					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		}});
+
+
+	screen.Loop(renderer);
+
+}
+
+void gui::createCodeTour(std::string username)
+{
+
+
+
+	std::filesystem::path word1 = std::filesystem::current_path();
+	word1 += "\\data\\codebooks";
+	std::filesystem::create_directories(word1);
+	word1 += "\\data.txt";
+	std::string word;
+	std::ifstream Data(word1);
+
+	while (Data >> word)
+	{
+		CodeBook.push_back(word);
+	};
+
+	Data.close();
+
+
+	ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Tour";
+	std::string name;
+	std::ofstream data;
+	std::string type;
+	data.open(word1, std::ios::app);
+
+
+
+
+	std::filesystem::path location3 = std::filesystem::current_path();
+	location3 += "\\data\\codebooks";
+	std::filesystem::create_directories(location3);
+	location3 += "\\Tour.txt";
+
+	std::ofstream location33;
+	location33.open(location3, std::ios::app);
+
+	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(username); });
+	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
+
+	int t = 0;
+	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), EnterTourInfo(username, name), t = 1; });//Napraviti tour info
+
+
+	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
+
+
+	auto renderer = ftxui::Renderer(component, [&] {
+
+
+		t = 0;
+	std::string bannerMessage = "Tour";
+	for (int i = 0; i < CodeBook.size(); i++)
+	{
+		if (name == CodeBook[i])
+		{
+			bannerMessageColor = red;
+			t = 1;
+		}
+	};
+
+
+	if (t == 0)
+	{
+		bannerMessageColor = blue;
+
+
+
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+			separatorDouble(), vbox({
+				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+				}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+	}
+	else
+	{
+		std::string bannerMessage = "Already Exist!";
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+		separatorDouble(), vbox({
+			center(hbox(usernameInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+			center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+			}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+
+	}
+		}
+	);
+
+
+	screen.Loop(renderer);
+
+
+
+};
+
+
+int DeleteFile1(std::string name)
+{
+	std::filesystem::path path = std::filesystem::current_path();
+
+	path += "\\data\\codebooks\\";
+	path += name;
+	path += ".txt";
+
+
+	std::filesystem::remove(path);
+
+	std::filesystem::path word1 = std::filesystem::current_path();
+	word1 += "\\data\\codebooks";
+	std::filesystem::create_directories(word1);
+	word1 += "\\data.txt";
+
+	std::filesystem::path word2 = std::filesystem::current_path();
+	word2 += "\\data\\codebooks";
+	std::filesystem::create_directories(word2);
+	word2 += "\\location.txt";
+
+	std::filesystem::path word3 = std::filesystem::current_path();
+	word3 += "\\data\\codebooks";
+	std::filesystem::create_directories(word3);
+	word3 += "\\Bus.txt";
+
+	std::filesystem::path word4 = std::filesystem::current_path();
+	word4 += "\\data\\codebooks";
+	std::filesystem::create_directories(word4);
+	word4 += "\\Tour.txt";
+
+	std::vector<std::string> CodeBooks2;
+	std::vector<std::string> CodeBooks3;
+	std::vector<std::string> CodeBooks4;
+	std::vector<std::string> CodeBooks5;
+
+	std::string word;
+	std::ifstream Data(word1);
+
+	while (Data >> word)
+	{
+		CodeBooks2.push_back(word);
+	};
+	Data.close();
+	Data.open(word2);
+
+	while (Data >> word)
+	{
+		CodeBooks3.push_back(word);
+	};
+	Data.close();
+
+	Data.open(word3);
+	while (Data >> word)
+	{
+		CodeBooks4.push_back(word);
+	};
+
+	Data.close();
+
+	Data.open(word4);
+	while (Data >> word)
+	{
+		CodeBooks5.push_back(word);
+	};
+
+
+	auto n = std::find(CodeBooks2.begin(), CodeBooks2.end(), name);
+
+	if (n != CodeBooks2.end())
+	{
+		CodeBooks2.erase(n);
+	};
+	n = std::find(CodeBooks3.begin(), CodeBooks3.end(), name);
+
+	if (n != CodeBooks3.end())
+	{
+		CodeBooks3.erase(n);
+	};
+	n = std::find(CodeBooks4.begin(), CodeBooks4.end(), name);
+	if (n != CodeBooks4.end())
+	{
+		CodeBooks4.erase(n);
+	};
+	n = std::find(CodeBooks4.begin(), CodeBooks4.end(), name);
+	if (n != CodeBooks4.end())
+	{
+		CodeBooks4.erase(n);
+	};
+	n = std::find(CodeBooks5.begin(), CodeBooks5.end(), name);
+	if (n != CodeBooks5.end())
+	{
+		CodeBooks5.erase(n);
+	};
+
+	std::ofstream DATA;
+	DATA.open(word1);
+
+	for (int i = 0; i < CodeBooks2.size(); i++)
+	{
+		DATA << CodeBooks2[i] << std::endl;
+	};
+	DATA.close();
+
+	DATA.open(word2);
+	for (int i = 0; i < CodeBooks3.size(); i++)
+	{
+		DATA << CodeBooks3[i] << std::endl;
+	};
+	DATA.close();
+
+	DATA.open(word3);
+	for (int i = 0; i < CodeBooks4.size(); i++)
+	{
+		DATA << CodeBooks4[i] << std::endl;
+	};
+	DATA.close();
+
+	DATA.open(word4);
+	for (int i = 0; i < CodeBooks5.size(); i++)
+	{
+		DATA << CodeBooks5[i] << std::endl;
+	};
+	DATA.close();
+	return 1;
+};
+
+void gui::DeleteCodeBooks(std::string username)
+{
+	std::filesystem::path word1 = std::filesystem::current_path();
+	word1 += "\\data\\codebooks";
+	std::filesystem::create_directories(word1);
+	word1 += "\\data.txt";
+	std::string word;
+	std::ifstream Data(word1);
+
+	std::vector<std::string> CodeBooks2;
+
+	while (Data >> word)
+	{
+		CodeBooks2.push_back(word);
+	};
+
+	Data.close();
+
+	ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Choose file!";
+
+	int selected = -1;
+	auto menu = Radiobox(&CodeBooks2, &selected);
+
+	auto Enter = ftxui::Button("Enter", [&] { DeleteFile1(CodeBooks2[selected]), gui::createCodeBooksInterface(username); });
+
+	//auto Enter = ftxui::Button("Enter", [&] {exit(0); });
+
+	auto component = ftxui::Container::Vertical({ menu,Enter });
+
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		{
+
+
+
+			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+				separatorDouble(), vbox({
+					center(hbox(menu->Render())),
+					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
+
+
+
+					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		}});
+
+
+	screen.Loop(renderer);
+
+};
+void gui::createCodeBooksInterface(UserAccount& administrator)
+>>>>>>> eaa3dc38aa465dba91b9081a5d709e46756ccb49
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Choise type of Codebook";
 	ftxui::Color bannerMessageColor = blue;
+<<<<<<< HEAD
 	auto Location = ftxui::Button("Location", [&] {createCodeLocation(username); });//Dodati interfejs
 	auto Bus = ftxui::Button("Bus", [&] {createCodeBus(); });//Dodati interfejs
 	auto Tour = ftxui::Button("Tour", [&] {createCodeTour(); });//Dodati interfejs
 	auto Back = ftxui::Button("Back", [&] {gui::administrator_interface(username); });//Dodati interfejs
 	auto component = ftxui::Container::Vertical({ Location,  Bus, Tour,Back });
+=======
+	auto Location = ftxui::Button("Create Location codebook", [&] {createCodeLocation(administrator); });//Dodati interfejs
+	auto Bus = ftxui::Button("Create Bus codebook", [&] {createCodeBus(administrator); });//Dodati interfejs
+	auto Tour = ftxui::Button("Create Tour codebook", [&] {createCodeTour(administrator); });//Dodati interfejs
+	auto Delete = ftxui::Button("Delete Codebook", [&] {gui::DeleteCodeBooks(administrator); });//Dodati interfejs
+	auto Modify = ftxui::Button("Modify Codebooks", [&] {exit(0); });//Dodati interfejs
+	auto Back = ftxui::Button("Back", [&] {gui::administrator_interface(administrator); });//Dodati interfejs
+	auto component = ftxui::Container::Vertical({ Location,  Bus, Tour,Delete,Back });
+>>>>>>> eaa3dc38aa465dba91b9081a5d709e46756ccb49
 
 	//Buttons
 	auto renderer = ftxui::Renderer(component, [&] {
