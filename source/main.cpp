@@ -13,9 +13,6 @@
 
 int main()
 {
-
-	
-
 	config::configure();
 	////Administrator admin;
 	////admin.CreateCodeBook();

@@ -42,6 +42,7 @@ namespace gui {
 	void loginInterface();
 	void registerInterface(int number);
 	void changePassword(std::string username);
+
 	void administrator_interface(UserAccount& administrator);
 	void accountSettingsInterface(UserAccount& administrator);
 	void createCodeBooksInterface(UserAccount& administrator);

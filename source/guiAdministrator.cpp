@@ -398,7 +398,6 @@ void IsEqual(std::ofstream& data, std::filesystem::path path, std::string name)
 		std::filesystem::create_directories(location3);
 		location3 += "\\location.txt";
 
-void gui::EnterLocation(UserAccount& administrator, std::string name)
 		std::ifstream location33;
 		location33.open(location3);
 
@@ -426,7 +425,12 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 
 }
 
-void gui::EnterLocation(std::string username, std::string name)
+
+
+
+
+
+void gui::EnterLocation(UserAccount& administrator, std::string name)
 {
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -439,15 +443,15 @@ void gui::EnterLocation(std::string username, std::string name)
 	path += name;
 	path += ".txt";
 	std::ofstream data;
-	data.open(path, std::ios::app);
+
 
 	ftxui::Component locationInput = ftxui::Input(&location, "Enter City");
 	ftxui::Component countryInput = ftxui::Input(&country, "Enter Country");
 
 	int t = 0;
-	auto backButton = ftxui::Button("Back", [&] { gui::createCodeLocation(administrator); });//Dodaj konju
+	auto backButton = ftxui::Button("Back", [&] {IsEqual(data, path, name), gui::createCodeLocation(administrator); });
 
-	auto Enter = ftxui::Button("Enter", [&] {writeLocation(country, location, data), gui::EnterLocation(administrator, name), t = 0; });
+	auto Enter = ftxui::Button("Enter", [&] {writeLocation(country, location, path, data), gui::EnterLocation(administrator, name), t = 0; });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
@@ -518,7 +522,7 @@ void gui::createCodeLocation(UserAccount& administrator)
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), gui::EnterLocation(administrator, name), t = 1; });
+	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), EnterLocation(administrator, name), t = 1; });
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -648,7 +652,7 @@ void IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string nam
 
 }
 
-void EnterBusInfo(std::string username, std::string name)
+void EnterBusInfo(UserAccount& administrator, std::string name)
 {
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -670,9 +674,9 @@ void EnterBusInfo(std::string username, std::string name)
 
 
 	int t = 0;
-	auto backButton = ftxui::Button("Back", [&] {IsEqualBus(data, path, name), gui::createCodeBus(username); });
+	auto backButton = ftxui::Button("Back", [&] {IsEqualBus(data, path, name), gui::createCodeBus(administrator); });
 
-	auto Enter = ftxui::Button("Enter", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), EnterBusInfo(username, name), t = 0; });
+	auto Enter = ftxui::Button("Enter", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), EnterBusInfo(administrator, name), t = 0; });
 
 
 	auto component = ftxui::Container::Vertical({ brandInput,backButton,Enter,modelInput,YearInput,RegistrationInput,SeatsInput });
@@ -702,7 +706,7 @@ void EnterBusInfo(std::string username, std::string name)
 }
 
 //NOW YOU ARE DOING THIS!
-void gui::createCodeBus(std::string username)
+void gui::createCodeBus(UserAccount& administrator)
 {
 	std::filesystem::path word1 = std::filesystem::current_path();
 	word1 += "\\data\\codebooks";
@@ -737,11 +741,11 @@ void gui::createCodeBus(std::string username)
 	std::ofstream location33;
 	location33.open(location3, std::ios::app);
 
-	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(username); });
+	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(administrator); });
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), EnterBusInfo(username, name), t = 1; });
+	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), EnterBusInfo(administrator, name), t = 1; });
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -787,6 +791,8 @@ void gui::createCodeBus(std::string username)
 	}
 		}
 	);
+
+
 	screen.Loop(renderer);
 
 
@@ -805,7 +811,7 @@ void IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string na
 			data.close();
 		std::filesystem::remove(path);
 
-		std::vector<std::string>CodeBooks2;
+		std::vector < std::string>CodeBooks2;
 
 		std::filesystem::path word1 = std::filesystem::current_path();
 		word1 += "\\data\\codebooks";
@@ -872,7 +878,7 @@ void writeTour(std::string Location, std::filesystem::path path, std::ofstream& 
 	data.close();
 };
 
-void EnterTourInfo(std::string username, std::string name)
+void EnterTourInfo(UserAccount& administrator, std::string name)
 {
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -891,8 +897,8 @@ void EnterTourInfo(std::string username, std::string name)
 
 
 	int t = 0;
-	auto backButton = ftxui::Button("Back", [&] {IsEqualTour(data, path, name), gui::createCodeTour(username); });//IS EQual
-	auto brandButton = ftxui::Button("Enter", [&] {writeTour(brand, path, data), EnterTourInfo(username, name), t = 0; });
+	auto backButton = ftxui::Button("Back", [&] {IsEqualTour(data, path, name), gui::createCodeTour(administrator); });//IS EQual
+	auto brandButton = ftxui::Button("Enter", [&] {writeTour(brand, path, data), EnterTourInfo(administrator, name), t = 0; });
 
 	//auto Enter = ftxui::Button("Exit", [&] { EnterBusInfo(username, name), t = 0; });//ENTER
 
@@ -920,7 +926,7 @@ void EnterTourInfo(std::string username, std::string name)
 
 }
 
-void gui::createCodeTour(std::string username)
+void gui::createCodeTour(UserAccount& administrator)
 {
 
 
@@ -959,11 +965,11 @@ void gui::createCodeTour(std::string username)
 	std::ofstream location33;
 	location33.open(location3, std::ios::app);
 
-	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(username); });
+	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(administrator); });
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), EnterTourInfo(username, name), t = 1; });//Napraviti tour info
+	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), EnterTourInfo(administrator, name), t = 1; });//Napraviti tour info
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -1091,7 +1097,8 @@ int DeleteFile1(std::string name)
 	{
 		CodeBooks2.erase(n);
 	};
-	n = std::find(CodeBooks3.begin(), CodeBooks3.end(), name);
+	n = std::find(CodeBooks3.begin(),
+		CodeBooks3.end(), name);
 
 	if (n != CodeBooks3.end())
 	{
@@ -1145,7 +1152,7 @@ int DeleteFile1(std::string name)
 	return 1;
 };
 
-void gui::DeleteCodeBooks(std::string username)
+void gui::DeleteCodeBooks(UserAccount& administrator)
 {
 	std::filesystem::path word1 = std::filesystem::current_path();
 	word1 += "\\data\\codebooks";
@@ -1170,7 +1177,7 @@ void gui::DeleteCodeBooks(std::string username)
 	int selected = -1;
 	auto menu = Radiobox(&CodeBooks2, &selected);
 
-	auto Enter = ftxui::Button("Enter", [&] { DeleteFile1(CodeBooks2[selected]), gui::createCodeBooksInterface(username); });
+	auto Enter = ftxui::Button("Enter", [&] { DeleteFile1(CodeBooks2[selected]), gui::createCodeBooksInterface(administrator); });
 
 	//auto Enter = ftxui::Button("Enter", [&] {exit(0); });
 
@@ -1196,6 +1203,7 @@ void gui::DeleteCodeBooks(std::string username)
 	screen.Loop(renderer);
 
 };
+
 void gui::createCodeBooksInterface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -1221,4 +1229,3 @@ void gui::createCodeBooksInterface(UserAccount& administrator)
 		});
 	screen.Loop(renderer);
 };
-
