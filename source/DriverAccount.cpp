@@ -145,8 +145,11 @@ std::unordered_map<std::string, ProblemReport> DriverAccount::overviewProblemRep
 	return db::loadProblemReportsFromFile();
 }
 
-void DriverAccount::driveRoute(const std::string& fileName)
+void DriverAccount::driveRoute(const std::string& fileName) // prima RideID (ime .txt fajla)
 {
-	std::unordered_map<std::string, Ride> falseMap, map = db::loadDriverRides(getUsername());
+	std::unordered_map<std::string, Ride> driverMap = db::loadDriverRides(getUsername());
 
+	driverMap[fileName].changeDrivenStatus();
+
+	//db::rewriteExistingRide(driverMap[fileName]);	
 }

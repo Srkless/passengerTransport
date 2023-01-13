@@ -82,7 +82,7 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides\\schedule.txt";
 		std::ifstream iFile(path);
-		if(std::filesystem::exists(path))
+		if (std::filesystem::exists(path))
 		{
 			iFile.open(path, std::ios::app);
 			Schedule tmp;
@@ -127,7 +127,7 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
-		path += "\\ridedata.txt";
+		path += "\\AllRides.txt";
 		std::ifstream iFile(path);
 		std::unordered_map<std::string, Ride> rides;
 
@@ -135,16 +135,20 @@ namespace db
 		{
 			path = std::filesystem::current_path();
 			path += "\\data\\rides\\";
+
 			std::string name;
 			std::getline(iFile, name);
 			path += name;
+
 			std::ifstream iFile2(path);
 			Ride newRide;
+
 			iFile2 >> newRide;
 			rides[newRide.getRideID()] = newRide;
 			iFile2.close();
 		}
 		iFile.close();
+		
 		return rides;
 	}
 
@@ -155,7 +159,7 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
-		path += "\\ridedata.txt";
+		path += "\\AllRides.txt";
 		oFile.open(path, std::ios::app);
 
 		std::ofstream oFile2;
@@ -175,7 +179,7 @@ namespace db
 		else
 		{
 			std::string cmpName = ride.getRideID() + ".txt";
-			if (!checkName("rides","\\ridedata.txt", cmpName))
+			if (!checkName("rides", "\\AllRides.txt", cmpName))
 			{
 				oFile << std::endl << ride.getRideID() << ".txt";
 				oFile2.open(path);
@@ -184,6 +188,25 @@ namespace db
 			}
 		}
 		oFile.close();
+	}
+
+	inline void rewriteExistingRide(const Ride& ride)
+	{
+		std::ofstream file;
+		std::filesystem::path path = std::filesystem::current_path();
+		path = std::filesystem::current_path();
+		path += "\\data\\rides\\";
+		path += ride.getRideID();
+		path += ".txt";
+
+
+		std::string cmpName = ride.getRideID() + ".txt";
+		if (checkName("rides", "\\AllRides.txt", cmpName))
+		{
+			file.open(path, std::ios::out);
+			file << ride;
+			file.close();
+		}
 	}
 
 	// loads users from database into an unordered map
@@ -246,7 +269,7 @@ namespace db
 		path += "\\AllProblemReports.txt";
 		std::unordered_map<std::string, ProblemReport> problemReports;
 
-		if(std::filesystem::exists(path))
+		if (std::filesystem::exists(path))
 		{
 			std::ifstream iFile(path);
 			while (!iFile.eof())
@@ -364,10 +387,10 @@ namespace db
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
-		path += "\\ridedata.txt";
-		
+		path += "\\AllRides.txt";
+
 		std::unordered_map<std::string, Ride> rides;
-		if(std::filesystem::exists(path))
+		if (std::filesystem::exists(path))
 		{
 			std::ifstream iFile(path);
 			while (!iFile.eof())
@@ -380,7 +403,7 @@ namespace db
 				std::ifstream iFile2(path);
 				Ride newRide;
 				iFile2 >> newRide;
-				if(newRide.getDriver() == username)
+				if (newRide.getDriver() == username)
 				{
 					rides[newRide.getRideID()] = newRide;
 				}
