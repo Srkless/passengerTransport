@@ -40,9 +40,19 @@ int UserAccount::getNumOfLogins() const
 	return this->numOfLogins;
 }
 
+bool UserAccount::getNotificationAlert() const
+{
+	return this->notificationAlert;
+}
+
 bool UserAccount::getSuspendInfo() const
 {
 	return this->isSuspended;
+}
+
+void UserAccount::changeNotificationAlert()
+{
+	this->notificationAlert = !this->notificationAlert;
 }
 
 double UserAccount::getBalance() const
@@ -95,7 +105,7 @@ std::istream& operator>>(std::istream& is, UserAccount& account)
 	std::vector<std::string> items;
 	std::string item;
 	size_t count = 0;
-	while (std::getline(sstream, item, '#') && count < 6)
+	while (std::getline(sstream, item, '#') && count < 7)
 	{
 		items.push_back(item);
 		count++;
@@ -113,13 +123,20 @@ std::istream& operator>>(std::istream& is, UserAccount& account)
 	{
 		account.isSuspended = false;
 	}
-	account.balance + std::stoi(items[5]);
-
+	if (std::stoi(items[5]) == 1)
+	{
+		account.notificationAlert = true;
+	}
+	else
+	{
+		account.notificationAlert = false;
+	}
+	account.balance = std::stod(items[6]);
 	return is;
 }
 
 std::ostream& operator<<(std::ostream& os, const UserAccount& account)
 {
-	os << account.username << "#" << account.accountType << "#" << Utility::encrypt(account.password) << "#" << account.numOfLogins << "#" << account.isSuspended << "#" << account.balance << "#";
+	os << account.username << "#" << account.accountType << "#" << Utility::encrypt(account.password) << "#" << account.numOfLogins << "#" << account.isSuspended << "#" << account.notificationAlert << "#" << account.balance << "#";
 	return os;
 }
