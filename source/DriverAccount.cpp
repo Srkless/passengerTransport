@@ -8,7 +8,6 @@
 #include "Report.h"
 #include "ProblemReport.h"
 #include "database.h"
-#include <optional>
 
 inline bool checkName(const std::string& fileDirectory, const std::string& fileArray, const std::string& fileName)
 {
@@ -101,7 +100,7 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	}
 	else if (fileArray.good() && file.good())
 	{
-		if (!checkName("\\reports\\", "AllReports.txt", fileName))
+		if (!checkName("\\reports\\", "allReports.txt", fileName))
 		{
 			fileArray << std::endl << fileName;
 			file << report;
@@ -123,13 +122,13 @@ void DriverAccount::writeProblemReport(const std::string& fileName, ProblemRepor
 	std::ofstream fileArray;
 	std::filesystem::path path2 = std::filesystem::current_path();
 	path2 += "\\data\\problemReports";
-	path2 += "\\AllProblemReports.txt";
+	path2 += "\\allProblemReports.txt";
 	fileArray.open(path2, std::ios::app);
 
 
 	if (fileArray.good() && file.good())    // rideID, username, startTime, endTime, startLocation, pathLocations, endLocation
 	{
-		if (!checkName("\\problemReports\\", "AllProblemReports.txt", fileName))
+		if (!checkName("\\problemReports\\", "allProblemReports.txt", fileName))
 		{
 			fileArray << fileName << std::endl;
 			file << report;
