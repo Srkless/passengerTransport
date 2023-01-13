@@ -15,5 +15,6 @@ int main()
 {
 	config::configure();
 	gui::loginInterface();
+
 	return 0;
 }
