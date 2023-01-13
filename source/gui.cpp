@@ -11,6 +11,8 @@
 
 #define loginNums 20
 
+int pressed = 0;
+
 void gui::registerInterface(int number)
 {
 	std::string username;
@@ -37,6 +39,8 @@ void gui::registerInterface(int number)
 	std::unordered_map<std::string, UserAccount> userDatabase;
 	userDatabase = db::loadUsersFromFile();
 
+	std::vector<std::string> admins = Utility::returnAdmins();
+
 	int flag = 0;
 	auto registerButton = ftxui::Button("Register", [&] {
 		flag = 1;
@@ -46,24 +50,28 @@ void gui::registerInterface(int number)
 		wrongPassword = 0;
 		wrongUsername = 0;
 		std::string currUsername = userDatabase[username].getUsername();
-		if(number == 1)
+		if (number == 1)
 		{
 			UserAccount curr(username, password, "administrator", 0);
 			curr.changeSuspensionStatus();
 			db::addUserToFile(curr);
-			administrator_interface(currUsername);
+			administrator_interface(userDatabase[currUsername]);
 		}
-		else if(number == 2)
+		else if (number == 2)
 		{
 			UserAccount curr(username, password, "driver", 0);
 			curr.changeSuspensionStatus();
 			db::addUserToFile(curr);
-			administrator_interface(currUsername);
+			administrator_interface(userDatabase[currUsername]);
 		}
 		else
 		{
 			UserAccount curr(username, password, "user", 0);
-			db::addUserToFile(curr);
+			for (auto& admin : admins)
+				userDatabase[admin].changeNotificationAlert();
+			userDatabase[username] = curr;
+			userDatabase[username].changeNotificationAlert();
+			db::writeUsersToFile(userDatabase);
 			loginInterface();
 		}
 	}
@@ -221,7 +229,7 @@ void gui::loginInterface()
 				db::writeUsersToFile(userDatabase);
 			}
 			if (userDatabase[username].getAccountType() == "administrator")
-				administrator_interface(userDatabase[username].getUsername());
+				administrator_interface(userDatabase[username]);
 		}
 		else
 		{
@@ -236,7 +244,7 @@ void gui::loginInterface()
 				passwordColor = red;
 				wrongPassword = 1;
 			}
-			else if(userDatabase[username].getSuspendInfo())
+			else if (userDatabase[username].getSuspendInfo())
 				suspended = 1;
 		}
 
@@ -264,8 +272,8 @@ void gui::loginInterface()
 			ftxui::hbox({vbox({center(ftxui::hbox(ftxui::text(""), usernameInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(usernameColor)))}) | ftxui::borderRounded,
 			center(hbox(text(""), passwordInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(passwordColor))) | ftxui::borderRounded}),
 			center(hbox({hbox({center(logInButton->Render()) | size(WIDTH, EQUAL, 9) | ftxui::color(bright_green),
-			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})), 
-			(configNum == 1)?(center(hbox(center(registerButton->Render()) | size(WIDTH, EQUAL, 15) | ftxui::color(orange)))):(center(hbox()))}) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})),
+			(configNum == 1) ? (center(hbox(center(registerButton->Render()) | size(WIDTH, EQUAL, 15) | ftxui::color(orange)))) : (center(hbox())) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 
 
 	auto agreeUsernameButton = [&]() { wrongUsername = 0; wrongPassword = 0; suspended = 0; };
@@ -362,16 +370,16 @@ void gui::changePassword(std::string username)
 			passwordColor = red;
 			if (Utility::decrypt(userDatabase[username].getPassword()) != Utility::decrypt(oldPassword))
 				passwordControl = -1;
-			else if(password != confirmPassword)
+			else if (password != confirmPassword)
 				passwordControl = 1;
 			else if (Utility::decrypt(oldPassword) == Utility::decrypt(confirmPassword))
 				passwordControl = 2;
 
 		}
-	});
+		});
 	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
 
-	auto component = ftxui::Container::Vertical({ oldPasswordInput, passwordInput, confirmPasswordInput , confirmButton, exitButton});
+	auto component = ftxui::Container::Vertical({ oldPasswordInput, passwordInput, confirmPasswordInput , confirmButton, exitButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
 
@@ -390,7 +398,7 @@ void gui::changePassword(std::string username)
 			center(hbox(ftxui::text(""), passwordInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(passwordColor))) | ftxui::borderRounded,
 			center(hbox(ftxui::text(""), confirmPasswordInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(passwordColor))) | ftxui::borderRounded}),
 			center(hbox({ftxui::hbox({center(confirmButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green),
-			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})),}) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})), }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 
 
 	auto agreePasswordButton = [&]() { passwordControl = 0; };
@@ -438,36 +446,133 @@ void gui::changePassword(std::string username)
 	screen.Loop(mainRenderer);
 }
 
-void gui::administrator_interface(std::string username)
+void noticationInterface(UserAccount& administrator)
+{
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::vector<std::string> admins = Utility::returnAdmins();
+	std::vector<std::string> driversNotification;
+	std::vector<std::string> usersNotification;
+
+	std::unordered_map<std::string, UserAccount> userDatabase;
+	userDatabase = db::loadUsersFromFile();
+
+	std::string bannerMessage = "Notifications";
+	ftxui::Color userNotificationColor = light_gray;
+	ftxui::Color driverNotificationColor = light_gray;
+
+	
+	for (auto& user : userDatabase)
+	{
+		if (user.second.getAccountType() == "user" && user.second.getNotificationAlert() == 1)
+			usersNotification.push_back(user.second.getUsername() + " registered on system");
+		else if (user.second.getAccountType() == "driver" && user.second.getNotificationAlert() == 1)
+			driversNotification.push_back(user.second.getUsername() + " didn't complete the report");
+	}
+
+	for (auto& user : userDatabase)
+	{
+		if(user.second.getNotificationAlert() == 1)
+			userDatabase[user.second.getUsername()].changeNotificationAlert();
+	}
+	db::writeUsersToFile(userDatabase);
+
+	auto exitButton = ftxui::Button("Exit", [&] { exit(0); });
+	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(administrator); });
+
+	int selected = -1;
+	auto driverNotificationBox = Radiobox(&driversNotification, &selected);
+	auto usersNotificationBox = Radiobox(&usersNotification, &selected);
+	int flag = 0;
+
+	if (driversNotification.size())
+		driverNotificationColor = orange;
+	else if (usersNotification.size())
+		userNotificationColor = orange;
+
+	auto userButton = ftxui::Button("Notifications from users", [&] {flag = 1;});
+	auto driverButton = ftxui::Button("Notifications from drivers", [&] { flag = 2; });
+
+	auto component = ftxui::Container::Vertical({ exitButton, backButton, userButton, driverButton, usersNotificationBox, driverNotificationBox });
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(blue)),
+				separatorDouble(),
+				center(hbox(userButton->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(userNotificationColor))),
+				center(hbox(driverButton->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(driverNotificationColor))),
+				((flag == 1) ? (hbox(usersNotificationBox->Render())) : (center(hbox(driverNotificationBox->Render())))) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 50),
+				center(hbox({hbox({center(backButton->Render()) | size(WIDTH, EQUAL, 9) | ftxui::color(bright_green),
+				center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+
+	screen.Loop(renderer);
+}
+void gui::administrator_interface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Administrator Account";
 	ftxui::Color bannerMessageColor = blue;
 
-	auto accountSettings = ftxui::Button("Account settings", [&] {gui::accountSettingsInterface(username); }); // done
-	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {gui::createCodeBooksInterface(username); });
-	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {gui::scheduleSettings(username); }); // ostale metode
-	auto reportsSettings = ftxui::Button("Reports settings", [&] {gui::reportsSettings(username); }); // ostale metode
+	auto accountSettings = ftxui::Button("Account settings", [&] {gui::accountSettingsInterface(administrator); }); // done
+	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {gui::createCodeBooksInterface(administrator.getUsername()); });
+	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {gui::scheduleSettings(administrator); }); // ostale metode
+	auto reportsSettings = ftxui::Button("Reports settings", [&] {gui::reportsSettings(administrator); }); // done
 	auto generateTravelWarrant = ftxui::Button("Generate Travel Warrant", [&] {exit(0); });
-	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); });
+	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); });// done
 
+	auto notBox = ftxui::Button("", [&] {noticationInterface(administrator); }); // done
 
 	// CodeBooks Settings
 	auto createCodebooks = ftxui::Button("Create codebooks", [&] {exit(0); });
 	auto deleteCodebook = ftxui::Button("Create codebooks", [&] {exit(0); });
 	auto modifyCodebooks = ftxui::Button("Modify codebooks", [&] {exit(0); });
 
-	auto component = ftxui::Container::Vertical({ accountSettings, codeBooksSettings, ScheduleSettings, reportsSettings, generateTravelWarrant, logout });
+	auto component = ftxui::Container::Vertical({ notBox, accountSettings, codeBooksSettings, ScheduleSettings, reportsSettings, generateTravelWarrant, logout });
 
 	auto renderer = ftxui::Renderer(component, [&] {
-		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+		return ftxui::vbox({ hbox({center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+			(administrator.getNotificationAlert()) ? hbox(text("             "), notBox->Render() | size(WIDTH, EQUAL, 3) | ftxui::color(yellow) | hcenter) : (hbox() | ftxui::color(dark_gray))}),
 			separatorDouble(), vbox({
 				center(hbox(accountSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(codeBooksSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(ScheduleSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(reportsSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-				center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);;
+				center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
+	if(pressed == 0)
+	{
+		int agree = 1;
+		auto agreeButton = [&]() { agree = 0; pressed = 1; };
 
-	screen.Loop(renderer);
+		auto agreeContainer = Container::Horizontal({ Button("OK", [&] {agreeButton(); }) });
+		auto openNotContainer = Container::Horizontal({ Button("OPEN", [&] {pressed = 1; noticationInterface(administrator); }) });
+
+		auto ButtonsContainer = Container::Horizontal({ agreeContainer, openNotContainer });
+
+		auto agreeRederer = Renderer(ButtonsContainer, [&] {
+			return vbox({
+					   text("You have notifications!"),
+					   separator(),
+					   center(hbox({center(hbox(agreeContainer->Render())) | color(bright_green),
+						center(hbox(text("  "), openNotContainer->Render())) | color(orange)})),
+				}) |
+				border;
+			});
+
+		auto mainAgreeContainer = Container::Tab({ renderer, agreeRederer }, &agree);
+
+		auto mainRenderer = Renderer(mainAgreeContainer, [&] {
+			Element document = renderer->Render();
+
+		if (agree == 1) {
+			document = dbox({
+				document,
+				agreeRederer->Render() | clear_under | center,
+				});
+		}
+		return document;
+			});
+	screen.Loop(mainRenderer);
+	}
+	else
+		screen.Loop(renderer);
+	
 }

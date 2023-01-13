@@ -27,7 +27,7 @@ namespace config
 			std::filesystem::create_directories(path);
 			path += "\\userdata.txt";
 			std::ofstream users(path);
-			users << "admin#administrator#" << Utility::encrypt("admin") << "#0#0";
+			users << "admin#administrator#" << Utility::encrypt("admin") << "#0#0#0#500";
 			users.close();
 		}
 		else
@@ -47,7 +47,7 @@ namespace config
 				std::filesystem::create_directories(path);
 				path += "\\userdata.txt";
 				std::ofstream users(path);
-				users << "admin#administrator#" << Utility::encrypt("admin") << "#0#0";
+				users << "admin#administrator#" << Utility::encrypt("admin") << "#0#0#0#500";
 				users.close();
 			}
 		}

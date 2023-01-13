@@ -42,14 +42,14 @@ namespace gui {
 	void loginInterface();
 	void registerInterface(int number);
 	void changePassword(std::string username);
-	void administrator_interface(std::string username);
-	void accountSettingsInterface(std::string username);
+	void administrator_interface(UserAccount& administrator);
+	void accountSettingsInterface(UserAccount& administrator);
 	void createCodeBooksInterface(std::string username);
 	void EnterLocation(std::string username, std::string name);
 
 	void createCodeLocation(std::string username);
-	void scheduleSettings(std::string username);
-	void reportsSettings(std::string username);
+	void scheduleSettings(UserAccount& administrator);
+	void reportsSettings(UserAccount& administrator);
 	/*void supervisor_interface(Database& db);
 	void employee_overview(Database& db);
 	void create_employee_interface(Database& db);

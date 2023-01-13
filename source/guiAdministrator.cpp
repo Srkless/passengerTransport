@@ -1,13 +1,13 @@
 #include "gui.h"
 
-void choiceAccountInterface(std::string username)
+void choiceAccountInterface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Account types";
 	ftxui::Color bannerMessageColor = blue;
 	auto createAdministratorAccount = ftxui::Button("Create administrator account", [&] {gui::registerInterface(1); });
 	auto createDriverAccount = ftxui::Button("Create driver account", [&] {gui::registerInterface(2); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(username); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(administrator); });
 	auto component = ftxui::Container::Vertical({ createAdministratorAccount,  createDriverAccount, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -18,10 +18,10 @@ void choiceAccountInterface(std::string username)
 		   center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	screen.Loop(renderer);
 };
-void editAccountInterface(int value, std::string currUsername)
+void editAccountInterface(int value, UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string bannerMessage = currUsername + "'s account settings";
+	std::string bannerMessage = administrator.getUsername() + "'s account settings";
 	ftxui::Color bannerMessageColor = blue;
 	std::unordered_map<std::string, UserAccount> userDatabase;
 	std::vector<std::string> entries;
@@ -30,15 +30,15 @@ void editAccountInterface(int value, std::string currUsername)
 	{
 		if (value == 1)
 		{
-			if (elem.second.getSuspendInfo() && elem.second.getUsername() != currUsername)
+			if (elem.second.getSuspendInfo() && elem.second.getUsername() != administrator.getUsername())
 				entries.push_back(elem.first);
 		}
 		else if (value == 2)
 		{
-			if (!elem.second.getSuspendInfo() && elem.second.getUsername() != currUsername)
+			if (!elem.second.getSuspendInfo() && elem.second.getUsername() != administrator.getUsername())
 				entries.push_back(elem.first);
 		}
-		else if (elem.second.getUsername() != currUsername)
+		else if (elem.second.getUsername() != administrator.getUsername())
 		{
 			entries.push_back(elem.first);
 		}			
@@ -46,9 +46,9 @@ void editAccountInterface(int value, std::string currUsername)
 
 	int selected = -1;
 	auto menu = Radiobox(&entries, &selected);
-	auto acceptButton = ftxui::Button("Accept", [&] {(value == 3 && selected != -1) ? (userDatabase.erase(entries[selected]), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(currUsername))
-		: (value == 4 && selected != -1) ? (userDatabase[entries[selected]].setPassword("admin"), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(currUsername)) : (userDatabase[entries[selected]].changeSuspensionStatus(), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(currUsername)); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(currUsername); });
+	auto acceptButton = ftxui::Button("Accept", [&] {(value == 3 && selected != -1) ? (userDatabase.erase(entries[selected]), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(administrator))
+		: (value == 4 && selected != -1) ? (userDatabase[entries[selected]].setPassword("admin"), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(administrator)) : (userDatabase[entries[selected]].changeSuspensionStatus(), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(administrator)); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(administrator); });
 	auto component = ftxui::Container::Vertical({ menu,acceptButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -66,24 +66,24 @@ void editAccountInterface(int value, std::string currUsername)
 				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	screen.Loop(renderer);
 }
-void gui::accountSettingsInterface(std::string username)
+void gui::accountSettingsInterface(UserAccount& administrator)
 {
 
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string currUsername = username;
+	std::string currUsername = administrator.getUsername();
 	std::string bannerMessage = currUsername + "'s account settings";
 
 	// Account Settings
-	auto createAccount = ftxui::Button("Create account", [&] {choiceAccountInterface(username); });
-	auto activateAccount = ftxui::Button("Activate account", [&] {editAccountInterface(1, username); });
-	auto suspendAccount = ftxui::Button("Suspend account", [&] {editAccountInterface(2, username); });
-	auto deleteAccount = ftxui::Button("Delete account", [&] {editAccountInterface(3, username); });
-	auto viewAccounts = ftxui::Button("View accounts", [&] {editAccountInterface(0, username); });
+	auto createAccount = ftxui::Button("Create account", [&] {choiceAccountInterface(administrator); });
+	auto activateAccount = ftxui::Button("Activate account", [&] {editAccountInterface(1, administrator); });
+	auto suspendAccount = ftxui::Button("Suspend account", [&] {editAccountInterface(2, administrator); });
+	auto deleteAccount = ftxui::Button("Delete account", [&] {editAccountInterface(3, administrator); });
+	auto viewAccounts = ftxui::Button("View accounts", [&] {editAccountInterface(0, administrator); });
 
-	auto suspendPassword = ftxui::Button("Suspend password", [&] {editAccountInterface(4, username); });
-	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(username); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(username); });
+	auto suspendPassword = ftxui::Button("Suspend password", [&] {editAccountInterface(4, administrator); });
+	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(administrator.getUsername()); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(administrator); });
 
 
 
@@ -114,15 +114,15 @@ void deleteRideInterface() // TODO
 	exit(0);
 }
 
-void gui::scheduleSettings(std::string username)
+void gui::scheduleSettings(UserAccount& administrator)
 {
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string bannerMessage = username + "'s account Settings";
+	std::string bannerMessage = administrator.getUsername() + "'s account Settings";
 
 	auto addRide = ftxui::Button("Add ride", [&] {addRideInterface(); });
 	auto deleteRide = ftxui::Button("Delete ride", [&] {deleteRideInterface(); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(username); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(administrator); });
 	auto component = ftxui::Container::Vertical({ addRide, deleteRide, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -136,7 +136,7 @@ void gui::scheduleSettings(std::string username)
 	screen.Loop(renderer);
 }
 
-void viewReportInterface(std::string username)
+void viewReportInterface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 
@@ -144,7 +144,7 @@ void viewReportInterface(std::string username)
 	reportDatabase = db::loadReportsFromFile();
 	std::vector<std::string> entries;
 
-	std::string bannerMessage = username + "'s account settings";
+	std::string bannerMessage = administrator.getUsername() + "'s account settings";
 	ftxui::Color bannerMessageColor = blue;
 	int flag = 0;
 	for (auto& elem : reportDatabase)
@@ -155,7 +155,7 @@ void viewReportInterface(std::string username)
 	int selected = -1;
 	
 	auto menu = Radiobox(&entries, &selected);
-	auto backButton = ftxui::Button("BACK", [&] {gui::reportsSettings(username); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::reportsSettings(administrator); });
 	auto acceptButton = ftxui::Button("Accept", [&] {});
 	auto component = ftxui::Container::Vertical({ menu, backButton, acceptButton });
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -168,7 +168,7 @@ void viewReportInterface(std::string username)
 				| color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	screen.Loop(renderer);
 }
-void viewProblemsInterface(std::string username, int value)
+void viewProblemsInterface(UserAccount& administrator, int value)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 
@@ -176,7 +176,7 @@ void viewProblemsInterface(std::string username, int value)
 	problemDatabase = db::loadProblemReportsFromFile();
 	std::vector<std::string> entries;
 
-	std::string bannerMessage = username + "'s account settings";
+	std::string bannerMessage = administrator.getUsername() + "'s account settings";
 	ftxui::Color bannerMessageColor = blue;
 	int flag = 0;
 	for (auto& elem : problemDatabase)
@@ -192,7 +192,7 @@ void viewProblemsInterface(std::string username, int value)
 	
 	auto menu = Radiobox(&entries, &selected);
 
-	auto backButton = ftxui::Button("Back", [&] {gui::reportsSettings(username); });
+	auto backButton = ftxui::Button("Back", [&] {gui::reportsSettings(administrator); });
 	auto component = ftxui::Container::Vertical({ menu, backButton });
 	auto renderer = ftxui::Renderer(component, [&] {
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
@@ -205,16 +205,16 @@ void viewProblemsInterface(std::string username, int value)
 	screen.Loop(renderer);
 }
 
-void gui::reportsSettings(std::string username)
+void gui::reportsSettings(UserAccount& administrator)
 {
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string bannerMessage = username + "'s account Settings";
+	std::string bannerMessage = administrator.getUsername() + "'s account Settings";
 
-	auto viewReport = ftxui::Button("View reports", [&] { viewReportInterface(username); });
-	auto viewPassengerProblems = ftxui::Button("View passenger problems", [&] {viewProblemsInterface(username, 0); });
-	auto viewRideProblems = ftxui::Button("View ride problems", [&] {viewProblemsInterface(username, 1); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(username); });
+	auto viewReport = ftxui::Button("View reports", [&] { viewReportInterface(administrator); });
+	auto viewPassengerProblems = ftxui::Button("View passenger problems", [&] {viewProblemsInterface(administrator, 0); });
+	auto viewRideProblems = ftxui::Button("View ride problems", [&] {viewProblemsInterface(administrator, 1); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(administrator); });
 
 	auto component = ftxui::Container::Vertical({ viewReport, viewPassengerProblems, viewRideProblems, backButton });
 
@@ -410,7 +410,7 @@ void gui::createCodeLocation(std::string username)
 	std::ofstream location33;
 	location33.open(location3, std::ios::app);
 
-	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(username); });
+	auto backButton = ftxui::Button("Back", [&] { /*gui::administrator_interface(username);*/ });
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 	/*
 	std::filesystem::path path = std::filesystem::current_path();
@@ -491,7 +491,7 @@ void gui::createCodeBooksInterface(std::string username)
 	auto Location = ftxui::Button("Location", [&] {createCodeLocation(username); });//Dodati interfejs
 	auto Bus = ftxui::Button("Bus", [&] {createCodeBus(); });//Dodati interfejs
 	auto Tour = ftxui::Button("Tour", [&] {createCodeTour(); });//Dodati interfejs
-	auto Back = ftxui::Button("Back", [&] {gui::administrator_interface(username); });//Dodati interfejs
+	auto Back = ftxui::Button("Back", [&] {/*gui::administrator_interface(username);*/ });//Dodati interfejs
 	auto component = ftxui::Container::Vertical({ Location,  Bus, Tour,Back });
 
 	//Buttons
