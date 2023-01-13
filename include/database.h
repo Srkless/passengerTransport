@@ -210,8 +210,6 @@ namespace db
 		}
 	}
 
-	// loads users from database into an unordered map
-
 	inline std::unordered_map<std::string, UserAccount> loadUsersFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();

@@ -8,6 +8,7 @@
 #include "Report.h"
 #include "ProblemReport.h"
 #include "database.h"
+#include <optional>
 
 inline bool checkName(const std::string& fileDirectory, const std::string& fileArray, const std::string& fileName)
 {
@@ -39,7 +40,8 @@ Ride& DriverAccount::singleRouteOverview(const std::string& fileName) const
 {
 	std::unordered_map<std::string, Ride> map = db::loadDriverRides(getUsername());
 
-	return map[fileName];
+	if (map.count(fileName) > 0)
+		return map[fileName];
 }
 
 std::unordered_map<std::string, Ride> DriverAccount::allRoutesOverview() const
@@ -89,8 +91,8 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	std::ofstream fileArray;
 	std::filesystem::path path2 = std::filesystem::current_path();
 	path2 += "\\data\\reports";
-	path2 += "\\AllReports.txt";
-	fileArray.open(path2, std::ios::app); 
+	path2 += "\\allReports.txt";
+	fileArray.open(path2, std::ios::app);
 
 	fileArray.seekp(0, std::ios::end);
 	if (fileArray.tellp() == 0)
@@ -149,7 +151,10 @@ void DriverAccount::driveRoute(const std::string& fileName) // prima RideID (ime
 {
 	std::unordered_map<std::string, Ride> driverMap = db::loadDriverRides(getUsername());
 
-	driverMap[fileName].changeDrivenStatus();
+	if (driverMap.count(fileName) > 0)
+	{
+		driverMap[fileName].changeDrivenStatus();
 
-	//db::rewriteExistingRide(driverMap[fileName]);	
+		db::rewriteExistingRide(driverMap[fileName]);
+	}
 }
