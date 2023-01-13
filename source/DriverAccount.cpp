@@ -157,3 +157,15 @@ void DriverAccount::driveRoute(const std::string& fileName) // prima RideID (ime
 		db::rewriteExistingRide(driverMap[fileName]);
 	}
 }
+
+bool DriverAccount::checkRouteAndReport() const
+{
+	std::unordered_map<std::string, Ride> undrivenRidesMap = allUndrivenRides();
+
+	std::unordered_map<std::string, Report> reportMap = db::loadDriverReports(getUsername());
+
+	if (undrivenRidesMap.size() != reportMap.size())
+		return false;
+	else
+		return true;
+}
