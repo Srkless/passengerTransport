@@ -10,7 +10,7 @@ class DriverAccount : public UserAccount
 {
 public:
 	using UserAccount::UserAccount;
-	Ride& singleRouteOverview(const std::string& fileName) const; //TODO VODNJA.H
+	Ride singleRouteOverview(const std::string& fileName) const; //TODO VODNJA.H
 	std::unordered_map <std::string, Ride> allRoutesOverview() const;
 	std::unordered_map <std::string, Ride > allDrivenRides() const;
 	std::unordered_map <std::string, Ride> allUndrivenRides() const;

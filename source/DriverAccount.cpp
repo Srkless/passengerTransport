@@ -36,7 +36,7 @@ inline bool checkName(const std::string& fileDirectory, const std::string& fileA
 	return false;
 }
 
-Ride& DriverAccount::singleRouteOverview(const std::string& fileName) const
+Ride DriverAccount::singleRouteOverview(const std::string& fileName) const
 {
 	std::unordered_map<std::string, Ride> map = db::loadDriverRides(getUsername());
 
