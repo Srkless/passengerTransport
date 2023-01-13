@@ -230,3 +230,279 @@ void gui::reportsSettings(std::string username)
 	screen.Loop(renderer);
 }
 
+std::vector<std::string> CodeBook;
+
+
+//
+//inline bool is_equal(std::string name)
+//{
+//    std::filesystem::path path = std::filesystem::current_path();
+//    path += "\\data\\codebooks\\";
+//    path += name;
+//    path += ".txt";
+//    int i = 0;
+//    std::vector<std::string> strings;
+//    std::vector<std::string> strings2;
+//    std::string word, word2;
+//    std::ifstream file, file2;
+//
+//    if (CodeBook.size() == 0)
+//        return false;
+//
+//    while (i < CodeBook.size())
+//    {
+//        int check2 = 0;
+//
+//        std::filesystem::path path1 = std::filesystem::current_path();
+//        path1 += "\\data\\codebooks\\";
+//        path1 += CodeBook[i++];
+//        path1 += ".txt";
+//        file2.open(path1);
+//
+//        while (getline(file2, word))
+//        {
+//            strings.push_back(word);
+//        }
+//        file2.close();
+//
+//
+//        file.open(path);
+//
+//        while (getline(file, word2))
+//        {
+//            strings2.push_back(word2);
+//        }
+//
+//        file.close();
+//
+//
+//
+//
+//        int check = 0;
+//        for (int j = 0; j < strings.size(); j++)
+//        {
+//
+//            word = strings2[j];
+//
+//            if (strings.size() != strings2.size())
+//                break;
+//
+//
+//            for (int k = 0; k < strings.size(); k++)
+//            {
+//                if (word == strings[k])
+//                    check++;
+//            }
+//            if (check != 0)
+//                check2++;
+//
+//            check = 0;
+//        }
+//
+//        if (check2 == strings2.size())
+//        {
+//            return true;
+//        };
+//
+//        check2 = 0;
+//
+//    };
+//
+//    return false;
+//}
+void writeLocation(std::string name, std::string country, std::ofstream& data)
+{
+	data << name << "#" << country << std::endl;
+};
+
+void writeinFile(std::string name, std::ofstream& data)
+{
+	data << name << std::endl;
+};
+
+
+
+void gui::EnterLocation(std::string username, std::string name)
+{
+	ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Location";
+	std::string location;
+	std::string country;
+
+	std::filesystem::path path = std::filesystem::current_path();
+	path += "\\data\\codebooks\\";
+	path += name;
+	path += ".txt";
+	std::ofstream data;
+	data.open(path, std::ios::app);
+
+	ftxui::Component locationInput = ftxui::Input(&location, "Enter City");
+	ftxui::Component countryInput = ftxui::Input(&country, "Enter Country");
+
+	int t = 0;
+	auto backButton = ftxui::Button("Back", [&] { gui::createCodeLocation(username); });//Dodaj konju
+
+	auto Enter = ftxui::Button("Enter", [&] {writeLocation(country, location, data), gui::EnterLocation(username, name), t = 0; });
+
+
+	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
+
+
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		{
+			/*	if (location != "" && country != "" && t==0)
+				{
+					writeLocation(country, location,data);
+
+						t = 1;
+				}*/
+
+
+			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+				separatorDouble(), vbox({
+					center(hbox(locationInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+					center(hbox(countryInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+					center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+					center(hbox(Enter->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		}});
+
+
+	screen.Loop(renderer);
+
+
+};
+
+void gui::createCodeLocation(std::string username)
+{
+	std::filesystem::path word1 = std::filesystem::current_path();
+	word1 += "\\data\\codebooks";
+	std::filesystem::create_directories(word1);
+	word1 += "\\data.txt";
+	std::string word;
+	std::ifstream Data(word1);
+
+	while (Data >> word)
+	{
+		CodeBook.push_back(word);
+	};
+
+	Data.close();
+
+	ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Location";
+	std::string name;
+	std::ofstream data;
+	std::string type;
+	data.open(word1, std::ios::app);
+
+
+
+
+	std::filesystem::path location3 = std::filesystem::current_path();
+	location3 += "\\data\\codebooks";
+	std::filesystem::create_directories(location3);
+	location3 += "\\location.txt";
+
+	std::ofstream location33;
+	location33.open(location3, std::ios::app);
+
+	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(username); });
+	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
+	/*
+	std::filesystem::path path = std::filesystem::current_path();
+	path += "\\data\\codebooks\\";
+	std::ofstream file;
+	path += ".txt";
+	file.open(path, std::ios::app);*/
+	int t = 0;
+	auto Enter = ftxui::Button("Enter", [&] {writeinFile(name, data), writeinFile(name, location33), EnterLocation(username, name), t = 1; });
+
+
+	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
+
+
+	auto renderer = ftxui::Renderer(component, [&] {
+
+
+		t = 0;
+	std::string bannerMessage = "Location";
+	for (int i = 0; i < CodeBook.size(); i++)
+	{
+		if (name == CodeBook[i])
+		{
+			bannerMessageColor = red;
+			t = 1;
+		}
+	};
+
+	if (t == 0)
+	{
+		bannerMessageColor = blue;
+
+
+
+
+
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+			separatorDouble(), vbox({
+				center(hbox(usernameInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+				center(hbox(Enter->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))
+				}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+	}
+	else
+	{
+		std::string bannerMessage = "Already Exist!";
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+		separatorDouble(), vbox({
+			center(hbox(usernameInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+			center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+			}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+
+	}
+		}
+	);
+
+
+	screen.Loop(renderer);
+
+
+
+
+
+}
+void createCodeBus()
+{
+	exit(0);
+}
+void createCodeTour()
+{
+	exit(0);
+};
+void gui::createCodeBooksInterface(std::string username)
+{
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Choise type of Codebook";
+	ftxui::Color bannerMessageColor = blue;
+	auto Location = ftxui::Button("Location", [&] {createCodeLocation(username); });//Dodati interfejs
+	auto Bus = ftxui::Button("Bus", [&] {createCodeBus(); });//Dodati interfejs
+	auto Tour = ftxui::Button("Tour", [&] {createCodeTour(); });//Dodati interfejs
+	auto Back = ftxui::Button("Back", [&] {gui::administrator_interface(username); });//Dodati interfejs
+	auto component = ftxui::Container::Vertical({ Location,  Bus, Tour,Back });
+
+	//Buttons
+	auto renderer = ftxui::Renderer(component, [&] {
+		return vbox({ center(ftxui::text(bannerMessage) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
+		   separatorDouble(),
+		   center(hbox(center(Location->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))),
+		   center(hbox(Bus->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray))),
+		   center(hbox(Tour->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray))),
+		   center(hbox(Back->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		});
+	screen.Loop(renderer);
+};
+

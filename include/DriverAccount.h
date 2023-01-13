@@ -18,5 +18,5 @@ public:
 	void writeProblemReport(const std::string& fileName, ProblemReport& report) const;	// problemi
 	std::unordered_map <std::string, Report> overviewReports() const;
 	std::unordered_map<std::string, ProblemReport> overviewProblemReports() const;
-	void driveRoute();
+	void driveRoute(const std::string &fileName);
 };

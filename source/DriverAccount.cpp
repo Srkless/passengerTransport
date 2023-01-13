@@ -9,7 +9,7 @@
 #include "ProblemReport.h"
 #include "database.h"
 
-inline bool checkName(std::string fileDirectory, std::string fileArray, std::string fileName)
+inline bool checkName(const std::string& fileDirectory, const std::string& fileArray, const std::string& fileName)
 {
 	std::vector<std::string> fileData;
 	std::filesystem::path path1 = std::filesystem::current_path();
@@ -145,7 +145,8 @@ std::unordered_map<std::string, ProblemReport> DriverAccount::overviewProblemRep
 	return db::loadProblemReportsFromFile();
 }
 
-void DriverAccount::driveRoute()
+void DriverAccount::driveRoute(const std::string& fileName)
 {
-	//TODO
+	std::unordered_map<std::string, Ride> falseMap, map = db::loadDriverRides(getUsername());
+
 }

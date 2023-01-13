@@ -445,7 +445,7 @@ void gui::administrator_interface(std::string username)
 	ftxui::Color bannerMessageColor = blue;
 
 	auto accountSettings = ftxui::Button("Account settings", [&] {gui::accountSettingsInterface(username); }); // done
-	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {exit(0); });
+	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {gui::createCodeBooksInterface(username); });
 	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {gui::scheduleSettings(username); }); // ostale metode
 	auto reportsSettings = ftxui::Button("Reports settings", [&] {gui::reportsSettings(username); }); // ostale metode
 	auto generateTravelWarrant = ftxui::Button("Generate Travel Warrant", [&] {exit(0); });

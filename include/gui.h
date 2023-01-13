@@ -44,7 +44,10 @@ namespace gui {
 	void changePassword(std::string username);
 	void administrator_interface(std::string username);
 	void accountSettingsInterface(std::string username);
+	void createCodeBooksInterface(std::string username);
+	void EnterLocation(std::string username, std::string name);
 
+	void createCodeLocation(std::string username);
 	void scheduleSettings(std::string username);
 	void reportsSettings(std::string username);
 	/*void supervisor_interface(Database& db);
