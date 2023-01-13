@@ -477,7 +477,7 @@ void noticationInterface(UserAccount& administrator)
 	db::writeUsersToFile(userDatabase);
 
 	auto exitButton = ftxui::Button("Exit", [&] { exit(0); });
-	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(administrator); });
+	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(userDatabase[administrator.getUsername()]); });
 
 	int selected = -1;
 	auto driverNotificationBox = Radiobox(&driversNotification, &selected);
@@ -512,11 +512,11 @@ void gui::administrator_interface(UserAccount& administrator)
 	ftxui::Color bannerMessageColor = blue;
 
 	auto accountSettings = ftxui::Button("Account settings", [&] {gui::accountSettingsInterface(administrator); }); // done
-	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {gui::createCodeBooksInterface(administrator.getUsername()); });
+	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {gui::createCodeBooksInterface(administrator); });
 	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {gui::scheduleSettings(administrator); }); // ostale metode
 	auto reportsSettings = ftxui::Button("Reports settings", [&] {gui::reportsSettings(administrator); }); // done
 	auto generateTravelWarrant = ftxui::Button("Generate Travel Warrant", [&] {exit(0); });
-	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); });// done
+	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); }); // done
 
 	auto notBox = ftxui::Button("", [&] {noticationInterface(administrator); }); // done
 
@@ -537,7 +537,7 @@ void gui::administrator_interface(UserAccount& administrator)
 				center(hbox(reportsSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
-	if(pressed == 0)
+	if(pressed == 0 && administrator.getNotificationAlert())
 	{
 		int agree = 1;
 		auto agreeButton = [&]() { agree = 0; pressed = 1; };
