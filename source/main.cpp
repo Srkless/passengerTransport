@@ -13,7 +13,15 @@
 
 int main()
 {
+
+	
+
 	config::configure();
+	////Administrator admin;
+	////admin.CreateCodeBook();
+	////admin.CreateCodeBook();
+	//////admin.SuspendingUserAccount();
+	////admin.ViewUserAccount();
 	gui::loginInterface();
 
 	return 0;

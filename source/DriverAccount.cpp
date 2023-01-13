@@ -35,11 +35,12 @@ inline bool checkName(const std::string& fileDirectory, const std::string& fileA
 	return false;
 }
 
-Ride& DriverAccount::singleRouteOverview(const std::string& fileName) const
+Ride DriverAccount::singleRouteOverview(const std::string& fileName) const
 {
 	std::unordered_map<std::string, Ride> map = db::loadDriverRides(getUsername());
 
-	return map[fileName];
+	if (map.count(fileName) > 0)
+		return map[fileName];
 }
 
 std::unordered_map<std::string, Ride> DriverAccount::allRoutesOverview() const
@@ -77,7 +78,7 @@ std::unordered_map<std::string, Ride> DriverAccount::allUndrivenRides() const
 
 
 
-void DriverAccount::writeReport(const std::string& fileName, const Report& report) const
+void DriverAccount::writeReport(const std::string& fileName, Report& report) const
 {
 	std::ofstream file;
 	std::filesystem::path path1 = std::filesystem::current_path();
@@ -90,7 +91,7 @@ void DriverAccount::writeReport(const std::string& fileName, const Report& repor
 	std::filesystem::path path2 = std::filesystem::current_path();
 	path2 += "\\data\\reports";
 	path2 += "\\allReports.txt";
-	fileArray.open(path2, std::ios::app); 
+	fileArray.open(path2, std::ios::app);
 
 	fileArray.seekp(0, std::ios::end);
 	if (fileArray.tellp() == 0)
@@ -109,7 +110,7 @@ void DriverAccount::writeReport(const std::string& fileName, const Report& repor
 	}
 }
 
-void DriverAccount::writeProblemReport(const std::string& fileName, const ProblemReport& report) const
+void DriverAccount::writeProblemReport(const std::string& fileName, ProblemReport& report) const
 {
 	std::ofstream file;
 	std::filesystem::path path1 = std::filesystem::current_path();
@@ -149,7 +150,10 @@ void DriverAccount::driveRoute(const std::string& fileName) // prima RideID (ime
 {
 	std::unordered_map<std::string, Ride> driverMap = db::loadDriverRides(getUsername());
 
-	driverMap[fileName].changeDrivenStatus();
+	if (driverMap.count(fileName) > 0)
+	{
+		driverMap[fileName].changeDrivenStatus();
 
-	//db::rewriteExistingRide(driverMap[fileName]);	
+		db::rewriteExistingRide(driverMap[fileName]);
+	}
 }

@@ -1,7 +1,5 @@
 #include "utility.h"
 #include "UserAccount.h"
-#include <vector>
-#include "database.h"
 #define ROT 17
 
 std::string Utility::encrypt(std::string password)
@@ -55,18 +53,4 @@ std::string Utility::decrypt(std::string password)
 			continue;
 	}
 	return password;
-}
-
-std::vector<std::string> Utility::returnAdmins()
-{
-	std::unordered_map<std::string, UserAccount> userDatabase;
-	userDatabase = db::loadUsersFromFile();
-	std::vector<std::string> admins;
-	for (auto& user : userDatabase)
-	{
-		if (user.second.getAccountType() == "administrator")
-			admins.push_back(user.second.getUsername());
-	}
-
-	return admins;
 }
