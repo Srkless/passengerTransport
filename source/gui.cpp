@@ -344,7 +344,7 @@ void gui::changePassword(std::string username)
 	userDatabase = db::loadUsersFromFile();
 
 	auto confirmButton = ftxui::Button("CONFIRM", [&] {
-		if (Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword))
+		if (Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword) && Utility::decrypt(oldPassword) != Utility::decrypt(confirmPassword))
 		{
 			bannerMessage = "Successful password change";
 			passwordColor = bright_green;
@@ -364,6 +364,9 @@ void gui::changePassword(std::string username)
 				passwordControl = -1;
 			else if(password != confirmPassword)
 				passwordControl = 1;
+			else if (Utility::decrypt(oldPassword) == Utility::decrypt(confirmPassword))
+				passwordControl = 2;
+
 		}
 	});
 	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
@@ -372,7 +375,7 @@ void gui::changePassword(std::string username)
 
 	auto renderer = ftxui::Renderer(component, [&] {
 
-		if (Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword)) {
+		if (Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword) && Utility::decrypt(oldPassword) != Utility::decrypt(confirmPassword)) {
 			passwordColor = bright_green;
 			bannerMessageColor = bright_green;
 			passwordControl = 0;
@@ -410,6 +413,15 @@ void gui::changePassword(std::string username)
 			border;
 		});
 
+	auto samePasswordRederer = Renderer(wrongPasswordContainer, [&] {
+		return vbox({
+					(text("Old and new passwords are same!")),
+				   separator(),
+				   center(hbox(wrongPasswordContainer->Render())) | color(red),
+			}) |
+			border;
+		});
+
 	auto mainOldPasswordContainer = Container::Tab({ renderer, wrongPasswordContainer }, &passwordControl);
 
 	auto mainRenderer = Renderer(mainOldPasswordContainer, [&] {
@@ -419,6 +431,8 @@ void gui::changePassword(std::string username)
 		document = dbox({ document, wrongOldPasswordRederer->Render() | clear_under | center, });
 	else if (passwordControl == 1)
 		document = dbox({ document, wrongConfirmPasswordRederer->Render() | clear_under | center, });
+	else if (passwordControl == 2)
+		document = dbox({ document, samePasswordRederer->Render() | clear_under | center, });
 	return document;
 		});
 	screen.Loop(mainRenderer);
