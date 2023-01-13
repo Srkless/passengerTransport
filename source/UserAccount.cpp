@@ -95,7 +95,7 @@ std::istream& operator>>(std::istream& is, UserAccount& account)
 	std::vector<std::string> items;
 	std::string item;
 	size_t count = 0;
-	while (std::getline(sstream, item, '#') && count < 5)
+	while (std::getline(sstream, item, '#') && count < 6)
 	{
 		items.push_back(item);
 		count++;
@@ -113,6 +113,7 @@ std::istream& operator>>(std::istream& is, UserAccount& account)
 	{
 		account.isSuspended = false;
 	}
+	account.balance + std::stoi(items[5]);
 
 	return is;
 }
