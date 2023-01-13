@@ -43,7 +43,7 @@ void gui::registerInterface(int number)
 	std::vector<std::string> admins = Utility::returnAdmins();
 
 	int flag = 0;
-	auto registerButton = ftxui::Button("Register", [&] {
+	auto registerButton = ftxui::Button("REGISTER", [&] {
 		flag = 1;
 	if (flag && userDatabase[username].getUsername() == "" && password == againPassword && password.size() > 7) {
 		bannerMessage = "Successful registration!";
