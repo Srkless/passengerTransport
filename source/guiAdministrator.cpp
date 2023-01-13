@@ -502,14 +502,7 @@ void gui::createCodeLocation(UserAccount& administrator)
 	}
 		}
 	);
-
-
 	screen.Loop(renderer);
-
-
-
-
-
 }
 void createCodeBus()
 {
