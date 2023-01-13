@@ -41,7 +41,7 @@ void editAccountInterface(int value, std::string currUsername)
 		else if (elem.second.getUsername() != currUsername)
 		{
 			entries.push_back(elem.first);
-		}
+		}			
 	}
 
 	int selected = -1;
@@ -212,8 +212,8 @@ void gui::reportsSettings(std::string username)
 	std::string bannerMessage = username + "'s account Settings";
 
 	auto viewReport = ftxui::Button("View reports", [&] { viewReportInterface(username); });
-	auto viewPassengerProblems = ftxui::Button("View passenger problems", [&] {viewPassengerProblemsInterface(username); });
-	auto viewRideProblems = ftxui::Button("View ride problems", [&] {viewRideProblemsInterface(username); });
+	auto viewPassengerProblems = ftxui::Button("View passenger problems", [&] {viewProblemsInterface(username, 0); });
+	auto viewRideProblems = ftxui::Button("View ride problems", [&] {viewProblemsInterface(username, 1); });
 	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(username); });
 
 	auto component = ftxui::Container::Vertical({ viewReport, viewPassengerProblems, viewRideProblems, backButton });
