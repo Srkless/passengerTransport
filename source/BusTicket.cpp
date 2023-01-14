@@ -199,6 +199,9 @@ bool BusTicket::buyTicket(UserAccount& usr, Ride& ride)
 			std::ofstream ticketOFile(path);
 			ticketOFile << m_rideID << "#" << 1;
 		}
+		std::unordered_map<std::string, UserAccount> map = db::loadUsersFromFile();
+		map[usr.getUsername()].setBalance(usr.getBalance() - price);
+		db::writeUsersToFile(map);
 		return true;
 	}
 	else

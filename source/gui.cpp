@@ -53,21 +53,21 @@ void gui::registerInterface(std::string accountUsername, int number)
 		std::string currUsername = userDatabase[username].getUsername();
 		if (number == 1)
 		{
-			UserAccount curr(username, password, "administrator", 0);
+			UserAccount curr(username, password, "administrator", 0, userDatabase[username].getBalance());
 			curr.changeSuspensionStatus();
 			db::addUserToFile(curr);
 			administrator_interface(userDatabase[accountUsername]);
 		}
 		else if (number == 2)
 		{
-			UserAccount curr(username, password, "driver", 0);
+			UserAccount curr(username, password, "driver", 0, userDatabase[username].getBalance());
 			curr.changeSuspensionStatus();
 			db::addUserToFile(curr);
 			administrator_interface(userDatabase[accountUsername]);
 		}
 		else
 		{
-			UserAccount curr(username, password, "user", 0);
+			UserAccount curr(username, password, "user", 0, userDatabase[username].getBalance());
 			for (auto& admin : admins)
 			{
 				if (userDatabase[admin].getNotificationAlert() == 0)
@@ -237,12 +237,12 @@ void gui::loginInterface()
 
 			else if (userDatabase[username].getAccountType() == "driver")
 			{
-				DriverAccount curr(username, password, "driver", 0);
+				DriverAccount curr(username, password, "driver", 0, userDatabase[username].getBalance());
 				DriverInterface(curr);
 			}
 			else
 			{
-				UserAccount curr(username, password, "user", 0);
+				UserAccount curr(username, password, "user", 0, userDatabase[username].getBalance());
 				UserInterface(curr);
 			}
 		}
@@ -663,6 +663,10 @@ void gui::UserInterface(UserAccount& user)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "User Account";
+	std::ostringstream out;
+	out << std::fixed << std::setprecision(2) << user.getBalance();
+	std::string tmpString = out.str();
+	std::string bannerMessage2 = "Remaining funds: " + tmpString;
 	ftxui::Color bannerMessageColor = blue;
 
 	auto viewAllRouts = ftxui::Button("View all routes", [&] {viewAllRoutsInterface(user); });
@@ -675,6 +679,7 @@ void gui::UserInterface(UserAccount& user)
 	auto renderer = ftxui::Renderer(component, [&] {
 		pressed = 0;
 	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+		center(ftxui::text(bannerMessage2) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
 		separatorDouble(), vbox({
 			center(hbox(viewAllRouts->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 			center(hbox(viewTickets->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),

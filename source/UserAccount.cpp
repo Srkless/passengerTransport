@@ -7,12 +7,13 @@
 #include <sstream>
 UserAccount::UserAccount() {}
 
-UserAccount::UserAccount(std::string username, std::string password, std::string accountType, int numOfLogins)
+UserAccount::UserAccount(std::string username, std::string password, std::string accountType, int numOfLogins, double balance)
 {
 	this->username = username;
 	this->password = password;
 	this->accountType = accountType;
 	this->numOfLogins = numOfLogins;
+	this->balance = balance;
 }
 
 bool UserAccount::operator==(const UserAccount& other)
@@ -65,9 +66,9 @@ void UserAccount::setPassword(std::string newPassword)
 	this->password = newPassword;
 }
 
-UserAccount UserAccount::createAccount(std::string username, std::string password, std::string accountType)
+UserAccount UserAccount::createAccount(std::string username, std::string password, std::string accountType, double balance)
 {
-	UserAccount account(username, password, accountType, 0);
+	UserAccount account(username, password, accountType, 0, balance);
 	*this = account;
 	return *this;
 }
