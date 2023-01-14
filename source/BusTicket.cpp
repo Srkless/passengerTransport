@@ -78,9 +78,9 @@ double BusTicket::generatePrice(Ride& currentRide)
 			route.push_back(currentRide.geEndLocation());
 		}
 	}
-	else if (i == 0)
+	else if (i == 0 && currentRideLocations.size() == 0)
 	{
-		route.push_back(currentRideLocations[i]);
+		route.push_back(m_endLocation);
 	}
 	return (15 * route.size() + (2 * m_hasBaggage));
 }
