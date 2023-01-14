@@ -1291,8 +1291,8 @@ void gui::DeleteCodeBooks(UserAccount& administrator)
 	int selected = -1;
 	auto menu = Radiobox(&CodeBooks2, &selected);
 
-	auto Enter = ftxui::Button("Enter", [&] { DeleteFile1(CodeBooks2[selected]), gui::createCodeBooksInterface(administrator); });
-	auto Back = ftxui::Button("Back", [&] { gui::createCodeBooksInterface(administrator); });
+	auto Enter = ftxui::Button("ENTER", [&] { DeleteFile1(CodeBooks2[selected]), gui::createCodeBooksInterface(administrator); });
+	auto Back = ftxui::Button("BACK", [&] { gui::createCodeBooksInterface(administrator); });
 	
 
 	auto component = ftxui::Container::Vertical({ menu,Enter,Back });
@@ -1339,9 +1339,9 @@ void EnterLocationModify(std::string name, UserAccount& administrator)
 	ftxui::Component countryInput = ftxui::Input(&country, "Enter Country");
 
 	int t = 0;
-	auto backButton = ftxui::Button("Back", [&] { gui::LocationModify(administrator); });
+	auto backButton = ftxui::Button("BACK", [&] { gui::LocationModify(administrator); });
 
-	auto Enter = ftxui::Button("Enter", [&] {writeLocation(country, location, path, data), EnterLocationModify(name,administrator), t = 0; });
+	auto Enter = ftxui::Button("ENTER", [&] {writeLocation(country, location, path, data), EnterLocationModify(name,administrator), t = 0; });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
@@ -1393,8 +1393,8 @@ void gui::LocationModify(UserAccount& administrator)
 	int selected = -1;
 	auto menu = Radiobox(&CodeBooks2, &selected);
 
-	auto Enter = ftxui::Button("Enter", [&] { EnterLocationModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
-	auto Back = ftxui::Button("Back", [&] { gui::createCodeBooksInterface(administrator); });
+	auto Enter = ftxui::Button("ENTER", [&] { EnterLocationModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
+	auto Back = ftxui::Button("BACK", [&] { gui::createCodeBooksInterface(administrator); });
 
 
 
@@ -1445,9 +1445,9 @@ void EnterBusModify(std::string name, UserAccount& administrator)
 
 
 	int t = 0;
-	auto backButton = ftxui::Button("Back", [&] { gui::BusModify(administrator); });
+	auto backButton = ftxui::Button("BACK", [&] { gui::BusModify(administrator); });
 
-	auto Enter = ftxui::Button("Enter", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), EnterBusModify(name, administrator), t = 0; });
+	auto Enter = ftxui::Button("ENTER", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), EnterBusModify(name, administrator), t = 0; });
 
 
 	auto component = ftxui::Container::Vertical({ brandInput,backButton,Enter,modelInput,YearInput,RegistrationInput,SeatsInput });
@@ -1500,9 +1500,9 @@ void gui::BusModify(UserAccount& administrator)
 	int selected = -1;
 	auto menu = Radiobox(&CodeBooks2, &selected);
 
-	auto Enter = ftxui::Button("Enter", [&] { EnterBusModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
+	auto Enter = ftxui::Button("ENTER", [&] { EnterBusModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
 
-	auto Back = ftxui::Button("Back", [&] { gui::createCodeBooksInterface(administrator); });
+	auto Back = ftxui::Button("BACK", [&] { gui::createCodeBooksInterface(administrator); });
 
 
 
@@ -1547,8 +1547,8 @@ void EnterTourModify(std::string name, UserAccount& administrator)
 
 
 	int t = 0;
-	auto backButton = ftxui::Button("Done", [&] {gui::TourModify(administrator); });//IS EQual
-	auto brandButton = ftxui::Button("Enter", [&] {writeTour(brand, path, data), EnterTourModify(name,administrator), t = 0; });
+	auto backButton = ftxui::Button("DONE", [&] {gui::TourModify(administrator); });//IS EQual
+	auto brandButton = ftxui::Button("ENTER", [&] {writeTour(brand, path, data), EnterTourModify(name,administrator), t = 0; });
 
 	
 
@@ -1602,7 +1602,7 @@ void gui::TourModify(UserAccount& administrator)
 
 	auto Enter = ftxui::Button("Enter", [&] { EnterTourModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
 
-	auto Back = ftxui::Button("Back", [&] { gui::createCodeBooksInterface(administrator); });
+	auto Back = ftxui::Button("BACK", [&] { gui::createCodeBooksInterface(administrator); });
 
 
 
@@ -1639,7 +1639,7 @@ void gui::ModifyCodeBooks(UserAccount& administrator)
 	auto Location = ftxui::Button("Location", [&] {gui::LocationModify(administrator), gui::createCodeBooksInterface(administrator); });
 	auto Bus= ftxui::Button(   "  Bus", [&] {gui::BusModify(administrator), gui::createCodeBooksInterface(administrator); });
 	auto Tour = ftxui::Button("  Tour", [&] {gui::TourModify(administrator), gui::createCodeBooksInterface(administrator); });
-	auto Back = ftxui::Button("            Back", [&] { gui::createCodeBooksInterface(administrator); });
+	auto Back = ftxui::Button("            BACK", [&] { gui::createCodeBooksInterface(administrator); });
 
 
 	auto component = ftxui::Container::Vertical({Location,Bus,Tour,Back });
@@ -1676,7 +1676,7 @@ void gui::createCodeBooksInterface(UserAccount& administrator)
 	auto Tour = ftxui::Button("Create Tour codebook", [&] {createCodeTour(administrator); });//Dodati interfejs
 	auto Delete = ftxui::Button("Delete Codebook", [&] {gui::DeleteCodeBooks(administrator); });//Dodati interfejs
 	auto Modify = ftxui::Button("Modify Codebooks", [&] {ModifyCodeBooks(administrator); });//Dodati interfejs
-	auto Back = ftxui::Button("Back", [&] {gui::administrator_interface(administrator); });//Dodati interfejs
+	auto Back = ftxui::Button("BACK", [&] {gui::administrator_interface(administrator); });//Dodati interfejs
 	auto component = ftxui::Container::Vertical({ Location,  Bus, Tour,Delete,Modify,Back });
 
 	//Buttons
