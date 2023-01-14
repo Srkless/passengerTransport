@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "DriverAccount.h"
 #include "Ride.h"
 #include "Report.h"
 #include "ProblemReport.h"
 #include "database.h"
+#include "DriverAccount.h"
 
 inline bool checkName(const std::string& fileDirectory, const std::string& fileArray, const std::string& fileName)
 {
@@ -86,6 +86,7 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	path1 += "\\data\\reports\\";
 	std::filesystem::create_directories(path1);
 	path1 += fileName;
+	path1 += ".txt";
 	file.open(path1, std::ios::app);
 
 	std::ofstream fileArray;
@@ -99,7 +100,7 @@ void DriverAccount::writeReport(const std::string& fileName, Report& report) con
 	{
 		fileArray << fileName;
 	}
-	else if (fileArray.good() && file.good())
+	if (fileArray.good() && file.good())
 	{
 		if (!checkName("\\reports\\", "allReports.txt", fileName))
 		{
@@ -118,6 +119,7 @@ void DriverAccount::writeProblemReport(const std::string& fileName, ProblemRepor
 	path1 += "\\data\\problemReports\\";
 	std::filesystem::create_directories(path1);
 	path1 += fileName;
+	path1 += ".txt";
 	file.open(path1, std::ios::app);
 
 	std::ofstream fileArray;

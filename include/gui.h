@@ -1,5 +1,4 @@
 #pragma once
-
 #include "database.h"
 #include "UserAccount.h"
 #include "utility.h"
@@ -16,6 +15,7 @@
 #include "ftxui/screen/screen.hpp"
 #include "ftxui/screen/terminal.hpp"
 #include "ftxui/util/ref.hpp"
+#include "DriverAccount.h"
 
 using namespace ftxui;
 namespace {
@@ -34,7 +34,6 @@ namespace {
 	ftxui::Color light_gray = { 148, 176, 194 };
 	ftxui::Color gray = { 86, 108, 134 };
 	ftxui::Color dark_gray = { 51, 60, 87 };
-
 }
 
 namespace gui {
@@ -57,8 +56,13 @@ namespace gui {
 	void LocationModify(UserAccount& administrator);
 	void BusModify(UserAccount& administrator);
 	void TourModify(UserAccount& administrator);
-
 	void addRideInterface(UserAccount& administrator);
 	void deleteRideInterface(UserAccount& administrator);
-}
+
+	void DriverInterface(DriverAccount& driver);
+	
 };
+
+void routeOverviewInterface(DriverAccount& driver);
+void reportsOverviewInterface(DriverAccount& driver);
+void writeReportInterface(DriverAccount& driver);

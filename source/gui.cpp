@@ -231,6 +231,11 @@ void gui::loginInterface()
 			}
 			if (userDatabase[username].getAccountType() == "administrator")
 				administrator_interface(userDatabase[username]);
+			else if (userDatabase[username].getAccountType() == "driver")
+			{
+				DriverAccount curr(username, password, "driver", 0);
+				DriverInterface(curr);
+			}
 		}
 		else
 		{
@@ -513,18 +518,13 @@ void gui::administrator_interface(UserAccount& administrator)
 	ftxui::Color bannerMessageColor = blue;
 
 	auto accountSettings = ftxui::Button("Account settings", [&] {gui::accountSettingsInterface(administrator); }); // done
-	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {gui::createCodeBooksInterface(administrator); });
-	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {gui::scheduleSettings(administrator); }); // ostale metode
+	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {gui::createCodeBooksInterface(administrator); }); // done
+	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {gui::scheduleSettings(administrator); }); // done
 	auto reportsSettings = ftxui::Button("Reports settings", [&] {gui::reportsSettings(administrator); }); // done
 	auto generateTravelWarrant = ftxui::Button("Generate Travel Warrant", [&] {exit(0); });
 	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); }); // done
 
 	auto notBox = ftxui::Button("", [&] {noticationInterface(administrator); }); // done
-
-	// CodeBooks Settings
-	auto createCodebooks = ftxui::Button("Create codebooks", [&] {exit(0); });
-	auto deleteCodebook = ftxui::Button("Create codebooks", [&] {exit(0); });
-	auto modifyCodebooks = ftxui::Button("Modify codebooks", [&] {exit(0); });
 
 	auto component = ftxui::Container::Vertical({ notBox, accountSettings, codeBooksSettings, ScheduleSettings, reportsSettings, generateTravelWarrant, logout });
 
@@ -537,6 +537,7 @@ void gui::administrator_interface(UserAccount& administrator)
 				center(hbox(codeBooksSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(ScheduleSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(reportsSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+				center(hbox(generateTravelWarrant->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
 	if(pressed == 0 && administrator.getNotificationAlert())
@@ -577,4 +578,31 @@ void gui::administrator_interface(UserAccount& administrator)
 	}
 	else
 		screen.Loop(renderer);
+}
+
+void gui::DriverInterface(DriverAccount& driver)
+{
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Driver Account";
+	ftxui::Color bannerMessageColor = blue;
+
+	auto routeOverview = ftxui::Button("Route overview", [&] {routeOverviewInterface(driver); });
+	auto reportsOverview = ftxui::Button("Reports overview", [&] {reportsOverviewInterface(driver); });
+	auto writeReport = ftxui::Button("Write reports", [&] {writeReportInterface(driver); });
+	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(driver.getUsername()); }); // done
+	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); }); // done
+
+	auto component = ftxui::Container::Vertical({ routeOverview, reportsOverview, writeReport, changePassword, logout });
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		pressed = 0;
+	return ftxui::vbox({center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+		separatorDouble(), vbox({
+			center(hbox(routeOverview->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+			center(hbox(reportsOverview->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+			center(hbox(writeReport->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+			center(hbox(changePassword->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+			center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) })}) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		});
+	screen.Loop(renderer);
 }
