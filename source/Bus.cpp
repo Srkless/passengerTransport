@@ -80,7 +80,7 @@ std::istream& operator>>(std::istream& is, bus& a)
 	a.brand = items[0];
 	a.model = items[1];
 	a.yearOfProduction = items[2];
-	a.registration = std::stoi(items[3]);
+	a.registration = items[3];
 	a.numberOfSeats = std::stoi(items[4]);
 
 	return is;

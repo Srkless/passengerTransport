@@ -30,12 +30,12 @@ namespace db
 
 		while (!iFile.eof())
 		{
-			std::filesystem::path path = std::filesystem::current_path();
+			path = std::filesystem::current_path();
 			path += "\\data\\codebooks\\";
 
 			std::string name;
 			std::getline(iFile, name);
-			path += name;
+			path += (name + ".txt");
 
 			bus tmpBus;
 

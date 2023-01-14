@@ -67,13 +67,20 @@ double BusTicket::generatePrice(Ride& currentRide)
 		route.push_back(currentRideLocations[i]);
 		i++;
 	}
-	if (currentRideLocations[i - 1] == m_endLocation)
+	if(i > 0)
 	{
-		route.push_back(m_endLocation);
+		if (currentRideLocations[i - 1] == m_endLocation)
+		{
+			route.push_back(m_endLocation);
+		}
+		else
+		{
+			route.push_back(currentRide.geEndLocation());
+		}
 	}
-	else
+	else if (i == 0)
 	{
-		route.push_back(currentRide.geEndLocation());
+		route.push_back(currentRideLocations[i]);
 	}
 	return (15 * route.size() + (2 * m_hasBaggage));
 }
@@ -119,7 +126,8 @@ int BusTicket::getAvailableTickets()
 		{
 			int numOfSeats;
 			std::ifstream iFile(path);
-			iFile >> numOfSeats;
+			iFile >> (numOfSeats);
+			return numOfSeats;
 		}
 		else
 		{
@@ -148,7 +156,9 @@ bool BusTicket::buyTicket(UserAccount& usr, Ride& ride)
 		// change user's ticket count
 		usr.setBalance(usr.getBalance() - price);
 		path = std::filesystem::current_path();
-		path += "\\data\\tickets\\" + usr.getUsername() + ".txt";
+		path += "\\data\\tickets\\user_tickets\\";
+		std::filesystem::create_directories(path);
+		path += usr.getUsername() + ".txt";
 		if (std::filesystem::exists(path))
 		{
 			std::unordered_map<std::string, int> tickets;

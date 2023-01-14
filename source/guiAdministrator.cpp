@@ -469,9 +469,20 @@ void writeLocation(std::string name, std::string country, std::filesystem::path 
 	data.close();
 };
 
-void writeinFile(std::string name, std::ofstream& data)
+void writeinFile(std::string name, std::filesystem::path data)
 {
-	data << name << std::endl;
+	if (std::filesystem::exists(data))
+	{
+		std::ofstream oFile(data);
+		oFile << name;
+		oFile.close();
+	}
+	else
+	{
+		std::ofstream oFile(data);
+		oFile << std::endl << name;
+		oFile.close();
+	}
 };
 
 int IsEqual(std::ofstream& data, std::filesystem::path path, std::string name)
@@ -620,26 +631,18 @@ void gui::createCodeLocation(UserAccount& administrator)
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Location";
 	std::string name;
-	std::ofstream data;
 	std::string type;
-	data.open(word1, std::ios::app);
-
-
-
 
 	std::filesystem::path location3 = std::filesystem::current_path();
 	location3 += "\\data\\codebooks";
 	std::filesystem::create_directories(location3);
 	location3 += "\\location.txt";
 
-	std::ofstream location33;
-	location33.open(location3, std::ios::app);
-
 	auto backButton = ftxui::Button("BACK", [&] { gui::administrator_interface(administrator); });
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("ENTER", [&] {writeinFile(name, data), writeinFile(name, location33), EnterLocation(administrator, name), t = 1; });
+	auto Enter = ftxui::Button("ENTER", [&] {writeinFile(name, word1), writeinFile(name, location3), EnterLocation(administrator, name), t = 1; });
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -695,10 +698,20 @@ void gui::createCodeLocation(UserAccount& administrator)
 
 void writeLocationBus(std::string brand, std::string model, std::string god, std::string registration, std::string NumSeats, std::filesystem::path path, std::ofstream& data)
 {
-	data.open(path, std::ios::app);
-	if (brand != "" && model != "" && god != "" && registration != "" && NumSeats != "")
-		data << brand << "#" << model << "#" << god << "#" << registration << "#" << NumSeats << std::endl;
-	data.close();
+	if (std::filesystem::exists(path))
+	{
+		data.open(path, std::ios::app);
+		if (brand != "" && model != "" && god != "" && registration != "" && NumSeats != "")
+			data << std::endl << brand << "#" << model << "#" << god << "#" << registration << "#" << NumSeats;
+		data.close();
+	}
+	else
+	{
+		data.open(path, std::ios::app);
+		if (brand != "" && model != "" && god != "" && registration != "" && NumSeats != "")
+			data << brand << "#" << model << "#" << god << "#" << registration << "#" << NumSeats;
+		data.close();
+	}
 };
 int IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string name)
 {
@@ -758,9 +771,6 @@ int IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string name
 			Data2 << Code[i] << std::endl;
 		}
 		Data2.close();
-
-
-
 	};
 	return 1;
 
@@ -840,26 +850,18 @@ void gui::createCodeBus(UserAccount& administrator)
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Bus";
 	std::string name;
-	std::ofstream data;
 	std::string type;
-	data.open(word1, std::ios::app);
-
-
-
 
 	std::filesystem::path location3 = std::filesystem::current_path();
 	location3 += "\\data\\codebooks";
 	std::filesystem::create_directories(location3);
 	location3 += "\\Bus.txt";
 
-	std::ofstream location33;
-	location33.open(location3, std::ios::app);
-
 	auto backButton = ftxui::Button("BACK", [&] { gui::administrator_interface(administrator); });
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("      ENTER", [&] {writeinFile(name, data), writeinFile(name, location33), EnterBusInfo(administrator, name), t = 1; });
+	auto Enter = ftxui::Button("      ENTER", [&] {writeinFile(name, word1), writeinFile(name, location3), EnterBusInfo(administrator, name), t = 1; });
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -908,13 +910,6 @@ void gui::createCodeBus(UserAccount& administrator)
 
 
 	screen.Loop(renderer);
-
-
-
-
-
-
-
 }
 
 int IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string name)
@@ -1064,12 +1059,7 @@ void gui::createCodeTour(UserAccount& administrator)
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Tour";
 	std::string name;
-	std::ofstream data;
 	std::string type;
-	data.open(word1, std::ios::app);
-
-
-
 
 	std::filesystem::path location3 = std::filesystem::current_path();
 	location3 += "\\data\\codebooks";
@@ -1083,7 +1073,7 @@ void gui::createCodeTour(UserAccount& administrator)
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("      ENTER", [&] {writeinFile(name, data), writeinFile(name, location33), EnterTourInfo(administrator, name), t = 1; });//Napraviti tour info
+	auto Enter = ftxui::Button("      ENTER", [&] {writeinFile(name, word1), writeinFile(name, location3), EnterTourInfo(administrator, name), t = 1; });//Napraviti tour info
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });

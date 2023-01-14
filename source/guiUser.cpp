@@ -192,7 +192,7 @@ void buyTicketInterface(UserAccount& user, Ride& ride, BusTicket& ticket)
 	std::string bannerMessage4 = "Your Balance: " + tmpString;
 	ftxui::Color bannerMessageColor = white;
 	auto backButton = ftxui::Button("BACK", [&] {selectEndLocationInterface(user, ride, ticket); });
-	auto buyButton = ftxui::Button("Purchase", [&] { });
+	auto buyButton = ftxui::Button("Purchase", [&] {ticket.buyTicket(user, ride); viewAllRoutsInterface(user); });
 	auto component = ftxui::Container::Vertical({backButton, buyButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -210,5 +210,42 @@ void buyTicketInterface(UserAccount& user, Ride& ride, BusTicket& ticket)
 
 void viewTicketsInterface(UserAccount& user)
 {
-	exit(0);
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Your tickets: ";
+	std::string tmp;
+	std::vector<std::string> tickets;
+	std::filesystem::path path = std::filesystem::current_path();
+	path += ("\\data\\tickets\\user_tickets\\" + user.getUsername() + ".txt");
+	if (std::filesystem::exists(path))
+	{
+		std::ifstream iFile(path);
+		while(!iFile.eof())
+		{
+			std::string line;
+			std::getline(iFile, line);
+			std::stringstream sstream(line);
+			std::getline(sstream, tmp, '#');
+			tmp += ": ";
+			std::getline(sstream, line, '#');
+			tmp += line;
+			tickets.push_back(tmp);
+		}
+	}
+
+	int selected = -1;
+	auto view = Radiobox(&tickets, &selected);
+
+	ftxui::Color bannerMessageColor = white;
+	auto backButton = ftxui::Button("BACK", [&] {gui::UserInterface(user); });
+	auto component = ftxui::Container::Vertical({view, backButton });
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		return vbox({
+		center(ftxui::text(bannerMessage) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
+		   separatorDouble(), vbox({
+				center(hbox(view->Render())),
+				hbox({
+				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))}) | hcenter | color(white) | borderHeavy
+			   }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+	screen.Loop(renderer);
 }
