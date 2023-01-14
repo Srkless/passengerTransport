@@ -12,17 +12,24 @@ class BusTicket
 {
 private:
 	std::string m_rideID;
-	size_t m_seatNumber;
 	std::string m_startLocation;
 	std::string m_endLocation;
 	bool m_hasBaggage = false;
 public:
-	BusTicket(std::string rideID, size_t seatNumber, std::string startLocation, std::string endLocation, bool hasBaggage = false);
+	BusTicket();
+	BusTicket(std::string rideID, std::string startLocation, std::string endLocation, bool hasBaggage = false);
 	
-	// TODO we have to check if there is room on the bus
+	void setRideID(std::string&);
+	void setStartLocation(std::string&);
+	void setEndLocation(std::string&);
 
-	double generatePrice();
+	std::string getStartLocation();
+	std::string getEndLocation();
+	std::string getRideID();
+	bool hasBaggage();
+
+	double generatePrice(Ride& ride);
 	void addBaggage();
 	int getAvailableTickets();
-	bool buyTicket(UserAccount& usr);
+	bool buyTicket(UserAccount& usr, Ride& ride);
 };

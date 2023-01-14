@@ -27,15 +27,3 @@ std::ostream& operator<<(std::ostream& os, const Schedule& schedule)
 
 	return os;
 }
-
-std::istream& operator>>(std::istream& is, Schedule& schedule)
-{
-	while (is.good())
-	{
-		Ride tmp;
-		is >> tmp;
-		schedule.m_Schedule[tmp.getRideID()] = tmp;
-	}
-
-	return is;
-}

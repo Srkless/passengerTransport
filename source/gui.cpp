@@ -621,18 +621,18 @@ void gui::UserInterface(UserAccount& user)
 	ftxui::Color bannerMessageColor = blue;
 
 	auto viewAllRouts = ftxui::Button("View all routes", [&] {viewAllRoutsInterface(user); });
-	auto busTicket = ftxui::Button("Buy BusTicket", [&] {buyBusTicketInterface(user); });
+	auto viewTickets = ftxui::Button("View My Tickets", [&] {viewTicketsInterface(user); });
 	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(user.getUsername()); }); // done
 	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); }); // done
 
-	auto component = ftxui::Container::Vertical({ viewAllRouts, busTicket, changePassword, logout });
+	auto component = ftxui::Container::Vertical({ viewAllRouts, viewTickets, changePassword, logout });
 
 	auto renderer = ftxui::Renderer(component, [&] {
 		pressed = 0;
 	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 		separatorDouble(), vbox({
 			center(hbox(viewAllRouts->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-			center(hbox(busTicket->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+			center(hbox(viewTickets->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 			center(hbox(changePassword->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 			center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
