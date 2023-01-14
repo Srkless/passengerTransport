@@ -236,6 +236,11 @@ void gui::loginInterface()
 				DriverAccount curr(username, password, "driver", 0);
 				DriverInterface(curr);
 			}
+			else
+			{
+				UserAccount curr(username, password, "user", 0);
+				UserInterface(curr);
+			}
 		}
 		else
 		{
@@ -613,19 +618,19 @@ void gui::UserInterface(UserAccount& user)
 	std::string bannerMessage = "User Account";
 	ftxui::Color bannerMessageColor = blue;
 
-	auto routeOverview = ftxui::Button("View all routes", [&] {routeOverviewInterface(driver); });
-	auto reportsOverview = ftxui::Button("Buy BusTicket", [&] {reportsOverviewInterface(driver); });
+	auto viewAllRouts = ftxui::Button("View all routes", [&] {viewAllRoutsInterface(user); });
+	auto busTicket = ftxui::Button("Buy BusTicket", [&] {buyBusTicketInterface(user); });
 	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(user.getUsername()); }); // done
 	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); }); // done
 
-	auto component = ftxui::Container::Vertical({ routeOverview, reportsOverview, changePassword, logout });
+	auto component = ftxui::Container::Vertical({ viewAllRouts, busTicket, changePassword, logout });
 
 	auto renderer = ftxui::Renderer(component, [&] {
 		pressed = 0;
 	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 		separatorDouble(), vbox({
-			center(hbox(routeOverview->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-			center(hbox(reportsOverview->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+			center(hbox(viewAllRouts->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+			center(hbox(busTicket->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 			center(hbox(changePassword->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 			center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});

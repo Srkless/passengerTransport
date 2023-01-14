@@ -59,9 +59,11 @@ namespace gui {
 	void deleteRideInterface(UserAccount& administrator);
 
 	void DriverInterface(DriverAccount& driver);
-	void UserInterface(UserAccount& driver)
+	void UserInterface(UserAccount& user);
 };
 
 void routeOverviewInterface(DriverAccount& driver);
 void reportsOverviewInterface(DriverAccount& driver);
 void writeReportInterface(DriverAccount& driver);
+void viewAllRoutsInterface(UserAccount& user);
+void buyBusTicketInterface(UserAccount& user);
