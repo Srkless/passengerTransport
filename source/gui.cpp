@@ -69,7 +69,10 @@ void gui::registerInterface(std::string accountUsername, int number)
 		{
 			UserAccount curr(username, password, "user", 0);
 			for (auto& admin : admins)
-				userDatabase[admin].changeNotificationAlert();
+			{
+				if (userDatabase[admin].getNotificationAlert() == 0)
+					userDatabase[admin].changeNotificationAlert();
+			}
 			userDatabase[username] = curr;
 			userDatabase[username].changeNotificationAlert();
 			db::writeUsersToFile(userDatabase);
@@ -231,6 +234,7 @@ void gui::loginInterface()
 			}
 			if (userDatabase[username].getAccountType() == "administrator")
 				administrator_interface(userDatabase[username]);
+
 			else if (userDatabase[username].getAccountType() == "driver")
 			{
 				DriverAccount curr(username, password, "driver", 0);
@@ -461,6 +465,7 @@ void noticationInterface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::vector<std::string> admins = Utility::returnAdmins();
+
 	std::vector<std::string> driversNotification;
 	std::vector<std::string> usersNotification;
 
@@ -497,7 +502,7 @@ void noticationInterface(UserAccount& administrator)
 
 	if (driversNotification.size())
 		driverNotificationColor = orange;
-	else if (usersNotification.size())
+	if (usersNotification.size())
 		userNotificationColor = orange;
 
 	auto userButton = ftxui::Button("Notifications from users", [&] {flag = 1;});
@@ -545,6 +550,7 @@ void gui::administrator_interface(UserAccount& administrator)
 				center(hbox(generateTravelWarrant->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
+	
 	if(pressed == 0 && administrator.getNotificationAlert())
 	{
 		int agree = 1;
@@ -590,17 +596,57 @@ void gui::DriverInterface(DriverAccount& driver)
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Driver Account";
 	ftxui::Color bannerMessageColor = blue;
-
+	int ridesSize = 0;
 	auto routeOverview = ftxui::Button("Route overview", [&] {routeOverviewInterface(driver); });
 	auto reportsOverview = ftxui::Button("Reports overview", [&] {reportsOverviewInterface(driver); });
 	auto writeReport = ftxui::Button("Write reports", [&] {writeReportInterface(driver); });
 	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(driver.getUsername()); }); // done
 	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); }); // done
 
+	std::unordered_map<std::string, UserAccount> userDatabase;
+	userDatabase = db::loadUsersFromFile();
+	std::vector<std::string> drivenRideIds;
+	std::vector<std::string> admins = Utility::returnAdmins();
+
+	std::unordered_map<std::string, Ride> rides;
+	rides = db::loadDriverRides(driver.getUsername());
+	for (auto& ride : rides)
+	{
+		if (ride.second.getDriver() == driver.getUsername())
+			ridesSize++;
+		if (ride.second.getDrivenStatus())
+			drivenRideIds.push_back(ride.first);
+	}
+
 	auto component = ftxui::Container::Vertical({ routeOverview, reportsOverview, writeReport, changePassword, logout });
 
 	auto renderer = ftxui::Renderer(component, [&] {
-		pressed = 0;
+	if (ridesSize == drivenRideIds.size())
+		if (driver.checkRouteAndReport())
+		{
+			if (userDatabase[driver.getUsername()].getNotificationAlert() == 0)
+				userDatabase[driver.getUsername()].changeNotificationAlert();
+			for (auto& admin : admins)
+			{
+				if(userDatabase[admin].getNotificationAlert() == 0)
+					userDatabase[admin].changeNotificationAlert();
+			}
+			db::writeUsersToFile(userDatabase);
+		}
+	if (driver.getReports() == 0)
+	{
+		std::unordered_map<std::string, UserAccount> userDatabase;
+		userDatabase = db::loadUsersFromFile();
+		std::vector<std::string> admins = Utility::returnAdmins();
+			if (userDatabase[driver.getUsername()].getNotificationAlert() == 1)
+				userDatabase[driver.getUsername()].changeNotificationAlert();
+			for (auto& admin : admins)
+			{
+				if (userDatabase[admin].getNotificationAlert() == 1)
+					userDatabase[admin].changeNotificationAlert();
+			db::writeUsersToFile(userDatabase);
+		}
+	}
 	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 		separatorDouble(), vbox({
 			center(hbox(routeOverview->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
@@ -609,6 +655,7 @@ void gui::DriverInterface(DriverAccount& driver)
 			center(hbox(changePassword->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 			center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
+	
 	screen.Loop(renderer);
 }
 
