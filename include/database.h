@@ -463,31 +463,35 @@ namespace db
 	inline std::unordered_map<std::string, Report> loadDriverReports(std::string driverName)
 	{
 		std::filesystem::path path = std::filesystem::current_path();
-		path += "\\data\\rides";
+		path += "\\data\\reports";
 		std::filesystem::create_directories(path);
-		path += "\\allRides.txt";
+		path += "\\allReports.txt";
 
 		std::unordered_map<std::string, Report> reportMap;
 		std::ifstream allReports;
 
 		allReports.open(path);
-		while (!allReports.eof())
+		if (std::filesystem::exists(path))
 		{
-			path = std::filesystem::current_path();
-			path += "\\data\\reports\\";
+			while (!allReports.eof())
+			{
+				path = std::filesystem::current_path();
+				path += "\\data\\reports\\";
 
-			std::string name;
-			std::getline(allReports, name);
-			path += name;
+				std::string name;
+				std::getline(allReports, name);
+				path += name;
+				path += ".txt";
 
-			std::ifstream report(path);
-			Report newReport;
+				std::ifstream report(path);
+				Report newReport;
 
-			report >> newReport;
-			if (newReport.getAuthor() == driverName)
-				reportMap[newReport.getRideID()] = newReport;
+				report >> newReport;
+				if (newReport.getAuthor() == driverName)
+					reportMap[newReport.getRideID()] = newReport;
 
-			report.close();
+				report.close();
+			}
 		}
 		allReports.close();
 
@@ -536,23 +540,27 @@ namespace db
 		std::ifstream allReports;
 
 		allReports.open(path);
-		while (!allReports.eof())
+		if (std::filesystem::exists(path))
 		{
-			path = std::filesystem::current_path();
-			path += "\\data\\problemReports\\";
+			while (!allReports.eof())
+			{
+				path = std::filesystem::current_path();
+				path += "\\data\\problemReports\\";
 
-			std::string name;
-			std::getline(allReports, name);
-			path += name;
+				std::string name;
+				std::getline(allReports, name);
+				path += name;
+				path += ".txt";
 
-			std::ifstream report(path);
-			ProblemReport newReport;
+				std::ifstream report(path);
+				ProblemReport newReport;
 
-			report >> newReport;
-			if (newReport.getAuthor() == driverName)
-				reportMap[newReport.getRideID()] = newReport;
+				report >> newReport;
+				if (newReport.getAuthor() == driverName)
+					reportMap[newReport.getRideID()] = newReport;
 
-			report.close();
+				report.close();
+			}
 		}
 		allReports.close();
 

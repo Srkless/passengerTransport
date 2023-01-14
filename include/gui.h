@@ -59,7 +59,7 @@ namespace gui {
 	void deleteRideInterface(UserAccount& administrator);
 
 	void DriverInterface(DriverAccount& driver);
-	
+	void UserInterface(UserAccount& driver)
 };
 
 void routeOverviewInterface(DriverAccount& driver);

@@ -606,3 +606,28 @@ void gui::DriverInterface(DriverAccount& driver)
 		});
 	screen.Loop(renderer);
 }
+
+void gui::UserInterface(UserAccount& user)
+{
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "User Account";
+	ftxui::Color bannerMessageColor = blue;
+
+	auto routeOverview = ftxui::Button("View all routes", [&] {routeOverviewInterface(driver); });
+	auto reportsOverview = ftxui::Button("Buy BusTicket", [&] {reportsOverviewInterface(driver); });
+	auto changePassword = ftxui::Button("Change password", [&] {gui::changePassword(user.getUsername()); }); // done
+	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); }); // done
+
+	auto component = ftxui::Container::Vertical({ routeOverview, reportsOverview, changePassword, logout });
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		pressed = 0;
+	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+		separatorDouble(), vbox({
+			center(hbox(routeOverview->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+			center(hbox(reportsOverview->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+			center(hbox(changePassword->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+			center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		});
+	screen.Loop(renderer);
+}

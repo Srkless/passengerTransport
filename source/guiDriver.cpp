@@ -36,7 +36,7 @@ void routeOverviewInterface(DriverAccount& driver)
 				center(hbox(text("   "), allDrivenRides->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 				hbox(text("(*) Undriven rides") | ftxui::color(light_gray) | hcenter),
 				center(hbox(text("   "), allUndrivenRides->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-				center(hbox(driveButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(orange) | hcenter)),
+				(undrivenRideIds.size() != 0)?center(hbox(driveButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(orange) | hcenter)) : center(hbox()),
 				center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green) | hcenter)) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
 	screen.Loop(renderer);
@@ -44,41 +44,60 @@ void routeOverviewInterface(DriverAccount& driver)
 
 void reportsOverviewInterface(DriverAccount& driver)
 {
-	exit(0);
-	//auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	//std::string bannerMessage = driver.getUsername() + "'s account";
-	//ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = driver.getUsername() + "'s account";
+	ftxui::Color bannerMessageColor = blue;
 
-	//std::unordered_map<std::string, Report> reports;
-	//reports = db::loadDriverReports(driver.getUsername());
+	std::unordered_map<std::string, Report> reports;
+	reports = db::loadDriverReports(driver.getUsername());
 
-	//std::vector<std::string> allReports;
-	//std::vector<std::string> passangerProblems;
-	//std::vector<std::string> busProblems;
+	std::unordered_map<std::string, ProblemReport> problems;
+	problems = db::loadDriverProblemReports(driver.getUsername());
 
-	//for (auto& report : reports)
-	//{
-	//	allReports.push_back(report.second.getRideID());
-	//}
+	std::vector<std::string> allReports;
+	std::vector<std::string> passangerProblems;
+	std::vector<std::string> busProblems;
 
-	//int selected = -1;
+	allReports.push_back("Reports");
+	passangerProblems.push_back("Passenger Problems");
+	busProblems.push_back("Autobus Problems");
 
-	//auto allDriverReports = Radiobox(&allReports, &selected);
-	////auto allUndrivenRides = Radiobox(&undrivenRideIds, &selectedAllUndriverRides);
-	//auto backButton = Button("BACK", [&] {gui::DriverInterface(driver); });
-	//auto component = ftxui::Container::Vertical({ allDriverReports, allUndrivenRides, driveButton, backButton });
+	for (auto& report : reports)
+	{
+		allReports.push_back(report.second.getRideID());
+	}
 
-	//auto renderer = ftxui::Renderer(component, [&] {
-	//	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
-	//		separatorDouble(), vbox({
-	//			hbox(text("(*) Driven rides") | ftxui::color(light_gray) | hcenter),
-	//			center(hbox(text("   "), allDrivenRides->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-	//			hbox(text("(*) Undriven rides") | ftxui::color(light_gray) | hcenter),
-	//			center(hbox(text("   "), allUndrivenRides->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-	//			center(hbox(driveButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(orange) | hcenter)),
-	//			center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green) | hcenter)) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
-	//	});
-	//screen.Loop(renderer);
+	for (auto& problem : problems)
+	{
+		if(problem.second.getTypeOfProblem() == "passenger")
+			passangerProblems.push_back(problem.second.getRideID());
+		else
+			busProblems.push_back(problem.second.getRideID());
+	}
+
+	int reportSelect = -1;
+	int passProbSelect = -1;
+	int busProbSelect = -1;
+
+	auto allReportsBox = Radiobox(&allReports, &reportSelect);
+	auto allPassangerProblemsBox = Radiobox(&passangerProblems, &passProbSelect);
+	auto allBusProblemsBox = Radiobox(&busProblems, &busProbSelect);
+
+	auto backButton = Button("BACK", [&] {gui::DriverInterface(driver); });
+	auto component = ftxui::Container::Vertical({ allReportsBox, allPassangerProblemsBox, allBusProblemsBox, backButton });
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+			separatorDouble(), vbox({
+				center(hbox(text(""), allReportsBox->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+				(reportSelect > 0)?center(hbox(text(allReports[reportSelect]))) | borderHeavy | size(WIDTH, EQUAL, 150) : center(hbox()),
+				center(hbox(text(""), allPassangerProblemsBox->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+				(passProbSelect > 0)?center(hbox(text(passangerProblems[passProbSelect]))) | borderHeavy | size(WIDTH, EQUAL, 150) : center(hbox()),
+				center(hbox(text(""), allBusProblemsBox->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+				(busProbSelect > 0)?center(hbox(text(busProblems[busProbSelect]))) | borderHeavy | size(WIDTH, EQUAL, 150) : center(hbox()),
+				center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green) | hcenter)) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		});
+	screen.Loop(renderer);
 }
 
 void writeReportInterface(DriverAccount& driver)
@@ -86,9 +105,6 @@ void writeReportInterface(DriverAccount& driver)
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = driver.getUsername() + "'s account";
 	ftxui::Color bannerMessageColor = blue;
-
-	std::unordered_map<std::string, Report> reports;
-	reports = db::loadDriverReports(driver.getUsername());
 
 	std::vector<std::string> options = { "Reports", "Passanger problem", "Bus problem" };
 	std::string ReportID;
