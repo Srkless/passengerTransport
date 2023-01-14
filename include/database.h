@@ -460,7 +460,6 @@ namespace db
 		return rides;*/
 	}
 
-
 	inline std::unordered_map<std::string, Report> loadDriverReports(std::string driverName)
 	{
 		std::filesystem::path path = std::filesystem::current_path();

@@ -35,7 +35,6 @@ namespace {
 	ftxui::Color gray = { 86, 108, 134 };
 	ftxui::Color dark_gray = { 51, 60, 87 };
 }
-
 namespace gui {
 
 	void loginInterface();

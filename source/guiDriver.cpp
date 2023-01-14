@@ -128,6 +128,5 @@ void writeReportInterface(DriverAccount& driver)
 				center(hbox(sendButton->Render() | size(WIDTH, EQUAL, 10) | ftxui::color(light_gray) | hcenter))})),
 				center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green) | hcenter)) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
-	
 	screen.Loop(renderer);
 }

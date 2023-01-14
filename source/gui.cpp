@@ -580,7 +580,6 @@ void gui::administrator_interface(UserAccount& administrator)
 		screen.Loop(renderer);
 }
 
-
 void gui::DriverInterface(DriverAccount& driver)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
