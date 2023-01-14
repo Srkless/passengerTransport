@@ -474,7 +474,7 @@ void writeinFile(std::string name, std::ofstream& data)
 	data << name << std::endl;
 };
 
-void IsEqual(std::ofstream& data, std::filesystem::path path, std::string name)
+int IsEqual(std::ofstream& data, std::filesystem::path path, std::string name)
 {
 	if (is_equalFile(name))
 	{
@@ -537,7 +537,7 @@ void IsEqual(std::ofstream& data, std::filesystem::path path, std::string name)
 
 	};
 
-
+	return 1;
 }
 
 
@@ -564,9 +564,9 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 	ftxui::Component countryInput = ftxui::Input(&country, "Enter Country");
 
 	int t = 0;
-	auto backButton = ftxui::Button("Back", [&] {IsEqual(data, path, name), gui::createCodeLocation(administrator); });
+	auto backButton = ftxui::Button("Back", [&] {(t == 1) ? IsEqual(data, path, name) : t = t, gui::createCodeLocation(administrator); });
 
-	auto Enter = ftxui::Button("Enter", [&] {writeLocation(country, location, path, data), gui::EnterLocation(administrator, name), t = 0; });
+	auto Enter = ftxui::Button("Enter", [&] {writeLocation(country, location, path, data), gui::EnterLocation(administrator, name), t = 1; });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
@@ -585,10 +585,12 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 				separatorDouble(), vbox({
-					center(hbox(locationInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
-					center(hbox(countryInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
-					center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+					center(hbox(locationInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))| borderRounded,
+					center(hbox(countryInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) | borderRounded,
 					center(hbox(Enter->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+					center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+
+					
 					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		}});
 
@@ -666,9 +668,9 @@ void gui::createCodeLocation(UserAccount& administrator)
 
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(), vbox({
-				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
-				center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
-				center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green)))
+				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green)))| borderRounded,
+				center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+				center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green)))
 				}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 	}
 	else
@@ -698,7 +700,7 @@ void writeLocationBus(std::string brand, std::string model, std::string god, std
 		data << brand << "#" << model << "#" << god << "#" << registration << "#" << NumSeats << std::endl;
 	data.close();
 };
-void IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string name)
+int IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string name)
 {
 	if (is_equalFile(name))
 	{
@@ -760,7 +762,7 @@ void IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string nam
 
 
 	};
-
+	return 1;
 
 }
 
@@ -786,9 +788,9 @@ void EnterBusInfo(UserAccount& administrator, std::string name)
 
 
 	int t = 0;
-	auto backButton = ftxui::Button("Back", [&] {IsEqualBus(data, path, name), gui::createCodeBus(administrator); });
+	auto backButton = ftxui::Button("     Back", [&] {(t == 1) ? IsEqualBus(data, path, name) : (t=t), gui::createCodeBus(administrator); });
 
-	auto Enter = ftxui::Button("Enter", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), EnterBusInfo(administrator, name), t = 0; });
+	auto Enter = ftxui::Button("     Enter", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), EnterBusInfo(administrator, name), t = 1; });
 
 
 	auto component = ftxui::Container::Vertical({ brandInput,backButton,Enter,modelInput,YearInput,RegistrationInput,SeatsInput });
@@ -801,14 +803,14 @@ void EnterBusInfo(UserAccount& administrator, std::string name)
 
 
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
-				separatorDouble(), vbox({
-					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
-					center(hbox(modelInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
-					center(hbox(YearInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
-					center(hbox(RegistrationInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
-					center(hbox(SeatsInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
-					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
-					center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+				separatorDouble(), vbox({vbox({
+					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(modelInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(YearInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(RegistrationInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(SeatsInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded})| borderRounded,
+					hbox({center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+					center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green)))}),
 					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		}});
 
@@ -886,7 +888,7 @@ void gui::createCodeBus(UserAccount& administrator)
 
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(), vbox({
-				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))) | borderRounded,
 					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
 				}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
@@ -896,7 +898,7 @@ void gui::createCodeBus(UserAccount& administrator)
 		std::string bannerMessage = "Already Exist!";
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 		separatorDouble(), vbox({
-			center(hbox(usernameInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+			center(hbox(usernameInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) | borderRounded,
 			center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
 			}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 
@@ -915,7 +917,7 @@ void gui::createCodeBus(UserAccount& administrator)
 
 }
 
-void IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string name)
+int IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string name)
 {
 	if (is_equalFile(name))
 	{
@@ -978,7 +980,7 @@ void IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string na
 
 	};
 
-
+	return 1;
 };
 
 
@@ -1009,8 +1011,8 @@ void EnterTourInfo(UserAccount& administrator, std::string name)
 
 
 	int t = 0;
-	auto backButton = ftxui::Button("Done", [&] {IsEqualTour(data, path, name), gui::createCodeTour(administrator); });//IS EQual
-	auto brandButton = ftxui::Button("Enter", [&] {writeTour(brand, path, data), EnterTourInfo(administrator, name), t = 0; });
+	auto backButton = ftxui::Button("Done", [&] {(t==1) ? IsEqualTour(data, path, name) : t=t, gui::createCodeTour(administrator); });//IS EQual
+	auto brandButton = ftxui::Button("Enter", [&] {writeTour(brand, path, data), EnterTourInfo(administrator, name), t = 1; });
 
 	//auto Enter = ftxui::Button("Exit", [&] { EnterBusInfo(username, name), t = 0; });//ENTER
 
@@ -1026,7 +1028,7 @@ void EnterTourInfo(UserAccount& administrator, std::string name)
 
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 				separatorDouble(), vbox({
-					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
+					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
 					center(hbox(brandButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 					center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 
@@ -1110,7 +1112,7 @@ void gui::createCodeTour(UserAccount& administrator)
 
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(), vbox({
-				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))) | borderRounded,
 					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
 				}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
@@ -1352,8 +1354,8 @@ void EnterLocationModify(std::string name, UserAccount& administrator)
 
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 				separatorDouble(), vbox({
-					center(hbox(locationInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
-					center(hbox(countryInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+					center(hbox(locationInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(countryInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) | borderRounded,
 					center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
 					center(hbox(Enter->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
 					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
@@ -1456,12 +1458,12 @@ void EnterBusModify(std::string name, UserAccount& administrator)
 		{
 
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
-				separatorDouble(), vbox({
-					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
-					center(hbox(modelInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
-					center(hbox(YearInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
-					center(hbox(RegistrationInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
-					center(hbox(SeatsInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
+				separatorDouble(), vbox({vbox({
+					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(modelInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(YearInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(RegistrationInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(SeatsInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded})| borderRounded,
 					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 					center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
@@ -1562,7 +1564,7 @@ void EnterTourModify(std::string name, UserAccount& administrator)
 
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 				separatorDouble(), vbox({
-					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))),
+					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
 					center(hbox(brandButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 					center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 
