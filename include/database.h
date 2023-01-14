@@ -533,7 +533,7 @@ namespace db
 		std::filesystem::create_directories(path);
 		path += "\\allProblemReports.txt";
 
-		std::unordered_map<std::string, Report> reportMap;
+		std::unordered_map<std::string, ProblemReport> reportMap;
 		std::ifstream allReports;
 
 		allReports.open(path);
@@ -558,8 +558,7 @@ namespace db
 		allReports.close();
 
 		return reportMap;
-
-
+	}
 
 		/*std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
@@ -589,5 +588,4 @@ namespace db
 			}
 		}
 		return rides;*/
-	}
 };
