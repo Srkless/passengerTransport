@@ -1,5 +1,5 @@
 #include "gui.h"
-int max = 0;
+
 void routeOverviewInterface(DriverAccount& driver)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -10,15 +10,18 @@ void routeOverviewInterface(DriverAccount& driver)
 	userDatabase = db::loadUsersFromFile();
 
 	std::unordered_map<std::string, Ride> rides;
+	int ridesSize = 0;
 	rides = db::loadDriverRides(driver.getUsername());
-	std::vector<std::string> admins = Utility::returnAdmins();
+	
 
 	std::vector<std::string> drivenRideIds;
 	std::vector<std::string> undrivenRideIds;
 
 	for (auto& ride : rides)
 	{
-		if(ride.second.getDrivenStatus())
+		if (ride.second.getDriver() == driver.getUsername())
+			ridesSize++;
+		if(ride.second.getDriver() == driver.getUsername() && ride.second.getDrivenStatus())
 			drivenRideIds.push_back(ride.first);
 		else
 			undrivenRideIds.push_back(ride.first);
@@ -27,23 +30,18 @@ void routeOverviewInterface(DriverAccount& driver)
 	int selectedAllDrivenRides = -1;
 	int selectedAllUndriverRides = -1;
 	
-	if (rides.size() == drivenRideIds.size())
+	if (ridesSize == drivenRideIds.size())
 	{
 		for (int i = 0; i < drivenRideIds.size(); i++)
 		{
 			rides[drivenRideIds[i]].changeDrivenStatus(false);
 			db::rewriteExistingRide(rides[drivenRideIds[i]]);
-			if (driver.checkRouteAndReport())
-				userDatabase[driver.getUsername()].changeNotificationAlert();
-		}
-		for (auto& admin : admins)
-		{
-			userDatabase[admin].changeNotificationAlert();
 		}
 	}
+	//db::writeUsersToFile(userDatabase);
 	auto allDrivenRides = Radiobox(&drivenRideIds, &selectedAllDrivenRides);
 	auto allUndrivenRides = Radiobox(&undrivenRideIds, &selectedAllUndriverRides);
-	auto driveButton = Button("DRIVE", [&] {driver.driveRoute(undrivenRideIds[selectedAllUndriverRides]); gui::DriverInterface(driver); });
+	auto driveButton = Button("DRIVE", [&] {driver.driveRoute(undrivenRideIds[selectedAllUndriverRides]); driver.decreaseReport(); gui::DriverInterface(driver); });
 	auto backButton = Button("BACK", [&] {gui::DriverInterface(driver); });
 	auto component = ftxui::Container::Vertical({ allDrivenRides, allUndrivenRides, driveButton, backButton });
 
@@ -57,7 +55,7 @@ void routeOverviewInterface(DriverAccount& driver)
 				(undrivenRideIds.size() != 0)?center(hbox(driveButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(orange) | hcenter)) : center(hbox()),
 				center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green) | hcenter)) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
-	db::writeUsersToFile(userDatabase);
+	
 	screen.Loop(renderer);
 }
 
@@ -125,6 +123,23 @@ void writeReportInterface(DriverAccount& driver)
 	std::string bannerMessage = driver.getUsername() + "'s account";
 	ftxui::Color bannerMessageColor = blue;
 
+	if (driver.getReports() == 0)
+	{
+		std::unordered_map<std::string, UserAccount> userDatabase;
+		userDatabase = db::loadUsersFromFile();
+		std::vector<std::string> admins = Utility::returnAdmins();
+		if (driver.checkRouteAndReport())
+		{
+			if (userDatabase[driver.getUsername()].getNotificationAlert() == 0)
+				userDatabase[driver.getUsername()].changeNotificationAlert();
+			for (auto& admin : admins)
+			{
+				if (userDatabase[admin].getNotificationAlert() == 0)
+					userDatabase[admin].changeNotificationAlert();
+			}
+			db::writeUsersToFile(userDatabase);
+		}
+	}
 	std::vector<std::string> options = { "Reports", "Passanger problem", "Bus problem" };
 	std::string ReportID;
 	std::string text;
@@ -134,21 +149,25 @@ void writeReportInterface(DriverAccount& driver)
 
 	auto optionsBox = Radiobox(&options, &selected);
 	auto backButton = Button("       BACK", [&] {gui::DriverInterface(driver); });
-	auto sendButton = Button("  SEND", [&] {max++;
-		if (selected == 0)
+	auto sendButton = Button("  SEND", [&] {
+		if(ReportID != "" && text != "")
 		{
-			Report report(ReportID, driver.getUsername(), text);
-			driver.writeReport(ReportID, report);
-		}
-		else if (selected == 1)
-		{
-			ProblemReport passProblem(ReportID, driver.getUsername(), text, "passenger");
-			driver.writeProblemReport(ReportID, passProblem);
-		}
-		else
-		{
-			ProblemReport passProblem(ReportID, driver.getUsername(), text, "bus");
-			driver.writeProblemReport(ReportID, passProblem);
+			if (selected == 0)
+			{
+				Report report(ReportID, driver.getUsername(), text);
+				driver.increaseReport();
+				driver.writeReport(ReportID, report);
+			}
+			else if (selected == 1)
+			{
+				ProblemReport passProblem(ReportID, driver.getUsername(), text, "passenger");
+				driver.writeProblemReport(ReportID, passProblem);
+			}
+			else
+			{
+				ProblemReport passProblem(ReportID, driver.getUsername(), text, "bus");
+				driver.writeProblemReport(ReportID, passProblem);
+			}
 		}
 		gui::DriverInterface(driver);
 		});

@@ -8,6 +8,7 @@
 
 class DriverAccount : public UserAccount
 {
+	int reports = 0;
 public:
 	using UserAccount::UserAccount;
 	Ride singleRouteOverview(const std::string& fileName) const; //TODO VODNJA.H
@@ -19,5 +20,9 @@ public:
 	std::unordered_map <std::string, Report> overviewReports() const;
 	std::unordered_map<std::string, ProblemReport> overviewProblemReports() const;
 	void driveRoute(const std::string &fileName);
-	bool checkRouteAndReport(int max) const;
+	bool checkRouteAndReport() const;
+	int getReports();
+	void increaseReport();
+	void decreaseReport();
+
 };

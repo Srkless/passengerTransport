@@ -161,14 +161,24 @@ void DriverAccount::driveRoute(const std::string& fileName) // prima RideID (ime
 	}
 }
 
-bool DriverAccount::checkRouteAndReport(int max) const
+bool DriverAccount::checkRouteAndReport() const
 {
-	std::unordered_map<std::string, Ride> drivenRidesMap = allDrivenRides();
-
-	std::unordered_map<std::string, Report> reportMap = db::loadDriverReports(getUsername());
-
-	if (drivenRidesMap.size() != (max - reportMap.size()))
+	if (this->reports == 0)
 		return false;
 	else
 		return true;
+}
+
+int DriverAccount::getReports()
+{
+	return this->reports;
+}
+void DriverAccount::increaseReport()
+{
+	this->reports++;
+}
+
+void DriverAccount::decreaseReport()
+{
+	this->reports--;
 }
