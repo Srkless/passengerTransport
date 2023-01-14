@@ -580,6 +580,7 @@ void gui::administrator_interface(UserAccount& administrator)
 		screen.Loop(renderer);
 }
 
+
 void gui::DriverInterface(DriverAccount& driver)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -596,13 +597,13 @@ void gui::DriverInterface(DriverAccount& driver)
 
 	auto renderer = ftxui::Renderer(component, [&] {
 		pressed = 0;
-	return ftxui::vbox({center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 		separatorDouble(), vbox({
 			center(hbox(routeOverview->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 			center(hbox(reportsOverview->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 			center(hbox(writeReport->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 			center(hbox(changePassword->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-			center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) })}) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+			center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
 	screen.Loop(renderer);
 }
