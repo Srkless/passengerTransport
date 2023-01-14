@@ -30,7 +30,7 @@ public:
 	void setStartLocation(std::string startLocation);
 	void setEndLocation(std::string endLocation);
 	void setPathLocationos(std::vector<std::string> pathLocations);
-	void changeDrivenStatus();
+	void changeDrivenStatus(bool value);
 
 	std::string getRideID() const;
 	std::string getDriver() const;

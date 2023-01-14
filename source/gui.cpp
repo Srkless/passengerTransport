@@ -231,6 +231,7 @@ void gui::loginInterface()
 			}
 			if (userDatabase[username].getAccountType() == "administrator")
 				administrator_interface(userDatabase[username]);
+
 			else if (userDatabase[username].getAccountType() == "driver")
 			{
 				DriverAccount curr(username, password, "driver", 0);
@@ -461,6 +462,7 @@ void noticationInterface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::vector<std::string> admins = Utility::returnAdmins();
+
 	std::vector<std::string> driversNotification;
 	std::vector<std::string> usersNotification;
 

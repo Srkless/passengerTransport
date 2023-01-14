@@ -1,13 +1,17 @@
 #include "gui.h"
-
+int max = 0;
 void routeOverviewInterface(DriverAccount& driver)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = driver.getUsername() + "'s account";
 	ftxui::Color bannerMessageColor = blue;
 
+	std::unordered_map<std::string, UserAccount> userDatabase;
+	userDatabase = db::loadUsersFromFile();
+
 	std::unordered_map<std::string, Ride> rides;
 	rides = db::loadDriverRides(driver.getUsername());
+	std::vector<std::string> admins = Utility::returnAdmins();
 
 	std::vector<std::string> drivenRideIds;
 	std::vector<std::string> undrivenRideIds;
@@ -22,7 +26,21 @@ void routeOverviewInterface(DriverAccount& driver)
 
 	int selectedAllDrivenRides = -1;
 	int selectedAllUndriverRides = -1;
-
+	
+	if (rides.size() == drivenRideIds.size())
+	{
+		for (int i = 0; i < drivenRideIds.size(); i++)
+		{
+			rides[drivenRideIds[i]].changeDrivenStatus(false);
+			db::rewriteExistingRide(rides[drivenRideIds[i]]);
+			if (driver.checkRouteAndReport())
+				userDatabase[driver.getUsername()].changeNotificationAlert();
+		}
+		for (auto& admin : admins)
+		{
+			userDatabase[admin].changeNotificationAlert();
+		}
+	}
 	auto allDrivenRides = Radiobox(&drivenRideIds, &selectedAllDrivenRides);
 	auto allUndrivenRides = Radiobox(&undrivenRideIds, &selectedAllUndriverRides);
 	auto driveButton = Button("DRIVE", [&] {driver.driveRoute(undrivenRideIds[selectedAllUndriverRides]); gui::DriverInterface(driver); });
@@ -39,6 +57,7 @@ void routeOverviewInterface(DriverAccount& driver)
 				(undrivenRideIds.size() != 0)?center(hbox(driveButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(orange) | hcenter)) : center(hbox()),
 				center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green) | hcenter)) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
+	db::writeUsersToFile(userDatabase);
 	screen.Loop(renderer);
 }
 
@@ -115,7 +134,7 @@ void writeReportInterface(DriverAccount& driver)
 
 	auto optionsBox = Radiobox(&options, &selected);
 	auto backButton = Button("       BACK", [&] {gui::DriverInterface(driver); });
-	auto sendButton = Button("  SEND", [&] {
+	auto sendButton = Button("  SEND", [&] {max++;
 		if (selected == 0)
 		{
 			Report report(ReportID, driver.getUsername(), text);

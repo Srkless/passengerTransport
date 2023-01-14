@@ -49,9 +49,9 @@ void Ride::setPathLocationos(std::vector<std::string> pathLocations)
 	m_PathLocations = pathLocations;
 }
 
-void Ride::changeDrivenStatus()
+void Ride::changeDrivenStatus(bool value)
 {
-	m_drivenStatus = true;
+	m_drivenStatus = value;
 }
 
 std::string Ride::getRideID() const
