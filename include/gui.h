@@ -60,5 +60,4 @@ namespace gui {
 
 	void addRideInterface(UserAccount& administrator);
 	void deleteRideInterface(UserAccount& administrator);
-}
 };
