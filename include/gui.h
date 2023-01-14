@@ -16,6 +16,7 @@
 #include "ftxui/screen/terminal.hpp"
 #include "ftxui/util/ref.hpp"
 #include "DriverAccount.h"
+#include "BusTicket.h"
 
 using namespace ftxui;
 namespace {
@@ -66,4 +67,9 @@ void routeOverviewInterface(DriverAccount& driver);
 void reportsOverviewInterface(DriverAccount& driver);
 void writeReportInterface(DriverAccount& driver);
 void viewAllRoutsInterface(UserAccount& user);
-void buyBusTicketInterface(UserAccount& user);
+void selectStartLocationInterface(UserAccount& user, Ride& ride);
+void selectEndLocationInterface(UserAccount& user, Ride& ride, BusTicket& ticket);
+void selectBaggageInterface(UserAccount& user, Ride& ride, BusTicket& ticket);
+void buyTicketInterface(UserAccount& user, Ride& ride, BusTicket& ticket);
+void viewTicketsInterface(UserAccount& user);
+void viewRide(UserAccount& user, Ride& ride);

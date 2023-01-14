@@ -77,22 +77,6 @@ namespace db
 		return false;
 	}
 
-	inline Schedule readScheduleFromFile()
-	{
-		std::filesystem::path path = std::filesystem::current_path();
-		path += "\\data\\rides\\schedule.txt";
-		std::ifstream iFile(path);
-		if (std::filesystem::exists(path))
-		{
-			iFile.open(path, std::ios::app);
-			Schedule tmp;
-			iFile >> tmp;
-			return tmp;
-		}
-		Schedule empty;
-		return empty;
-	}
-
 	inline void writeScheduleToFile(const Schedule& schedule)
 	{
 		std::filesystem::path path = std::filesystem::current_path();
@@ -349,25 +333,6 @@ namespace db
 		{is >> a} ->std::convertible_to<std::istream&>;
 	};
 
-	// function for reading a specified type from a file
-	// assumes that the '#' symbol terminates the data type
-	// default type is string
-	template<typename T = std::string>
-		requires Readable<T> && (std::copy_constructible<T> || std::copyable<T>)
-	T readItem(std::ifstream& is)
-	{
-		std::string line;
-		std::getline(is, line, '#');
-
-		std::stringstream stream(line);
-
-		T tmp;
-
-		stream >> tmp;
-
-		return tmp;
-	}
-
 	inline std::unordered_map<std::string, UserAccount> loadDriversFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
@@ -426,38 +391,6 @@ namespace db
 		iFile.close();
 
 		return rides;
-
-
-
-
-		/*std::filesystem::path path = std::filesystem::current_path();
-		path += "\\data\\rides";
-		std::filesystem::create_directories(path);
-		path += "\\allRides.txt";
-
-		std::unordered_map<std::string, Ride> rides;
-		if (std::filesystem::exists(path))
-		{
-			std::ifstream iFile(path);
-			while (!iFile.eof())
-			{
-				path = std::filesystem::current_path();
-				path += "\\data\\rides\\";
-				std::string name;
-				std::getline(iFile, name);
-				path += name;
-				std::ifstream iFile2(path);
-				Ride newRide;
-				iFile2 >> newRide;
-				if (newRide.getDriver() == username)
-				{
-					rides[newRide.getRideID()] = newRide;
-				}
-				iFile2.close();
-				iFile.close();
-			}
-		}
-		return rides;*/
 	}
 
 	inline std::unordered_map<std::string, Report> loadDriverReports(std::string driverName)
@@ -496,37 +429,6 @@ namespace db
 		allReports.close();
 
 		return reportMap;
-
-
-
-		/*std::filesystem::path path = std::filesystem::current_path();
-		path += "\\data\\rides";
-		std::filesystem::create_directories(path);
-		path += "\\allRides.txt";
-
-		std::unordered_map<std::string, Ride> rides;
-		if (std::filesystem::exists(path))
-		{
-			std::ifstream iFile(path);
-			while (!iFile.eof())
-			{
-				path = std::filesystem::current_path();
-				path += "\\data\\rides\\";
-				std::string name;
-				std::getline(iFile, name);
-				path += name;
-				std::ifstream iFile2(path);
-				Ride newRide;
-				iFile2 >> newRide;
-				if (newRide.getDriver() == username)
-				{
-					rides[newRide.getRideID()] = newRide;
-				}
-				iFile2.close();
-				iFile.close();
-			}
-		}
-		return rides;*/
 	}
 
 	inline std::unordered_map<std::string, ProblemReport> loadDriverProblemReports(std::string driverName)
@@ -566,33 +468,4 @@ namespace db
 
 		return reportMap;
 	}
-
-		/*std::filesystem::path path = std::filesystem::current_path();
-		path += "\\data\\rides";
-		std::filesystem::create_directories(path);
-		path += "\\allRides.txt";
-
-		std::unordered_map<std::string, Ride> rides;
-		if (std::filesystem::exists(path))
-		{
-			std::ifstream iFile(path);
-			while (!iFile.eof())
-			{
-				path = std::filesystem::current_path();
-				path += "\\data\\rides\\";
-				std::string name;
-				std::getline(iFile, name);
-				path += name;
-				std::ifstream iFile2(path);
-				Ride newRide;
-				iFile2 >> newRide;
-				if (newRide.getDriver() == username)
-				{
-					rides[newRide.getRideID()] = newRide;
-				}
-				iFile2.close();
-				iFile.close();
-			}
-		}
-		return rides;*/
 };
