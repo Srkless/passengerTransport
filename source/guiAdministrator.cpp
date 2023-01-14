@@ -521,7 +521,7 @@ void writeLocation(std::string name, std::string country, std::filesystem::path 
 {
 	data.open(path, std::ios::app);
 	if (name != "" && country != "")
-		data << name << "#" << country << std::endl;
+		data << std::endl << name << "#" << country;
 	data.close();
 };
 
@@ -529,14 +529,16 @@ void writeinFile(std::string name, std::filesystem::path data)
 {
 	if (std::filesystem::exists(data))
 	{
-		std::ofstream oFile(data);
-		oFile << name;
+		std::ofstream oFile;
+		oFile.open(data, std::ios::app);
+		oFile << std::endl << name;
 		oFile.close();
 	}
 	else
 	{
-		std::ofstream oFile(data);
-		oFile << std::endl << name;
+		std::ofstream oFile;
+		oFile.open(data, std::ios::app);
+		oFile << name;
 		oFile.close();
 	}
 };
