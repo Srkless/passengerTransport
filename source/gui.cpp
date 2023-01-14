@@ -358,7 +358,7 @@ void gui::changePassword(std::string username)
 	userDatabase = db::loadUsersFromFile();
 
 	auto confirmButton = ftxui::Button("CONFIRM", [&] {
-		if (Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword) && Utility::decrypt(oldPassword) != Utility::decrypt(confirmPassword))
+		if (confirmPassword.size() >= 8 && Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword) && Utility::decrypt(oldPassword) != Utility::decrypt(confirmPassword))
 		{
 			bannerMessage = "Successful password change";
 			passwordColor = bright_green;
@@ -389,7 +389,7 @@ void gui::changePassword(std::string username)
 
 	auto renderer = ftxui::Renderer(component, [&] {
 
-		if (Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword) && Utility::decrypt(oldPassword) != Utility::decrypt(confirmPassword)) {
+		if (confirmPassword.size() >= 8 && Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword) && Utility::decrypt(oldPassword) != Utility::decrypt(confirmPassword)) {
 			passwordColor = bright_green;
 			bannerMessageColor = bright_green;
 			passwordControl = 0;

@@ -463,34 +463,31 @@ namespace db
 	inline std::unordered_map<std::string, Report> loadDriverReports(std::string driverName)
 	{
 		std::filesystem::path path = std::filesystem::current_path();
-		path += "\\data\\reports";
+		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
-		path += "\\allReports.txt";
+		path += "\\allRides.txt";
 
 		std::unordered_map<std::string, Report> reportMap;
 		std::ifstream allReports;
 
 		allReports.open(path);
-		if(!allReports.eof())
+		while (!allReports.eof())
 		{
-			while (!allReports.eof())
-			{
-				path = std::filesystem::current_path();
-				path += "\\data\\reports\\";
+			path = std::filesystem::current_path();
+			path += "\\data\\reports\\";
 
-				std::string name;
-				std::getline(allReports, name);
-				path += name;
+			std::string name;
+			std::getline(allReports, name);
+			path += name;
 
-				std::ifstream report(path);
-				Report newReport;
+			std::ifstream report(path);
+			Report newReport;
 
-				report >> newReport;
-				if (newReport.getAuthor() == driverName)
-					reportMap[newReport.getRideID()] = newReport;
+			report >> newReport;
+			if (newReport.getAuthor() == driverName)
+				reportMap[newReport.getRideID()] = newReport;
 
-				report.close();
-			}
+			report.close();
 		}
 		allReports.close();
 
