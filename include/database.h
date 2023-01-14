@@ -561,8 +561,7 @@ namespace db
 		allReports.close();
 
 		return reportMap;
-
-
+	}
 
 		/*std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
@@ -592,5 +591,4 @@ namespace db
 			}
 		}
 		return rides;*/
-	}
 };
