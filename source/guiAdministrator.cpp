@@ -132,7 +132,7 @@ void gui::addRideInterface(UserAccount& administrator)
 		auto start = allLocations.begin() + 1;
 		auto end = allLocations.end() - 1;
 		std::vector<std::string> locations(start, end);
-		Ride ride(RideID, Driver, BusRegistration, StartTime, EndTime, allLocations[0], locations, allLocations[locations.size() - 1]);
+		Ride ride(RideID, Driver, BusRegistration, StartTime, EndTime, allLocations[0], locations, allLocations[allLocations.size() - 1]);
 		db::addRideToFile(ride);
 	}
 	else if (allLocations.size() == 2)

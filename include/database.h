@@ -81,7 +81,7 @@ namespace db
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides\\schedule.txt";
-		std::ofstream oFile(path);
+		std::ofstream oFile(path, std::ios::app);
 		oFile << schedule;
 	}
 
@@ -134,12 +134,6 @@ namespace db
 				iFile2.close();
 			}
 			iFile.close();
-		}
-		else
-		{
-			std::ofstream oFile(path);
-			oFile << "hi";
-			oFile.close();
 		}
 		return rides;
 	}
