@@ -6,6 +6,9 @@ Ride::Ride()
 Ride::Ride(std::string rideID, std::string driver, std::string busReg, std::string startTime, std::string endTime, std::string startLocation, std::vector<std::string> pathLocations, std::string endLocation)
 	: m_RideID(rideID), m_Driver(driver), m_BusRegistration(busReg), m_StartTime(startTime), m_EndTime(endTime), m_StartLocation(startLocation), m_PathLocations(pathLocations), m_EndLocation(endLocation) {}
 
+Ride::Ride(std::string rideID, std::string driver, std::string busReg, std::string startTime, std::string endTime, std::string startLocation, std::string endLocation)
+	: m_RideID(rideID), m_Driver(driver), m_BusRegistration(busReg), m_StartTime(startTime), m_EndTime(endTime), m_StartLocation(startLocation), m_EndLocation(endLocation) {}
+
 void Ride::setRideID(std::string RideID)
 {
 	m_RideID = RideID;

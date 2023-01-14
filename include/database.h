@@ -135,19 +135,19 @@ namespace db
 			iFile.open(path);
 			while (!iFile.eof())
 			{
-				path = std::filesystem::current_path();
-				path += "\\data\\rides\\";
+					path = std::filesystem::current_path();
+					path += "\\data\\rides\\";
 
-				std::string name;
-				std::getline(iFile, name);
-				path += name;
+					std::string name;
+					std::getline(iFile, name);
+					path += name;
 
-				std::ifstream iFile2(path);
-				Ride newRide;
+					std::ifstream iFile2(path);
+					Ride newRide;
 
-				iFile2 >> newRide;
-				rides[newRide.getRideID()] = newRide;
-				iFile2.close();
+					iFile2 >> newRide;
+					rides[newRide.getRideID()] = newRide;
+					iFile2.close();
 			}
 			iFile.close();
 		}
@@ -245,24 +245,27 @@ namespace db
 		std::ifstream iFile(path);
 		std::unordered_map<std::string, Report> reports;
 
-		while (!iFile.eof())
+		if(iFile.eof())
 		{
-			std::filesystem::path path = std::filesystem::current_path();
-			path += "\\data\\reports\\";
+			while (!iFile.eof())
+			{
+				std::filesystem::path path = std::filesystem::current_path();
+				path += "\\data\\reports\\";
 
-			std::string name;
-			std::getline(iFile, name);
-			path += name;
+				std::string name;
+				std::getline(iFile, name);
+				path += name;
 
-			Report rep;
+				Report rep;
 
-			std::ifstream iFile2(path);
-			iFile2 >> rep;
+				std::ifstream iFile2(path);
+				iFile2 >> rep;
 
-			reports[rep.getRideID()] = rep;
-			iFile2.close();
+				reports[rep.getRideID()] = rep;
+				iFile2.close();
+			}
+			iFile.close();
 		}
-		iFile.close();
 
 		return reports;
 	}
@@ -586,4 +589,5 @@ namespace db
 	}
 
 };
+
 

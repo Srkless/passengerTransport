@@ -20,7 +20,8 @@ public:
 	Ride();
 	Ride(std::string rideID, std::string driver, std::string busReg, std::string startTime,
 		std::string endTime, std::string startLocation, std::vector<std::string> pathLocations, std::string endLocation);
-
+	Ride(std::string rideID, std::string driver, std::string busReg, std::string startTime,
+		std::string endTime, std::string startLocation, std::string endLocation);
 	void setRideID(std::string RideID);
 	void setDriver(std::string driver);
 	void setBusReg(std::string busReg);

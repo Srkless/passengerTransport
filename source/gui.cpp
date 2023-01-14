@@ -14,7 +14,7 @@
 
 int pressed = 0;
 
-void gui::registerInterface(int number)
+void gui::registerInterface(std::string accountUsername, int number)
 {
 	std::string username;
 	std::string password;
@@ -43,7 +43,7 @@ void gui::registerInterface(int number)
 	std::vector<std::string> admins = Utility::returnAdmins();
 
 	int flag = 0;
-	auto registerButton = ftxui::Button("Register", [&] {
+	auto registerButton = ftxui::Button("REGISTER", [&] {
 		flag = 1;
 	if (flag && userDatabase[username].getUsername() == "" && password == againPassword && password.size() > 7) {
 		bannerMessage = "Successful registration!";
@@ -56,14 +56,14 @@ void gui::registerInterface(int number)
 			UserAccount curr(username, password, "administrator", 0);
 			curr.changeSuspensionStatus();
 			db::addUserToFile(curr);
-			administrator_interface(userDatabase[currUsername]);
+			administrator_interface(userDatabase[accountUsername]);
 		}
 		else if (number == 2)
 		{
 			UserAccount curr(username, password, "driver", 0);
 			curr.changeSuspensionStatus();
 			db::addUserToFile(curr);
-			administrator_interface(userDatabase[currUsername]);
+			administrator_interface(userDatabase[accountUsername]);
 		}
 		else
 		{
@@ -252,7 +252,7 @@ void gui::loginInterface()
 		});
 
 	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
-	auto registerButton = ftxui::Button("SIGN UP", [&] {registerInterface(0); });
+	auto registerButton = ftxui::Button("SIGN UP", [&] {registerInterface("",0); });
 	auto component = ftxui::Container::Vertical({ usernameInput, passwordInput, logInButton, exitButton, registerButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -529,6 +529,7 @@ void gui::administrator_interface(UserAccount& administrator)
 	auto component = ftxui::Container::Vertical({ notBox, accountSettings, codeBooksSettings, ScheduleSettings, reportsSettings, generateTravelWarrant, logout });
 
 	auto renderer = ftxui::Renderer(component, [&] {
+		pressed = 0;
 		return ftxui::vbox({ hbox({center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			(administrator.getNotificationAlert()) ? hbox(text("             "), notBox->Render() | size(WIDTH, EQUAL, 3) | ftxui::color(yellow) | hcenter) : (hbox() | ftxui::color(dark_gray))}),
 			separatorDouble(), vbox({
@@ -571,9 +572,9 @@ void gui::administrator_interface(UserAccount& administrator)
 		}
 		return document;
 			});
+		
 	screen.Loop(mainRenderer);
 	}
 	else
 		screen.Loop(renderer);
-	
 }
