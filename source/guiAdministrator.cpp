@@ -859,7 +859,7 @@ void gui::createCodeBus(UserAccount& administrator)
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("ENTER", [&] {writeinFile(name, data), writeinFile(name, location33), EnterBusInfo(administrator, name), t = 1; });
+	auto Enter = ftxui::Button("      ENTER", [&] {writeinFile(name, data), writeinFile(name, location33), EnterBusInfo(administrator, name), t = 1; });
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -1083,7 +1083,7 @@ void gui::createCodeTour(UserAccount& administrator)
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("ENTER", [&] {writeinFile(name, data), writeinFile(name, location33), EnterTourInfo(administrator, name), t = 1; });//Napraviti tour info
+	auto Enter = ftxui::Button("      ENTER", [&] {writeinFile(name, data), writeinFile(name, location33), EnterTourInfo(administrator, name), t = 1; });//Napraviti tour info
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -1291,8 +1291,8 @@ void gui::DeleteCodeBooks(UserAccount& administrator)
 	int selected = -1;
 	auto menu = Radiobox(&CodeBooks2, &selected);
 
-	auto Enter = ftxui::Button("ENTER", [&] { DeleteFile1(CodeBooks2[selected]), gui::createCodeBooksInterface(administrator); });
-	auto Back = ftxui::Button("BACK", [&] { gui::createCodeBooksInterface(administrator); });
+	auto Enter = ftxui::Button(" ENTER", [&] { DeleteFile1(CodeBooks2[selected]), gui::createCodeBooksInterface(administrator); });
+	auto Back = ftxui::Button("  BACK", [&] { gui::createCodeBooksInterface(administrator); });
 	
 
 	auto component = ftxui::Container::Vertical({ menu,Enter,Back });
