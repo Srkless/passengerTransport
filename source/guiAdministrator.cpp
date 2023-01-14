@@ -1119,7 +1119,7 @@ void gui::createCodeTour(UserAccount& administrator)
 	}
 	else
 	{
-		std::string bannerMessage = "Already Exist!";
+		std::string bannerMessage = "Already exist!";
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 		separatorDouble(), vbox({
 			center(hbox(usernameInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
@@ -1335,8 +1335,8 @@ void EnterLocationModify(std::string name, UserAccount& administrator)
 	path += name;
 	path += ".txt";
 
-	ftxui::Component locationInput = ftxui::Input(&location, "Enter City");
-	ftxui::Component countryInput = ftxui::Input(&country, "Enter Country");
+	ftxui::Component locationInput = ftxui::Input(&location, "Enter city");
+	ftxui::Component countryInput = ftxui::Input(&country, "Enter country");
 
 	int t = 0;
 	auto backButton = ftxui::Button("BACK", [&] { gui::LocationModify(administrator); });
@@ -1674,8 +1674,8 @@ void gui::createCodeBooksInterface(UserAccount& administrator)
 	auto Location = ftxui::Button("Create location codebook", [&] {createCodeLocation(administrator); });//Dodati interfejs
 	auto Bus = ftxui::Button("Create bus codebook", [&] {createCodeBus(administrator); });//Dodati interfejs
 	auto Tour = ftxui::Button("Create tour codebook", [&] {createCodeTour(administrator); });//Dodati interfejs
-	auto Delete = ftxui::Button("Delete Codebook", [&] {gui::DeleteCodeBooks(administrator); });//Dodati interfejs
-	auto Modify = ftxui::Button("Modify Codebooks", [&] {ModifyCodeBooks(administrator); });//Dodati interfejs
+	auto Delete = ftxui::Button("Delete codebook", [&] {gui::DeleteCodeBooks(administrator); });//Dodati interfejs
+	auto Modify = ftxui::Button("Modify codebooks", [&] {ModifyCodeBooks(administrator); });//Dodati interfejs
 	auto Back = ftxui::Button("BACK", [&] {gui::administrator_interface(administrator); });//Dodati interfejs
 	auto component = ftxui::Container::Vertical({ Location,  Bus, Tour,Delete,Modify,Back });
 
