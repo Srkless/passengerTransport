@@ -245,7 +245,7 @@ namespace db
 		std::ifstream iFile(path);
 		std::unordered_map<std::string, Report> reports;
 
-		if(iFile.eof())
+		if(!iFile.eof())
 		{
 			while (!iFile.eof())
 			{
@@ -402,23 +402,26 @@ namespace db
 		std::ifstream iFile;
 
 		iFile.open(path);
-		while (!iFile.eof())
+		if(!iFile.eof())
 		{
-			path = std::filesystem::current_path();
-			path += "\\data\\rides\\";
+			while (!iFile.eof())
+			{
+				path = std::filesystem::current_path();
+				path += "\\data\\rides\\";
 
-			std::string name;
-			std::getline(iFile, name);
-			path += name;
+				std::string name;
+				std::getline(iFile, name);
+				path += name;
 
-			std::ifstream iFile2(path);
-			Ride newRide;
+				std::ifstream iFile2(path);
+				Ride newRide;
 
-			iFile2 >> newRide;
-			if (newRide.getDriver() == driverName)
-				rides[newRide.getRideID()] = newRide;
+				iFile2 >> newRide;
+				if (newRide.getDriver() == driverName)
+					rides[newRide.getRideID()] = newRide;
 
-			iFile2.close();
+				iFile2.close();
+			}
 		}
 		iFile.close();
 
@@ -587,7 +590,4 @@ namespace db
 		}
 		return rides;*/
 	}
-
 };
-
-
