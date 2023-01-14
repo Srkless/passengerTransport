@@ -474,7 +474,7 @@ void writeinFile(std::string name, std::ofstream& data)
 	data << name << std::endl;
 };
 
-void IsEqual(std::ofstream& data, std::filesystem::path path, std::string name)
+int IsEqual(std::ofstream& data, std::filesystem::path path, std::string name)
 {
 	if (is_equalFile(name))
 	{
@@ -537,7 +537,7 @@ void IsEqual(std::ofstream& data, std::filesystem::path path, std::string name)
 
 	};
 
-
+	return 1;
 }
 
 
@@ -564,9 +564,9 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 	ftxui::Component countryInput = ftxui::Input(&country, "Enter Country");
 
 	int t = 0;
-	auto backButton = ftxui::Button("Back", [&] {IsEqual(data, path, name), gui::createCodeLocation(administrator); });
+	auto backButton = ftxui::Button("Back", [&] {(t == 1) ? IsEqual(data, path, name) : t = t, gui::createCodeLocation(administrator); });
 
-	auto Enter = ftxui::Button("Enter", [&] {writeLocation(country, location, path, data), gui::EnterLocation(administrator, name), t = 0; });
+	auto Enter = ftxui::Button("Enter", [&] {writeLocation(country, location, path, data), gui::EnterLocation(administrator, name), t = 1; });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
@@ -700,7 +700,7 @@ void writeLocationBus(std::string brand, std::string model, std::string god, std
 		data << brand << "#" << model << "#" << god << "#" << registration << "#" << NumSeats << std::endl;
 	data.close();
 };
-void IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string name)
+int IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string name)
 {
 	if (is_equalFile(name))
 	{
@@ -762,7 +762,7 @@ void IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string nam
 
 
 	};
-
+	return 1;
 
 }
 
@@ -788,9 +788,9 @@ void EnterBusInfo(UserAccount& administrator, std::string name)
 
 
 	int t = 0;
-	auto backButton = ftxui::Button("     Back", [&] {IsEqualBus(data, path, name), gui::createCodeBus(administrator); });
+	auto backButton = ftxui::Button("     Back", [&] {(t == 1) ? IsEqualBus(data, path, name) : (t=t), gui::createCodeBus(administrator); });
 
-	auto Enter = ftxui::Button("     Enter", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), EnterBusInfo(administrator, name), t = 0; });
+	auto Enter = ftxui::Button("     Enter", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), EnterBusInfo(administrator, name), t = 1; });
 
 
 	auto component = ftxui::Container::Vertical({ brandInput,backButton,Enter,modelInput,YearInput,RegistrationInput,SeatsInput });
@@ -917,7 +917,7 @@ void gui::createCodeBus(UserAccount& administrator)
 
 }
 
-void IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string name)
+int IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string name)
 {
 	if (is_equalFile(name))
 	{
@@ -980,7 +980,7 @@ void IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string na
 
 	};
 
-
+	return 1;
 };
 
 
@@ -1011,8 +1011,8 @@ void EnterTourInfo(UserAccount& administrator, std::string name)
 
 
 	int t = 0;
-	auto backButton = ftxui::Button("Done", [&] {IsEqualTour(data, path, name), gui::createCodeTour(administrator); });//IS EQual
-	auto brandButton = ftxui::Button("Enter", [&] {writeTour(brand, path, data), EnterTourInfo(administrator, name), t = 0; });
+	auto backButton = ftxui::Button("Done", [&] {(t==1) ? IsEqualTour(data, path, name) : t=t, gui::createCodeTour(administrator); });//IS EQual
+	auto brandButton = ftxui::Button("Enter", [&] {writeTour(brand, path, data), EnterTourInfo(administrator, name), t = 1; });
 
 	//auto Enter = ftxui::Button("Exit", [&] { EnterBusInfo(username, name), t = 0; });//ENTER
 
