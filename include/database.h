@@ -471,23 +471,26 @@ namespace db
 		std::ifstream allReports;
 
 		allReports.open(path);
-		while (!allReports.eof())
+		if(!allReports.eof())
 		{
-			path = std::filesystem::current_path();
-			path += "\\data\\reports\\";
+			while (!allReports.eof())
+			{
+				path = std::filesystem::current_path();
+				path += "\\data\\reports\\";
 
-			std::string name;
-			std::getline(allReports, name);
-			path += name;
+				std::string name;
+				std::getline(allReports, name);
+				path += name;
 
-			std::ifstream report(path);
-			Report newReport;
+				std::ifstream report(path);
+				Report newReport;
 
-			report >> newReport;
-			if (newReport.getAuthor() == driverName)
-				reportMap[newReport.getRideID()] = newReport;
+				report >> newReport;
+				if (newReport.getAuthor() == driverName)
+					reportMap[newReport.getRideID()] = newReport;
 
-			report.close();
+				report.close();
+			}
 		}
 		allReports.close();
 
