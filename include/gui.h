@@ -40,7 +40,7 @@ namespace {
 namespace gui {
 
 	void loginInterface();
-	void registerInterface(int number);
+	void registerInterface(std::string accountUsername, int number);
 	void changePassword(std::string username);
 
 	void administrator_interface(UserAccount& administrator);
@@ -57,15 +57,8 @@ namespace gui {
 	void LocationModify(UserAccount& administrator);
 	void BusModify(UserAccount& administrator);
 	void TourModify(UserAccount& administrator);
-	/*void supervisor_interface(Database& db);
-	void employee_overview(Database& db);
-	void create_employee_interface(Database& db);
-	void items_overview(Database& db);
-	void report_interface(Database& db);
-	void daily_report(Database& db, const std::vector<Item>& items);
-	void weekly_report(Database& db, const std::vector<Item>& items);
-	void monthly_report(Database& db, const std::vector<Item>& items);
-	void yearly_report(Database& db, const std::vector<Item>& items);
-	void arbitrary_report(Database& db, const std::vector<Item>& items);
-	void create_item_interface(Database& db);*/
+
+	void addRideInterface(UserAccount& administrator);
+	void deleteRideInterface(UserAccount& administrator);
+}
 };

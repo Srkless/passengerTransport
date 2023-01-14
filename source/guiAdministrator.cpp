@@ -1,12 +1,13 @@
 #include "gui.h"
+#include <sstream>
 
 void choiceAccountInterface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Account types";
 	ftxui::Color bannerMessageColor = blue;
-	auto createAdministratorAccount = ftxui::Button("Create administrator account", [&] {gui::registerInterface(1); });
-	auto createDriverAccount = ftxui::Button("Create driver account", [&] {gui::registerInterface(2); });
+	auto createAdministratorAccount = ftxui::Button("Create administrator account", [&] {gui::registerInterface(administrator.getUsername(), 1); });
+	auto createDriverAccount = ftxui::Button("Create driver account", [&] {gui::registerInterface(administrator.getUsername(), 2); });
 	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(administrator); });
 	auto component = ftxui::Container::Vertical({ createAdministratorAccount,  createDriverAccount, backButton });
 
@@ -41,7 +42,7 @@ void editAccountInterface(int value, UserAccount& administrator)
 		else if (elem.second.getUsername() != administrator.getUsername())
 		{
 			entries.push_back(elem.first);
-		}			
+		}
 	}
 
 	int selected = -1;
@@ -68,7 +69,6 @@ void editAccountInterface(int value, UserAccount& administrator)
 }
 void gui::accountSettingsInterface(UserAccount& administrator)
 {
-
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string currUsername = administrator.getUsername();
@@ -103,7 +103,7 @@ void gui::accountSettingsInterface(UserAccount& administrator)
 	screen.Loop(renderer);
 }
 
-void addRideInterface(UserAccount& administrator) // TODO
+void gui::addRideInterface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	ftxui::Color bannerMessageColor = blue;
@@ -116,38 +116,152 @@ void addRideInterface(UserAccount& administrator) // TODO
 	ftxui::Component StartTimeComponent = ftxui::Input(&StartTime, "StartTime");
 	ftxui::Component EndTimeComponent = ftxui::Input(&EndTime, "EndTime");
 	ftxui::Component LocationComponent = ftxui::Input(&Location, "Location");
-	/*std::vector<std::string> allLocations;
-	allLocations.push_back(Location);*/
-	auto backButton = ftxui::Button("Back", [&] {gui::scheduleSettings(administrator); });
-	auto exitButton = ftxui::Button("Exit", [&] {exit(0); });
+
+	std::vector<std::string> allLocations;
+
+	std::string item;
+
+	int flag = 0;
+
+	auto enterButton = ftxui::Button("DONE", [&] {
+		std::stringstream ss(Location);
+	while (std::getline(ss, item, ','))
+		allLocations.push_back(item);
+
+	if(allLocations.size() >= 3)
+	{
+		auto start = allLocations.begin() + 1;
+		auto end = allLocations.end() - 1;
+		std::vector<std::string> locations(start, end);
+		Ride ride(RideID, Driver, BusRegistration, StartTime, EndTime, allLocations[0], locations, allLocations[locations.size() - 1]);
+		db::addRideToFile(ride);
+	}
+	else if (allLocations.size() == 2)
+	{
+		Ride ride(RideID, Driver, BusRegistration, StartTime, EndTime, allLocations[0], allLocations[1]);
+		db::addRideToFile(ride);
+	}
+	gui::scheduleSettings(administrator);
+		});
+
+	auto backButton = ftxui::Button("BACK", [&] {gui::scheduleSettings(administrator); });
 
 	ftxui::Color inputColor = light_gray;
-	auto component = ftxui::Container::Vertical({ RideIDComponent, DriverComponent, BusRegistrationComponent, StartTimeComponent, EndTimeComponent, LocationComponent , backButton ,exitButton });
+	auto component = ftxui::Container::Vertical({ RideIDComponent, DriverComponent, BusRegistrationComponent, StartTimeComponent, EndTimeComponent, LocationComponent, enterButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
-		
-		return  vbox({ center(ftxui::text(bannerMessage) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
-				separatorDouble(),
-				center(hbox({hbox(center(RideIDComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray))) | ftxui::borderRounded,
-				center(hbox(center(DriverComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded,
-				center(hbox(center(BusRegistrationComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded})) | ftxui::borderRounded,
-				center(hbox({hbox(center(StartTimeComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray))) | ftxui::borderRounded,
-				center(hbox(center(EndTimeComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded,
-				center(hbox(center(LocationComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded})) | ftxui::borderRounded,
-				center(hbox({hbox(center(backButton->Render() | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green))),
-				center(hbox(center(exitButton->Render() | size(WIDTH, EQUAL, 12) | ftxui::color(red))))})) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
-	/*auto start = allLocations.begin() + 1;
-	auto end = allLocations.end() - 1;
-	std::vector<std::string> locations(start, end);
-	Ride ride(RideID, Driver, BusRegistration, StartTime, EndTime, locations[0], locations, locations[locations.size() - 1]);
-	db::addRideToFile(ride);*/
+		if (Location == "")
+		flag = 0;
+		else
+			flag = 1;
+	return  vbox({ center(ftxui::text(bannerMessage) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+			separatorDouble(),
+			center(vbox({center(hbox({hbox(center(RideIDComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray))) | ftxui::borderRounded,
+			center(hbox(center(DriverComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded,
+			center(hbox(center(BusRegistrationComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded})) | ftxui::borderRounded,
+			center(hbox({hbox(center(StartTimeComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray))) | ftxui::borderRounded,
+			center(hbox(center(EndTimeComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded,
+			center(hbox(center(LocationComponent->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(light_gray)))) | ftxui::borderRounded})) | ftxui::borderRounded})),
+			(flag == 1) ? (center(hbox(hbox(center(enterButton->Render() | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green)))))) :
+			(center(hbox(hbox(center(backButton->Render() | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green)))))) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+
+
 	screen.Loop(renderer);
 }
-	
-void deleteRideInterface(UserAccount& administrator) // TODO
+
+int deleteRideFile(std::string name)
 {
-	exit(0);
-}
+	std::filesystem::path path = std::filesystem::current_path();
+
+	path += "\\data\\rides\\";
+	path += name;
+
+	std::filesystem::remove(path);
+
+	std::filesystem::path pathAllRides = std::filesystem::current_path();
+	pathAllRides += "\\data\\rides";
+	std::filesystem::create_directories(pathAllRides);
+	pathAllRides += "\\allRides.txt";
+
+
+	std::vector<std::string> allRides;
+
+	std::string files;
+	std::ifstream rides(pathAllRides);
+
+	while (rides >> files)
+	{
+		allRides.push_back(files);
+	};
+	rides.close();
+
+	auto n = std::find(allRides.begin(), allRides.end(), name);
+
+	if (n != allRides.end())
+	{
+		allRides.erase(n);
+	};
+
+
+	std::ofstream newRides;
+	newRides.open(pathAllRides);
+
+	for (int i = 0; i < allRides.size(); i++)
+	{
+		newRides << allRides[i] << std::endl;
+	};
+	newRides.close();
+	return 1;
+};
+
+void gui::deleteRideInterface(UserAccount& administrator)
+{
+	std::filesystem::path pathAllRides = std::filesystem::current_path();
+	pathAllRides += "\\data\\rides";
+	std::filesystem::create_directories(pathAllRides);
+	pathAllRides += "\\allRides.txt";
+
+	std::string files;
+	std::ifstream Data(pathAllRides);
+
+	std::vector<std::string> allRides;
+
+	while (Data >> files)
+	{
+		allRides.push_back(files);
+	};
+
+	Data.close();
+
+	ftxui::Color bannerMessageColor = blue;
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Choose file!";
+
+	int selected = -1;
+	int flag = 0;
+	if (allRides.size() != 0)
+		flag = 1;
+	auto menu = Radiobox(&allRides, &selected);
+
+	auto enterButton = ftxui::Button("ENTER", [&] { deleteRideFile(allRides[selected]), gui::createCodeBooksInterface(administrator); });
+	auto backButton = ftxui::Button("BACK", [&] {gui::scheduleSettings(administrator); });
+	//auto Enter = ftxui::Button("Enter", [&] {exit(0); });
+
+	auto component = ftxui::Container::Vertical({ menu, enterButton, backButton});
+
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+			separatorDouble(), vbox({
+				center(hbox(menu->Render())),
+				(flag == 1) ? (center(hbox(enterButton->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green)))):
+				(center(hbox(backButton->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))))
+				}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		});
+	screen.Loop(renderer);
+
+};
+
 
 void gui::scheduleSettings(UserAccount& administrator)
 {
@@ -155,8 +269,8 @@ void gui::scheduleSettings(UserAccount& administrator)
 	ftxui::Color bannerMessageColor = blue;
 	std::string bannerMessage = administrator.getUsername() + "'s schedule Settings";
 
-	auto addRide = ftxui::Button("Add ride", [&] {addRideInterface(administrator); });
-	auto deleteRide = ftxui::Button("Delete ride", [&] {deleteRideInterface(administrator); });
+	auto addRide = ftxui::Button("Add ride", [&] {gui::addRideInterface(administrator); });
+	auto deleteRide = ftxui::Button("Delete ride", [&] {gui::deleteRideInterface(administrator); });
 	auto backButton = ftxui::Button("BACK", [&] {gui::administrator_interface(administrator); });
 
 	auto component = ftxui::Container::Vertical({ addRide, deleteRide, backButton });
@@ -183,13 +297,14 @@ void viewReportInterface(UserAccount& administrator)
 	std::string bannerMessage = administrator.getUsername() + "'s account settings";
 	ftxui::Color bannerMessageColor = blue;
 	int flag = 0;
-	for (auto& elem : reportDatabase)
-	{
-		entries.push_back(elem.first);
-		flag = 1;
-	}
+	if (reportDatabase.size() != 0)
+		for (auto& elem : reportDatabase)
+		{
+			entries.push_back(elem.first);
+			flag = 1;
+		}
 	int selected = -1;
-	
+
 	auto menu = Radiobox(&entries, &selected);
 	auto backButton = ftxui::Button("BACK", [&] {gui::reportsSettings(administrator); });
 	auto acceptButton = ftxui::Button("Accept", [&] {});
@@ -200,7 +315,7 @@ void viewReportInterface(UserAccount& administrator)
 				center(hbox(menu->Render())),
 				center(hbox(backButton->Render() | size(WIDTH, EQUAL, 25) | ftxui::color(bright_green))),
 				center(hbox(text("") | size(WIDTH, EQUAL, 25) | ftxui::color(bright_green))),
-				(selected != -1 && flag == 1) ? (hbox(text(reportDatabase[entries[selected]].getContent()) | size(WIDTH, GREATER_THAN, 10) | ftxui::color(white))) : (hbox() | size(WIDTH, GREATER_THAN, 10))})})
+				(selected != -1 && flag == 1) ? (hbox(text(reportDatabase[entries[selected]].getContent()) | size(WIDTH, GREATER_THAN, 10) | ftxui::color(white))) : (hbox() | size(WIDTH, GREATER_THAN, 10))}) })
 				| color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	screen.Loop(renderer);
 }
@@ -225,7 +340,7 @@ void viewProblemsInterface(UserAccount& administrator, int value)
 	}
 
 	int selected = -1;
-	
+
 	auto menu = Radiobox(&entries, &selected);
 
 	auto backButton = ftxui::Button("Back", [&] {gui::reportsSettings(administrator); });
