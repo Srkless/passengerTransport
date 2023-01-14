@@ -49,7 +49,8 @@ namespace gui {
 	void createCodeBus(UserAccount& administrator);
 	void createCodeTour(UserAccount& administrator);
 	void createCodeLocation(UserAccount& administrator);
-	void scheduleSettings(UserAccount& administrator);
+	void ScheduleSettings(UserAccount& administrator);
+	void generateTravelWarrant(UserAccount& administrator);
 	void reportsSettings(UserAccount& administrator);
 	void DeleteCodeBooks(UserAccount& administrator);
 	void ModifyCodeBooks(UserAccount& administrator);

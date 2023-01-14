@@ -4,13 +4,13 @@
 void Schedule::addRideToSchedule(const std::string& rideID, const Ride& ride)
 {
 	m_Schedule[rideID] = ride;
-	db::writeScheduleToFile(*this);
+	db::writeScheduleToFile(rideID);
 }
 
 void Schedule::removeRideFromSchedule(const std::string& rideID)
 {
 	m_Schedule.erase(rideID);
-	db::writeScheduleToFile(*this);
+	db::writeScheduleToFile(rideID);
 }
 
 Ride& Schedule::getRide(std::string rideID)

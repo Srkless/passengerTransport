@@ -527,11 +527,11 @@ void gui::administrator_interface(UserAccount& administrator)
 	std::string bannerMessage = "Administrator Account";
 	ftxui::Color bannerMessageColor = blue;
 
-	auto accountSettings = ftxui::Button("Account settings", [&] {gui::accountSettingsInterface(administrator); }); // done
-	auto codeBooksSettings = ftxui::Button("Codebooks settings", [&] {gui::createCodeBooksInterface(administrator); }); // done
-	auto ScheduleSettings = ftxui::Button("Schedule settings", [&] {gui::scheduleSettings(administrator); }); // done
-	auto reportsSettings = ftxui::Button("Reports settings", [&] {gui::reportsSettings(administrator); }); // done
-	auto generateTravelWarrant = ftxui::Button("Generate Travel Warrant", [&] {exit(0); });
+	auto accountSettings = ftxui::Button("    Account settings", [&] {gui::accountSettingsInterface(administrator); }); // done
+	auto codeBooksSettings = ftxui::Button("    Codebooks settings", [&] {gui::createCodeBooksInterface(administrator); }); // done
+	auto ScheduleSettings = ftxui::Button("    Schedule settings", [&] { gui::ScheduleSettings(administrator); }); // done
+	auto reportsSettings = ftxui::Button("     Reports settings", [&] {gui::reportsSettings(administrator); }); // done
+	auto generateTravelWarrant = ftxui::Button(" Generate Travel Warrant", [&] {gui::generateTravelWarrant(administrator); });
 	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); }); // done
 
 	auto notBox = ftxui::Button("", [&] {noticationInterface(administrator); }); // done
@@ -543,11 +543,11 @@ void gui::administrator_interface(UserAccount& administrator)
 		return ftxui::vbox({ hbox({center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			(administrator.getNotificationAlert()) ? hbox(text("             "), notBox->Render() | size(WIDTH, EQUAL, 3) | ftxui::color(yellow) | hcenter) : (hbox() | ftxui::color(dark_gray))}),
 			separatorDouble(), vbox({
-				center(hbox(accountSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-				center(hbox(codeBooksSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-				center(hbox(ScheduleSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-				center(hbox(reportsSettings->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-				center(hbox(generateTravelWarrant->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
+				center(hbox(accountSettings->Render() | size(WIDTH, EQUAL, 27) | ftxui::color(light_gray) | hcenter)),
+				center(hbox(codeBooksSettings->Render() | size(WIDTH, EQUAL, 27) | ftxui::color(light_gray) | hcenter)),
+				center(hbox(ScheduleSettings->Render() | size(WIDTH, EQUAL, 27) | ftxui::color(light_gray) | hcenter)),
+				center(hbox(reportsSettings->Render() | size(WIDTH, EQUAL, 27) | ftxui::color(light_gray) | hcenter)),
+				center(hbox(generateTravelWarrant->Render() | size(WIDTH, EQUAL, 27) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
 	

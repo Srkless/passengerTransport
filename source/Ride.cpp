@@ -54,6 +54,11 @@ void Ride::changeDrivenStatus(bool value)
 	m_drivenStatus = value;
 }
 
+void Ride::setSchaduleStatus(bool value)
+{
+	this->m_inSchadule = value;
+}
+
 std::string Ride::getRideID() const
 {
 	return m_RideID;
@@ -99,6 +104,11 @@ bool Ride::getDrivenStatus() const
 	return m_drivenStatus;
 }
 
+bool Ride::getSchaduleStatus() const
+{
+	return this->m_inSchadule;
+}
+
 std::istream& operator>>(std::istream& is, Ride& ride)
 {
 	std::string line;
@@ -108,7 +118,7 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 	std::vector<std::string> pathLocationItems;
 	std::string item;
 	size_t count = 0;
-	while (std::getline(sstream, item, '#') && count < 6)
+	while (std::getline(sstream, item, '#') && count < 7)
 	{
 		items.push_back(item);
 		count++;
@@ -123,13 +133,14 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 	items.push_back(item);
 
 	ride.m_RideID = items[0];
-	ride.m_drivenStatus = std::stoi(items[1]);
-	ride.m_Driver = items[2];
-	ride.m_BusRegistration = items[3];
-	ride.m_StartTime = items[4];
-	ride.m_EndTime = items[5];
-	ride.m_StartLocation = items[6];
-	ride.m_EndLocation = items[7];
+	ride.m_inSchadule = std::stoi(items[1]);
+	ride.m_drivenStatus = std::stoi(items[2]);
+	ride.m_Driver = items[3];
+	ride.m_BusRegistration = items[4];
+	ride.m_StartTime = items[5];
+	ride.m_EndTime = items[6];
+	ride.m_StartLocation = items[7];
+	ride.m_EndLocation = items[8];
 	pathLocationItems.resize(pathLocationItems.size() - 1);
 	ride.m_PathLocations = pathLocationItems;
 
@@ -138,7 +149,7 @@ std::istream& operator>>(std::istream& is, Ride& ride)
 
 std::ostream& operator<<(std::ostream& os, const Ride& ride)
 {
-	os << ride.m_RideID << "#"  << ride.m_drivenStatus << "#" << ride.m_Driver << "#" << ride.m_BusRegistration << "#" << ride.m_StartTime << "#" << ride.m_EndTime << "#" << ride.m_StartLocation << "#";
+	os << ride.m_RideID << "#" << ride.m_inSchadule << "#" << ride.m_drivenStatus << "#" << ride.m_Driver << "#" << ride.m_BusRegistration << "#" << ride.m_StartTime << "#" << ride.m_EndTime << "#" << ride.m_StartLocation << "#";
 	for (size_t i = 0; i < ride.m_PathLocations.size(); i++)
 	{
 
