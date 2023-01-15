@@ -15,21 +15,29 @@ private:
 	std::string m_startLocation;
 	std::string m_endLocation;
 	bool m_hasBaggage = false;
+	std::string m_startTime;
+	std::string m_endTime;
 public:
 	BusTicket();
-	BusTicket(std::string rideID, std::string startLocation, std::string endLocation, bool hasBaggage = false);
+	BusTicket(std::string rideID, std::string startLocation, std::string endLocation, std::string startTime, std::string endTime, bool hasBaggage = false);
 	
-	void setRideID(std::string&);
-	void setStartLocation(std::string&);
-	void setEndLocation(std::string&);
+	void setRideID(const std::string&);
+	void setStartLocation(const std::string&);
+	void setEndLocation(const std::string&);
+	void setStartTime(const std::string&);
+	void setEndTime(const std::string&);
 
 	std::string getStartLocation();
 	std::string getEndLocation();
 	std::string getRideID();
+	std::string getStartTime();
+	std::string getEndTime();
 	bool hasBaggage();
 
 	double generatePrice(Ride& ride);
 	void addBaggage();
 	int getAvailableTickets();
 	bool buyTicket(UserAccount& usr, Ride& ride);
+	void writeToFile(UserAccount& usr, Ride& ride);
+	static BusTicket readFromFile(UserAccount& usr, std::string& name);
 };
