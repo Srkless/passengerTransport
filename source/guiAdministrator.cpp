@@ -417,7 +417,7 @@ void viewReportInterface(UserAccount& administrator)
 	int selected = -1;
 
 	auto menu = Radiobox(&entries, &selected);
-	auto backButton = ftxui::Button("BACK", [&] {gui::reportsSettings(administrator); });
+	auto backButton = ftxui::Button("         BACK", [&] {gui::reportsSettings(administrator); });
 	auto acceptButton = ftxui::Button("Accept", [&] {});
 	auto component = ftxui::Container::Vertical({ menu, backButton, acceptButton });
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -454,7 +454,7 @@ void viewProblemsInterface(UserAccount& administrator, int value)
 
 	auto menu = Radiobox(&entries, &selected);
 
-	auto backButton = ftxui::Button("BACK", [&] {gui::reportsSettings(administrator); });
+	auto backButton = ftxui::Button("         BACK", [&] {gui::reportsSettings(administrator); });
 	auto component = ftxui::Container::Vertical({ menu, backButton });
 	auto renderer = ftxui::Renderer(component, [&] {
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
@@ -1519,8 +1519,8 @@ void gui::LocationModify(UserAccount& administrator)
 	int selected = -1;
 	auto menu = Radiobox(&CodeBooks2, &selected);
 
-	auto Enter = ftxui::Button("ENTER", [&] { EnterLocationModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
-	auto Back = ftxui::Button("BACK", [&] { gui::createCodeBooksInterface(administrator); });
+	auto Enter = ftxui::Button("  ENTER", [&] { EnterLocationModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
+	auto Back = ftxui::Button("  BACK", [&] { gui::createCodeBooksInterface(administrator); });
 
 
 
@@ -1622,9 +1622,9 @@ void gui::BusModify(UserAccount& administrator)
 	int selected = -1;
 	auto menu = Radiobox(&CodeBooks2, &selected);
 
-	auto Enter = ftxui::Button("ENTER", [&] { EnterBusModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
+	auto Enter = ftxui::Button("  ENTER", [&] { EnterBusModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
 
-	auto Back = ftxui::Button("BACK", [&] { gui::createCodeBooksInterface(administrator); });
+	auto Back = ftxui::Button("  BACK", [&] { gui::createCodeBooksInterface(administrator); });
 
 
 
@@ -1719,9 +1719,9 @@ void gui::TourModify(UserAccount& administrator)
 	int selected = -1;
 	auto menu = Radiobox(&CodeBooks2, &selected);
 
-	auto Enter = ftxui::Button("ENTER", [&] { EnterTourModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
+	auto Enter = ftxui::Button("  ENTER", [&] { EnterTourModify(CodeBooks2[selected], administrator), gui::createCodeBooksInterface(administrator); });
 
-	auto Back = ftxui::Button("BACK", [&] { gui::createCodeBooksInterface(administrator); });
+	auto Back = ftxui::Button("  BACK", [&] { gui::createCodeBooksInterface(administrator); });
 
 
 

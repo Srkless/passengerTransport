@@ -318,7 +318,7 @@ void viewTicketsInterface(UserAccount& user)
 
 	ftxui::Color bannerMessageColor = white;
 	auto backButton = ftxui::Button("BACK", [&] {gui::UserInterface(user); });
-	auto viewButton = ftxui::Button("View", [&] {if(selected != -1)viewTicketInterface(user, ticketArr[selected]); });
+	auto viewButton = ftxui::Button("VIEW", [&] {if(selected != -1)viewTicketInterface(user, ticketArr[selected]); });
 	auto component = ftxui::Container::Vertical({view, viewButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
