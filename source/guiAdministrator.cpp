@@ -50,7 +50,7 @@ void editAccountInterface(int value, UserAccount& administrator)
 
 	int selected = -1;
 	auto menu = Radiobox(&entries, &selected);
-	auto acceptButton = ftxui::Button("Accept", [&] {(value == 3 && selected != -1) ? (userDatabase.erase(entries[selected]), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(administrator))
+	auto acceptButton = ftxui::Button("           ACCEPT", [&] {(value == 3 && selected != -1) ? (userDatabase.erase(entries[selected]), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(administrator))
 		: (value == 4 && selected != -1) ? (userDatabase[entries[selected]].setPassword("admin"), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(administrator)) : (userDatabase[entries[selected]].changeSuspensionStatus(), db::writeUsersToFile(userDatabase), gui::accountSettingsInterface(administrator)); });
 	auto backButton = ftxui::Button("BACK", [&] {gui::accountSettingsInterface(administrator); });
 	auto component = ftxui::Container::Vertical({ menu,acceptButton, backButton });
