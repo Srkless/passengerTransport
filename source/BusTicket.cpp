@@ -78,11 +78,11 @@ double BusTicket::generatePrice(Ride& currentRide)
 			route.push_back(currentRide.geEndLocation());
 		}
 	}
-	else if (i == 0)
+	else if (i == 0 && currentRideLocations.size() == 0)
 	{
-		route.push_back(currentRideLocations[i]);
+		route.push_back(m_endLocation);
 	}
-	return (15 * route.size() + (2 * m_hasBaggage));
+	return (7 * route.size() + (2 * m_hasBaggage));
 }
 
 void BusTicket::addBaggage()
@@ -199,6 +199,9 @@ bool BusTicket::buyTicket(UserAccount& usr, Ride& ride)
 			std::ofstream ticketOFile(path);
 			ticketOFile << m_rideID << "#" << 1;
 		}
+		std::unordered_map<std::string, UserAccount> map = db::loadUsersFromFile();
+		map[usr.getUsername()].setBalance(usr.getBalance() - price);
+		db::writeUsersToFile(map);
 		return true;
 	}
 	else

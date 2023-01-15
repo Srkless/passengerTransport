@@ -1,29 +1,38 @@
 #include "Schedule.h"
 #include "database.h"
+#include <unordered_map>
 
-void Schedule::addRideToSchedule(const std::string& rideID, const Ride& ride)
+void Schedule::addRideToSchedule(const std::string& rideID)
 {
-	m_Schedule[rideID] = ride;
-	db::writeScheduleToFile(*this);
+	m_Schedule.push_back(rideID);
 }
 
 void Schedule::removeRideFromSchedule(const std::string& rideID)
 {
-	m_Schedule.erase(rideID);
+	m_Schedule.erase(std::remove(m_Schedule.begin(), m_Schedule.end(), rideID));
 	db::writeScheduleToFile(*this);
 }
 
-Ride& Schedule::getRide(std::string rideID)
+std::string& Schedule::getRide(std::string rideID)
 {
-	return m_Schedule[rideID];
+	auto it = std::find(m_Schedule.begin(), m_Schedule.end(), rideID);
+	return m_Schedule[std::distance(m_Schedule.begin(), it)];
 }
 
 std::ostream& operator<<(std::ostream& os, const Schedule& schedule)
 {
-	for (auto& item : schedule.m_Schedule)
+	if(schedule.m_Schedule.size() > 0)
 	{
-		os << item.second.getRideID();
-	};
+		os << schedule.m_Schedule[0];
+		for (size_t i = 1; i < schedule.m_Schedule.size(); i++)
+		{
+			os << std::endl << schedule.m_Schedule[i];
+		}
+	}
+	else
+	{
+		os << "";
+	}
 
 	return os;
 }

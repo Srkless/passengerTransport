@@ -60,14 +60,14 @@ void gui::registerInterface(std::string accountUsername, int number)
 		}
 		else if (number == 2)
 		{
-			UserAccount curr(username, password, "driver", 0);
+			DriverAccount curr(username, password, "driver", 0);
 			curr.changeSuspensionStatus();
 			db::addUserToFile(curr);
 			administrator_interface(userDatabase[accountUsername]);
 		}
 		else
 		{
-			UserAccount curr(username, password, "user", 0);
+			UserAccount curr(username, password, "user", 0, 500);
 			for (auto& admin : admins)
 			{
 				if (userDatabase[admin].getNotificationAlert() == 0)
@@ -171,7 +171,6 @@ void gui::registerInterface(std::string accountUsername, int number)
 
 	screen.Loop(mainRenderer);
 }
-
 void gui::loginInterface()
 {
 	std::string username;
@@ -237,12 +236,12 @@ void gui::loginInterface()
 
 			else if (userDatabase[username].getAccountType() == "driver")
 			{
-				DriverAccount curr(username, password, "driver", 0);
+				DriverAccount curr(username, password, "driver", 0, userDatabase[username].getBalance());
 				DriverInterface(curr);
 			}
 			else
 			{
-				UserAccount curr(username, password, "user", 0);
+				UserAccount curr(username, password, "user", 0, userDatabase[username].getBalance());
 				UserInterface(curr);
 			}
 		}
@@ -343,7 +342,6 @@ void gui::loginInterface()
 	screen.Loop(mainRenderer);
 
 }
-
 void gui::changePassword(std::string username)
 {
 	std::string oldPassword;
@@ -351,7 +349,6 @@ void gui::changePassword(std::string username)
 	std::string confirmPassword;
 	ftxui::Color passwordColor = light_gray;
 	int passwordControl = 0; // 0 - sve okej, -1 stara sifra ne valja, 1 ne valja nova
-
 	std::string bannerMessage = "Password change";
 	ftxui::Color bannerMessageColor = light_gray;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -392,9 +389,20 @@ void gui::changePassword(std::string username)
 
 		}
 		});
-	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
+	auto backButton = ftxui::Button("BACK", [&]
+		{
+			if (userDatabase[username].getAccountType() == "administrator")
+			administrator_interface(userDatabase[username]);
+			else if (userDatabase[username].getAccountType() == "driver")
+			{
+				DriverAccount driveracc(username, password, "driver", 0);
+				DriverInterface(driveracc);
+			}
+			else
+				UserInterface(userDatabase[username]);
+		});
 
-	auto component = ftxui::Container::Vertical({ oldPasswordInput, passwordInput, confirmPasswordInput , confirmButton, exitButton });
+	auto component = ftxui::Container::Vertical({ oldPasswordInput, passwordInput, confirmPasswordInput , confirmButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
 
@@ -413,7 +421,8 @@ void gui::changePassword(std::string username)
 			center(hbox(ftxui::text(""), passwordInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(passwordColor))) | ftxui::borderRounded,
 			center(hbox(ftxui::text(""), confirmPasswordInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(passwordColor))) | ftxui::borderRounded}),
 			center(hbox({ftxui::hbox({center(confirmButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(bright_green),
-			center(hbox(center(exitButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) })})), }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+			(userDatabase[username].getNumOfLogins() < 20 && userDatabase[username].getPassword() != "admin") ? center(hbox(center(backButton->Render()) | size(WIDTH, EQUAL, 12) | ftxui::color(red))) : center(hbox()),
+			})})),}) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 
 
 	auto agreePasswordButton = [&]() { passwordControl = 0; };
@@ -460,7 +469,6 @@ void gui::changePassword(std::string username)
 		});
 	screen.Loop(mainRenderer);
 }
-
 void noticationInterface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -495,9 +503,10 @@ void noticationInterface(UserAccount& administrator)
 	auto exitButton = ftxui::Button("Exit", [&] { exit(0); });
 	auto backButton = ftxui::Button("Back", [&] { gui::administrator_interface(userDatabase[administrator.getUsername()]); });
 
-	int selected = -1;
-	auto driverNotificationBox = Radiobox(&driversNotification, &selected);
-	auto usersNotificationBox = Radiobox(&usersNotification, &selected);
+	int selectedDriver = -1;
+	int selectedUser = -1;
+	auto driverNotificationBox = Radiobox(&driversNotification, &selectedDriver);
+	auto usersNotificationBox = Radiobox(&usersNotification, &selectedUser);
 	int flag = 0;
 
 	if (driversNotification.size())
@@ -521,10 +530,11 @@ void noticationInterface(UserAccount& administrator)
 
 	screen.Loop(renderer);
 }
+
 void gui::administrator_interface(UserAccount& administrator)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string bannerMessage = "Administrator Account";
+	std::string bannerMessage = "  Administrator Account";
 	ftxui::Color bannerMessageColor = blue;
 
 	auto accountSettings = ftxui::Button("    Account settings", [&] {gui::accountSettingsInterface(administrator); }); // done
@@ -590,7 +600,6 @@ void gui::administrator_interface(UserAccount& administrator)
 	else
 		screen.Loop(renderer);
 }
-
 void gui::DriverInterface(DriverAccount& driver)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -658,11 +667,14 @@ void gui::DriverInterface(DriverAccount& driver)
 	
 	screen.Loop(renderer);
 }
-
 void gui::UserInterface(UserAccount& user)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "User Account";
+	std::ostringstream out;
+	out << std::fixed << std::setprecision(2) << user.getBalance();
+	std::string tmpString = out.str();
+	std::string bannerMessage2 = "Remaining funds: " + tmpString;
 	ftxui::Color bannerMessageColor = blue;
 
 	auto viewAllRouts = ftxui::Button("View all routes", [&] {viewAllRoutsInterface(user); });
@@ -675,6 +687,7 @@ void gui::UserInterface(UserAccount& user)
 	auto renderer = ftxui::Renderer(component, [&] {
 		pressed = 0;
 	return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+		center(ftxui::text(bannerMessage2) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
 		separatorDouble(), vbox({
 			center(hbox(viewAllRouts->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
 			center(hbox(viewTickets->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),

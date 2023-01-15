@@ -11,10 +11,11 @@ private:
 	int numOfLogins;
 	bool isSuspended = true;
 	bool notificationAlert = false;
-	double balance = 500;				// balance is set to 500 each time when the user logs in, for the sake of simplicity, as the virtual money system is here purely for demonstration
+	double balance = 500;
 public:
 	UserAccount();
 	UserAccount(std::string username, std::string password, std::string accountType, int numOfLogins);
+	UserAccount(std::string username, std::string password, std::string accountType, int numOfLogins, double balance);
 
 	bool operator==(const UserAccount& other);
 	std::string getUsername() const;
@@ -26,7 +27,7 @@ public:
 	double getBalance() const;
 
 	void setPassword(std::string newPassword);
-	UserAccount createAccount(std::string username, std::string password, std::string accountType);
+	UserAccount createAccount(std::string username, std::string password, std::string accountType, double balance = 500);
 	void increaseNumOfLogins();
 	void resetNumOfLogins();
 	void changeSuspensionStatus();

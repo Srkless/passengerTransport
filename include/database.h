@@ -50,6 +50,42 @@ namespace db
 		return busMap;
 	}
 
+	inline std::unordered_map<std::string, std::vector<std::string>> readTourFromFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\codebooks";
+		std::filesystem::create_directories(path);
+		path += "\\Tour.txt";
+		std::ifstream iFile(path);
+		std::unordered_map<std::string, std::vector<std::string>> tourMap;
+
+		while (!iFile.eof())
+		{
+			path = std::filesystem::current_path();
+			path += "\\data\\codebooks\\";
+
+			std::string name;
+			std::getline(iFile, name);
+			path += (name + ".txt");
+
+			std::vector<std::string> tmpTour;
+			std::string tmpString;
+			std::ifstream iFile2(path);
+			iFile2 >> tmpString;
+			iFile2.close();
+
+			std::stringstream ss(tmpString);
+			std::string item;
+			while (getline(ss, item, '#'))
+				tmpTour.push_back(item);
+
+			tourMap[tmpTour[0]] = tmpTour;
+		}
+		iFile.close();
+
+		return tourMap;
+	}
+
 	// used to make sure no duplicates exist
 	inline bool checkName(std::string fileDirectory, std::string fileArray, std::string fileName)
 	{
@@ -77,42 +113,53 @@ namespace db
 		return false;
 	}
 
-	inline void writeScheduleToFile(const Schedule& schedule)
+	inline void writeScheduleToFile(Schedule& schedule)
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides\\schedule.txt";
 		std::ofstream oFile(path);
 		oFile << schedule;
-
-		oFile.seekp(0, std::ios::end);
-		if (oFile.tellp() == 0)
-		{
-			oFile << schedule;
-		}
-		else
-		{
-			oFile << std::endl << schedule;
-		}
+		oFile.close();
 	}
 
-	inline void editScheduleFile(const Ride& ride)
+	inline Schedule readScheduleFromFile()
+	{
+		std::filesystem::path schedulePath = std::filesystem::current_path();
+		schedulePath += "\\data\\rides\\schedule.txt";
+		Schedule tmp;
+		if (std::filesystem::exists(schedulePath))
+		{
+			
+			std::ifstream iFile(schedulePath);
+			while (!iFile.eof())
+			{
+				std::string rideID;
+				iFile >> rideID;
+				tmp.addRideToSchedule(rideID);
+			}
+		}
+		return tmp;
+	}
+
+	inline void editScheduleFile(const std::string rideID)
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
 		path += "\\schedule.txt";
-		std::ofstream oFile(path);
+		std::ofstream oFile;
 		oFile.open(path, std::ios::app);
 
 		oFile.seekp(0, std::ios::end);
 		if (oFile.tellp() == 0)
 		{
-			oFile << ride;
+			oFile << rideID;
 		}
 		else
 		{
-			oFile << std::endl << ride;
+			oFile << std::endl << rideID;
 		}
+		oFile.close();
 	}
 
 	// read rides from file into an unordered map
@@ -123,6 +170,7 @@ namespace db
 		std::filesystem::create_directories(path);
 		path += "\\allRides.txt";
 		std::unordered_map<std::string, Ride> rides;
+
 		if (std::filesystem::exists(path))
 		{
 			std::ifstream iFile;
@@ -144,12 +192,6 @@ namespace db
 				iFile2.close();
 			}
 			iFile.close();
-		}
-		else
-		{
-			std::ofstream oFile(path);
-			oFile << "hi";
-			oFile.close();
 		}
 		return rides;
 	}
@@ -239,7 +281,7 @@ namespace db
 		std::ifstream iFile(path);
 		std::unordered_map<std::string, Report> reports;
 
-		if (!iFile.eof())
+		if (std::filesystem::exists(path))
 		{
 			while (!iFile.eof())
 			{
@@ -321,6 +363,7 @@ namespace db
 		path += "\\data\\users";
 		std::filesystem::create_directories(path);
 		path += "\\userData.txt";
+
 		std::ofstream oFile(path);
 
 		for (auto& user : map)
@@ -376,9 +419,10 @@ namespace db
 		std::unordered_map<std::string, Ride> rides;
 		std::ifstream iFile;
 
-		iFile.open(path);
-		if (!iFile.eof())
+		
+		if (std::filesystem::exists(path))
 		{
+			iFile.open(path);
 			while (!iFile.eof())
 			{
 				path = std::filesystem::current_path();
