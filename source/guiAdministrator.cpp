@@ -403,18 +403,19 @@ void gui::ScheduleSettings(UserAccount& administrator)
 	int addSelect = -1;
 	int deleteSelect = -1;
 	
-	Schedule ScheduleMap;
+	Schedule sched = db::readScheduleFromFile();
 
 	auto addToSchedule = ftxui::Button("Add", [&] 
 		{
-			ScheduleMap.addRideToSchedule(outSchedule[addSelect], rides[outSchedule[addSelect]]);
+			sched.addRideToSchedule(outSchedule[addSelect]);
+			db::editScheduleFile(outSchedule[addSelect]);
 			rides[outSchedule[addSelect]].setSchaduleStatus(true);
 			db::rewriteExistingRide(rides[outSchedule[addSelect]]);
 			gui::administrator_interface(administrator);
 		});
 	auto deleteFromSchedule = ftxui::Button("Delete", [&] 
 		{
-			ScheduleMap.removeRideFromSchedule(inSchedule[deleteSelect]);
+			sched.removeRideFromSchedule(inSchedule[deleteSelect]);
 			rides[inSchedule[deleteSelect]].setSchaduleStatus(false);
 			db::rewriteExistingRide(rides[inSchedule[deleteSelect]]);
 			gui::administrator_interface(administrator);

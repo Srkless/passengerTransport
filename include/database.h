@@ -77,32 +77,53 @@ namespace db
 		return false;
 	}
 
-	inline void writeScheduleToFile(const std::string schedule)
+	inline void writeScheduleToFile(const Schedule schedule)
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides\\schedule.txt";
-		std::ofstream oFile(path, std::ios::app);
+		std::ofstream oFile(path);
 		oFile << schedule;
+		oFile.close();
 	}
 
-	inline void editScheduleFile(const Ride& ride)
+	inline Schedule readScheduleFromFile()
+	{
+		std::filesystem::path schedulePath = std::filesystem::current_path();
+		schedulePath += "\\data\\rides\\schedule.txt";
+		Schedule tmp;
+		if (std::filesystem::exists(schedulePath))
+		{
+			
+			std::ifstream iFile(schedulePath);
+			while (!iFile.eof())
+			{
+				std::string rideID;
+				iFile >> rideID;
+				tmp.addRideToSchedule(rideID);
+			}
+		}
+		return tmp;
+	}
+
+	inline void editScheduleFile(const std::string rideID)
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides";
 		std::filesystem::create_directories(path);
 		path += "\\schedule.txt";
-		std::ofstream oFile(path);
+		std::ofstream oFile;
 		oFile.open(path, std::ios::app);
 
 		oFile.seekp(0, std::ios::end);
 		if (oFile.tellp() == 0)
 		{
-			oFile << ride;
+			oFile << rideID;
 		}
 		else
 		{
-			oFile << std::endl << ride;
+			oFile << std::endl << rideID;
 		}
+		oFile.close();
 	}
 
 	// read rides from file into an unordered map
