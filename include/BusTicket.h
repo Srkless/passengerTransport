@@ -37,7 +37,7 @@ public:
 	double generatePrice(Ride& ride);
 	void addBaggage();
 	int getAvailableTickets();
-	bool buyTicket(UserAccount& usr, Ride& ride);
+	int buyTicket(UserAccount& usr, Ride& ride);
 	void writeToFile(UserAccount& usr, Ride& ride);
 	static BusTicket readFromFile(UserAccount& usr, std::string& name);
 };

@@ -193,8 +193,10 @@ void buyTicketInterface(UserAccount& user, Ride& ride, BusTicket& ticket)
 	tmpString = out.str();
 	std::string bannerMessage4 = "Your Balance: " + tmpString;
 	ftxui::Color bannerMessageColor = white;
+	int error = 2;
+	int flag = 0;
 	auto backButton = ftxui::Button("BACK", [&] {selectEndLocationInterface(user, ride, ticket); });
-	auto buyButton = ftxui::Button("Purchase", [&] {ticket.buyTicket(user, ride); viewAllRoutsInterface(user); });
+	auto buyButton = ftxui::Button("Purchase", [&] {flag = 1; error = ticket.buyTicket(user, ride); });
 	auto component = ftxui::Container::Vertical({backButton, buyButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -205,9 +207,71 @@ void buyTicketInterface(UserAccount& user, Ride& ride, BusTicket& ticket)
 		   separatorDouble(), vbox({
 				hbox(
 				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
-				center(hbox(buyButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))) | hcenter | color(white) | borderHeavy
+				center(hbox(buyButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))))  | hcenter | color(white) | borderHeavy
 			   }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
-	screen.Loop(renderer);
+
+	auto agreeButton = [&]() { error = 0; gui::UserInterface(user); };
+		auto availableTicketsContainer = Container::Horizontal({ Button("OK", [&] { agreeButton(); }) });
+		auto availableTicketsRederer = Renderer(availableTicketsContainer, [&] {
+			return vbox({
+					   text("All tickets are sold"),
+					   separator(),
+					   center(hbox(availableTicketsContainer->Render())) | color(red),
+				}) |
+				border;
+			});
+
+		auto priceContainer = Container::Horizontal({ Button("OK", [&] { agreeButton(); }) });
+		auto priceRederer = Renderer(priceContainer, [&] {
+			return vbox({
+					   text("You don't have enough money"),
+					   separator(),
+					   center(hbox(priceContainer->Render())) | color(red),
+				}) |
+				border;
+			});
+
+		auto successContainer = Container::Horizontal({ Button("OK", [&] { agreeButton(); }) });
+		auto successRederer = Renderer(priceContainer, [&] {
+			return vbox({
+					   text("Successful purchase"),
+					   separator(),
+					   center(hbox(priceContainer->Render())) | color(bright_green),
+				}) |
+				border;
+			});
+
+		auto mainAvailableTicketsContainer = Container::Tab({ renderer, availableTicketsRederer }, &error);
+		auto mainPriceContainer = Container::Tab({ renderer, priceRederer }, &error);
+		auto mainsSucessContainer = Container::Tab({ renderer, successRederer }, &error);
+		auto mainContainer = Container::Vertical({ mainAvailableTicketsContainer, mainPriceContainer, mainsSucessContainer });
+
+		auto mainRenderer = Renderer(mainContainer, [&] {
+			Element document = renderer->Render();
+
+		if (error == 0) {
+			document = dbox({
+				document,
+				availableTicketsRederer->Render() | clear_under | center,
+				});
+		}
+		else if (error == -1) document = dbox({
+				document,
+				priceRederer->Render() | clear_under | center,
+			});
+		else if (error == 1)
+		{
+			document = dbox({
+				document,
+				successRederer->Render() | clear_under | center,
+				});
+		}
+
+		return document;
+			});
+
+		
+		screen.Loop(mainRenderer);
 }
 
 void viewTicketsInterface(UserAccount& user)

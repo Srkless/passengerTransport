@@ -161,82 +161,85 @@ int BusTicket::getAvailableTickets()
 	return 0;
 }
 
-bool BusTicket::buyTicket(UserAccount& usr, Ride& ride)
+int BusTicket::buyTicket(UserAccount& usr, Ride& ride)
 {
 	double price = generatePrice(ride);
 	int availableTickets = getAvailableTickets();
-	if (availableTickets > 0 && price <= usr.getBalance())
+	if (availableTickets > 0)
 	{
-		std::filesystem::path path = std::filesystem::current_path();
-		path += "\\data\\tickets\\" + m_rideID + ".txt";
-		std::ofstream oFile(path);
-		oFile << availableTickets - 1;
-		oFile.close();
-
-		// change user's ticket count
-		usr.setBalance(usr.getBalance() - price);
-		path = std::filesystem::current_path();
-		path += "\\data\\tickets\\user_tickets\\";
-		std::filesystem::create_directories(path);
-		path += usr.getUsername() + ".txt";
-		if (std::filesystem::exists(path))
+		if (price <= usr.getBalance())
 		{
-			std::unordered_map<std::string, int> tickets;
-			std::string rideName;
-			int ticketNum;
-			std::ifstream ticketFile(path);
-			std::string line;
-			bool flag = false;
-			while (!ticketFile.eof())
+			std::filesystem::path path = std::filesystem::current_path();
+			path += "\\data\\tickets\\" + m_rideID + ".txt";
+			std::ofstream oFile(path);
+			oFile << availableTickets - 1;
+			oFile.close();
+
+			// change user's ticket count
+			usr.setBalance(usr.getBalance() - price);
+			path = std::filesystem::current_path();
+			path += "\\data\\tickets\\user_tickets\\";
+			std::filesystem::create_directories(path);
+			path += usr.getUsername() + ".txt";
+			if (std::filesystem::exists(path))
 			{
-				std::getline(ticketFile, line);
-				std::stringstream sstream(line);
-				
-				std::getline(sstream, rideName, '#');
-				std::getline(sstream, line, '#');
-				ticketNum = std::stoi(line);
-				tickets[rideName] = ticketNum;
-				if (rideName == m_rideID)
+				std::unordered_map<std::string, int> tickets;
+				std::string rideName;
+				int ticketNum;
+				std::ifstream ticketFile(path);
+				std::string line;
+				bool flag = false;
+				while (!ticketFile.eof())
 				{
-					tickets[rideName]++;
-					flag = true;
+					std::getline(ticketFile, line);
+					std::stringstream sstream(line);
+
+					std::getline(sstream, rideName, '#');
+					std::getline(sstream, line, '#');
+					ticketNum = std::stoi(line);
+					tickets[rideName] = ticketNum;
+					if (rideName == m_rideID)
+					{
+						tickets[rideName]++;
+						flag = true;
+					}
 				}
-			}
-			ticketFile.close();
-			if (!flag)
-			{
-				tickets[m_rideID] = 1;
-			}
-			std::ofstream ticketOFile(path);
-			for (auto& ticket : tickets)
-			{
-				if (ticket.second)
+				ticketFile.close();
+				if (!flag)
 				{
-					ticketOFile.seekp(0, std::ios::end);
-					if (ticketOFile.tellp() == 0)
-						ticketOFile << ticket.first << "#" << ticket.second;
-					else
-						ticketOFile << std::endl << ticket.first << "#" << ticket.second;
+					tickets[m_rideID] = 1;
 				}
+				std::ofstream ticketOFile(path);
+				for (auto& ticket : tickets)
+				{
+					if (ticket.second)
+					{
+						ticketOFile.seekp(0, std::ios::end);
+						if (ticketOFile.tellp() == 0)
+							ticketOFile << ticket.first << "#" << ticket.second;
+						else
+							ticketOFile << std::endl << ticket.first << "#" << ticket.second;
+					}
+				}
+				ticketOFile.close();
 			}
-			ticketOFile.close();
+			else
+			{
+				std::ofstream ticketOFile(path);
+				ticketOFile << m_rideID << "#" << 1;
+				ticketOFile.close();
+			}
+			std::unordered_map<std::string, UserAccount> map = db::loadUsersFromFile();
+			map[usr.getUsername()].setBalance(usr.getBalance() - price);
+			db::writeUsersToFile(map);
+			writeToFile(usr, ride);
+			return 1;
 		}
 		else
-		{
-			std::ofstream ticketOFile(path);
-			ticketOFile << m_rideID << "#" << 1;
-			ticketOFile.close();
-		}
-		std::unordered_map<std::string, UserAccount> map = db::loadUsersFromFile();
-		map[usr.getUsername()].setBalance(usr.getBalance() - price);
-		db::writeUsersToFile(map);
-		writeToFile(usr, ride);
-		return true;
+			return -1;
 	}
 	else
-	{
-		return false;
-	}
+		return 0;
 }
 
 void BusTicket::writeToFile(UserAccount& usr, Ride& ride)
