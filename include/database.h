@@ -77,12 +77,22 @@ namespace db
 		return false;
 	}
 
-	inline void writeScheduleToFile(const std::string schedule)
+	inline void writeScheduleToFile(const Schedule& schedule)
 	{
 		std::filesystem::path path = std::filesystem::current_path();
 		path += "\\data\\rides\\schedule.txt";
-		std::ofstream oFile(path, std::ios::app);
+		std::ofstream oFile(path);
 		oFile << schedule;
+
+		oFile.seekp(0, std::ios::end);
+		if (oFile.tellp() == 0)
+		{
+			oFile << schedule;
+		}
+		else
+		{
+			oFile << std::endl << schedule;
+		}
 	}
 
 	inline void editScheduleFile(const Ride& ride)
@@ -134,6 +144,12 @@ namespace db
 				iFile2.close();
 			}
 			iFile.close();
+		}
+		else
+		{
+			std::ofstream oFile(path);
+			oFile << "hi";
+			oFile.close();
 		}
 		return rides;
 	}

@@ -4,13 +4,13 @@
 void Schedule::addRideToSchedule(const std::string& rideID, const Ride& ride)
 {
 	m_Schedule[rideID] = ride;
-	db::writeScheduleToFile(rideID);
+	db::writeScheduleToFile(*this);
 }
 
 void Schedule::removeRideFromSchedule(const std::string& rideID)
 {
 	m_Schedule.erase(rideID);
-	db::writeScheduleToFile(rideID);
+	db::writeScheduleToFile(*this);
 }
 
 Ride& Schedule::getRide(std::string rideID)
@@ -20,9 +20,9 @@ Ride& Schedule::getRide(std::string rideID)
 
 std::ostream& operator<<(std::ostream& os, const Schedule& schedule)
 {
-	for (const auto& item : schedule.m_Schedule)
+	for (auto& item : schedule.m_Schedule)
 	{
-		os << item.second;
+		os << item.second.getRideID();
 	};
 
 	return os;
