@@ -5,23 +5,33 @@ BusTicket::BusTicket()
 {
 }
 
-BusTicket::BusTicket(std::string rideID, std::string startLocation, std::string endLocation, bool hasBaggageb)
-	: m_rideID(rideID), m_startLocation(startLocation), m_endLocation(endLocation)
+BusTicket::BusTicket(std::string rideID, std::string startLocation, std::string endLocation, std::string startTime, std::string endTime, bool hasBaggage)
+	: m_rideID(rideID), m_startLocation(startLocation), m_endLocation(endLocation), m_startTime(startTime), m_endTime(endTime), m_hasBaggage(hasBaggage)
 {}
 
-void BusTicket::setRideID(std::string& ID)
+void BusTicket::setRideID(const std::string& ID)
 {
 	m_rideID = ID;
 }
 
-void BusTicket::setStartLocation(std::string& startLocation)
+void BusTicket::setStartLocation(const std::string& startLocation)
 {
 	m_startLocation = startLocation;
 }
 
-void BusTicket::setEndLocation(std::string& endLocation)
+void BusTicket::setEndLocation(const std::string& endLocation)
 {
 	m_endLocation = endLocation;
+}
+
+void BusTicket::setStartTime(const std::string& time)
+{
+	m_startTime = time;
+}
+
+void BusTicket::setEndTime(const std::string& time)
+{
+	m_endTime = time;
 }
 
 std::string BusTicket::getStartLocation()
@@ -37,6 +47,16 @@ std::string BusTicket::getEndLocation()
 std::string BusTicket::getRideID()
 {
 	return m_rideID;
+}
+
+std::string BusTicket::getStartTime()
+{
+	return m_startTime;
+}
+
+std::string BusTicket::getEndTime()
+{
+	return m_endTime;
 }
 
 bool BusTicket::hasBaggage()
@@ -166,6 +186,7 @@ bool BusTicket::buyTicket(UserAccount& usr, Ride& ride)
 			int ticketNum;
 			std::ifstream ticketFile(path);
 			std::string line;
+			bool flag = false;
 			while (!ticketFile.eof())
 			{
 				std::getline(ticketFile, line);
@@ -178,9 +199,14 @@ bool BusTicket::buyTicket(UserAccount& usr, Ride& ride)
 				if (rideName == m_rideID)
 				{
 					tickets[rideName]++;
+					flag = true;
 				}
 			}
 			ticketFile.close();
+			if (!flag)
+			{
+				tickets[m_rideID] = 1;
+			}
 			std::ofstream ticketOFile(path);
 			for (auto& ticket : tickets)
 			{
@@ -193,15 +219,18 @@ bool BusTicket::buyTicket(UserAccount& usr, Ride& ride)
 						ticketOFile << std::endl << ticket.first << "#" << ticket.second;
 				}
 			}
+			ticketOFile.close();
 		}
 		else
 		{
 			std::ofstream ticketOFile(path);
 			ticketOFile << m_rideID << "#" << 1;
+			ticketOFile.close();
 		}
 		std::unordered_map<std::string, UserAccount> map = db::loadUsersFromFile();
 		map[usr.getUsername()].setBalance(usr.getBalance() - price);
 		db::writeUsersToFile(map);
+		writeToFile(usr, ride);
 		return true;
 	}
 	else
@@ -209,4 +238,59 @@ bool BusTicket::buyTicket(UserAccount& usr, Ride& ride)
 		return false;
 	}
 }
-	
+
+void BusTicket::writeToFile(UserAccount& usr, Ride& ride)
+{
+	std::filesystem::path path = std::filesystem::current_path();
+	path += "\\data\\tickets\\user_tickets\\";
+	std::filesystem::create_directories(path);
+	path += (usr.getUsername() + ".txt");
+	if (std::filesystem::exists(path))
+	{
+		std::unordered_map<std::string, int> tickets;
+		std::string rideName;
+		int ticketNum;
+		std::ifstream ticketFile(path);
+		std::string line;
+
+		while (!ticketFile.eof())
+		{
+			std::getline(ticketFile, line);
+			std::stringstream sstream(line);
+
+			std::getline(sstream, rideName, '#');
+			std::getline(sstream, line, '#');
+			ticketNum = std::stoi(line);
+			tickets[rideName] = ticketNum;
+		}
+		ticketFile.close();
+
+		path = std::filesystem::current_path();
+		path += ("\\data\\tickets\\user_tickets\\" + usr.getUsername() + "\\");
+		std::filesystem::create_directories(path);
+		path += (m_rideID + "_" + std::to_string(tickets[m_rideID]) + ".txt");
+		std::ofstream outFile(path);
+		outFile << m_rideID << "#" << m_startLocation << "#" << m_endLocation << "#" << m_hasBaggage << "#" << ride.getStartTime() << "#" << ride.getEndTime();
+		outFile.close();
+	}
+}
+
+BusTicket BusTicket::readFromFile(UserAccount& usr, std::string& name)
+{
+	std::ifstream iFile;
+	std::filesystem::path path = std::filesystem::current_path();
+	path += "\\data\\tickets\\user_tickets\\" + usr.getUsername() + "\\" + name + ".txt";
+	iFile.open(path);
+	std::string line;
+	std::getline(iFile, line);
+	std::stringstream sstream(line);
+	std::vector<std::string> arr;
+	size_t count = 0;
+	while (std::getline(sstream, line, '#') && count < 6)
+	{
+		arr.push_back(line);
+		count++;
+	}
+	BusTicket tmp(arr[0], arr[1], arr[2], arr[4], arr[5], std::stoi(arr[3]));
+	return tmp;
+}

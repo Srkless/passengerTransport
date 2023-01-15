@@ -79,6 +79,8 @@ void viewRide(UserAccount& user, Ride& ride)
 void selectStartLocationInterface(UserAccount& user, Ride& ride)
 {
 	BusTicket ticket;
+	ticket.setStartTime(ride.getStartTime());
+	ticket.setEndTime(ride.getEndTime());
 	std::string ID = ride.getRideID();
 	ticket.setRideID(ID);
 	std::vector<std::string> locations;
@@ -212,8 +214,12 @@ void viewTicketsInterface(UserAccount& user)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Your tickets: ";
-	std::string tmp;
+	std::string tmp2;
+	int numOfTickets;
+	std::vector<std::string> stringArr;
 	std::vector<std::string> tickets;
+	std::unordered_map<std::string, int> ticketIDs;
+	std::vector<BusTicket> ticketArr;
 	std::filesystem::path path = std::filesystem::current_path();
 	path += ("\\data\\tickets\\user_tickets\\" + user.getUsername() + ".txt");
 	if (std::filesystem::exists(path))
@@ -221,23 +227,35 @@ void viewTicketsInterface(UserAccount& user)
 		std::ifstream iFile(path);
 		while(!iFile.eof())
 		{
+			std::string tmp;
 			std::string line;
 			std::getline(iFile, line);
 			std::stringstream sstream(line);
 			std::getline(sstream, tmp, '#');
-			tmp += ": ";
 			std::getline(sstream, line, '#');
-			tmp += line;
-			tickets.push_back(tmp);
+			ticketIDs[tmp] = std::stoi(line);
+		}
+		iFile.close();
+		for (auto& it : ticketIDs)
+		{
+			for (size_t i = 0; i < it.second; i++)
+			{
+				std::string name = it.first + "_" + std::to_string(i + 1);
+				ticketArr.push_back(BusTicket::readFromFile(user, name));
+				stringArr.push_back(ticketArr.back().getStartLocation() + " - " + ticketArr.back().getEndLocation());
+			}
 		}
 	}
 
+	
+
 	int selected = -1;
-	auto view = Radiobox(&tickets, &selected);
+	auto view = Radiobox(&stringArr, &selected);
 
 	ftxui::Color bannerMessageColor = white;
 	auto backButton = ftxui::Button("BACK", [&] {gui::UserInterface(user); });
-	auto component = ftxui::Container::Vertical({view, backButton });
+	auto viewButton = ftxui::Button("View", [&] {if(selected != -1)viewTicketInterface(user, ticketArr[selected]); });
+	auto component = ftxui::Container::Vertical({view, viewButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
 		return vbox({
@@ -245,7 +263,35 @@ void viewTicketsInterface(UserAccount& user)
 		   separatorDouble(), vbox({
 				center(hbox(view->Render())),
 				hbox({
-				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))}) | hcenter | color(white) | borderHeavy
+				center(hbox(backButton->Render())),
+				center(hbox(viewButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))}) | hcenter | color(white) | borderHeavy
+			   }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
+	screen.Loop(renderer);
+}
+
+void viewTicketInterface(UserAccount& user, BusTicket& ticket)
+{
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage1 = "Ride ID: " + ticket.getRideID();
+	std::string bannerMessage2 = "Start Location: " + ticket.getStartLocation();
+	std::string bannerMessage3 = "End Location: " + ticket.getEndLocation();
+	std::string bannerMessage4 = "Start Time: " + ticket.getStartTime() + " Est.Arrival Time: " + ticket.getEndTime();
+	std::string bannerMessage5 = (ticket.hasBaggage() ? "Has Additional Baggage" : "Does Not Have Additional Baggage");
+	ftxui::Color bannerMessageColor = white;
+	auto backButton = ftxui::Button("BACK", [&] {viewTicketsInterface(user); });
+	auto component = ftxui::Container::Vertical({ backButton });
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		return vbox({
+		center(ftxui::text(bannerMessage1) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
+		center(ftxui::text(bannerMessage2) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
+		center(ftxui::text(bannerMessage3) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
+		center(ftxui::text(bannerMessage4) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
+		center(ftxui::text(bannerMessage5) | vcenter | size(HEIGHT, EQUAL, 5) | ftxui::color(bannerMessageColor)),
+		   separatorDouble(), vbox({
+				hbox({
+				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+				}) | hcenter | color(white) | borderHeavy
 			   }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150); });
 	screen.Loop(renderer);
 }

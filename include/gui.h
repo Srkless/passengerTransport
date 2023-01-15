@@ -74,3 +74,4 @@ void selectBaggageInterface(UserAccount& user, Ride& ride, BusTicket& ticket);
 void buyTicketInterface(UserAccount& user, Ride& ride, BusTicket& ticket);
 void viewTicketsInterface(UserAccount& user);
 void viewRide(UserAccount& user, Ride& ride);
+void viewTicketInterface(UserAccount& user, BusTicket& ticket);
