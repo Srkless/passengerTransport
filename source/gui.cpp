@@ -44,8 +44,12 @@ void gui::registerInterface(std::string accountUsername, int number)
 
 	int flag = 0;
 	auto registerButton = ftxui::Button("REGISTER", [&] {
+		username.erase(0, username.find_first_not_of(" "));
+		username.erase(username.find_last_not_of(" ") + 1);
+		password.erase(0, password.find_first_not_of(" "));
+		password.erase(password.find_last_not_of(" ") + 1);
 		flag = 1;
-	if (flag && userDatabase[username].getUsername() == "" && password == againPassword && password.size() > 7) {
+	if (flag && userDatabase[username].getUsername() == "" && password == againPassword && password.size() > 7 && username != "") {
 		bannerMessage = "Successful registration!";
 		bannerMessageColor = bright_green;
 		wrongPassword = 0;
@@ -375,6 +379,8 @@ void gui::changePassword(std::string username)
 	userDatabase = db::loadUsersFromFile();
 
 	auto confirmButton = ftxui::Button("CONFIRM", [&] {
+		password.erase(0, password.find_first_not_of(" "));
+		password.erase(password.find_last_not_of(" ") + 1);
 		if (confirmPassword.size() >= 8 && Utility::decrypt(userDatabase[username].getPassword()) == Utility::decrypt(oldPassword) && Utility::decrypt(password) == Utility::decrypt(confirmPassword) && Utility::decrypt(oldPassword) != Utility::decrypt(confirmPassword))
 		{
 			bannerMessage = "Successful password change";
