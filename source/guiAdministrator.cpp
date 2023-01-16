@@ -756,12 +756,16 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 	std::string location;
 	std::string country;
 
+	ftxui::Color locationColor = bright_green;
+	ftxui::Color countryColor = bright_green;
+
 	std::filesystem::path path = std::filesystem::current_path();
 	path += "\\data\\codebooks\\";
 	path += name;
 	path += ".txt";
 	std::ofstream data;
 
+	bool flag = false;
 
 	ftxui::Component locationInput = ftxui::Input(&location, "Enter city");
 	ftxui::Component countryInput = ftxui::Input(&country, "Enter country");
@@ -769,7 +773,7 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 	int t = 0;
 	auto backButton = ftxui::Button("BACK", [&] {gui::createCodeLocation(administrator); });
 
-	auto Enter = ftxui::Button("ENTER", [&] {writeLocation(country, location, path, data), IsEqual(data, path, name), gui::createCodeBooksInterface(administrator); });
+	auto Enter = ftxui::Button("ENTER", [&] {if (location == "" || country == "") { flag = true; } else { writeLocation(country, location, path, data), IsEqual(data, path, name), gui::createCodeBooksInterface(administrator); } });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
@@ -778,11 +782,42 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 
 	auto renderer = ftxui::Renderer(component, [&] {
 		{
+			if(flag == true)
+			{
+				if (location == "" && country != "")
+				{
+					locationColor = red;
+					countryColor = bright_green;
+					bannerMessage = "Must Enter Location!";
+					bannerMessageColor = red;
+				}
+				else if (location != "" && country == "")
+				{
+					locationColor = bright_green;
+					countryColor = red;
+					bannerMessage = "Must Enter Country!";
+					bannerMessageColor = red;
+				}
+				else if (location == "" && country == "")
+				{
+					locationColor = red;
+					countryColor = red;
+					bannerMessage = "Must Enter Information!";
+					bannerMessageColor = red;
+				}
+				else
+				{
+					locationColor = bright_green;
+					countryColor = bright_green;
+					bannerMessage = "Location";
+					bannerMessageColor = blue;
+				}
+			}
 
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 				separatorDouble(), vbox({
-					center(hbox(locationInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))| borderRounded,
-					center(hbox(countryInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(locationInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(locationColor)))| borderRounded,
+					center(hbox(countryInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(countryColor))) | borderRounded,
 					center(hbox(Enter->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
 					center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
 
@@ -822,11 +857,15 @@ void gui::createCodeLocation(UserAccount& administrator)
 	std::filesystem::create_directories(location3);
 	location3 += "\\location.txt";
 
+	ftxui::Color inputColor = bright_green;
+
+	bool flag = false;
+
 	auto backButton = ftxui::Button("BACK", [&] { gui::administrator_interface(administrator); });
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("ENTER", [&] {writeinFile(name, word1), writeinFile(name, location3), EnterLocation(administrator, name), t = 1; });
+	auto Enter = ftxui::Button("ENTER", [&] {if (name == "") { flag = true; } else { writeinFile(name, word1), writeinFile(name, location3), EnterLocation(administrator, name), t = 1; }});
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -850,12 +889,19 @@ void gui::createCodeLocation(UserAccount& administrator)
 	if (t == 0)
 	{
 		bannerMessageColor = blue;
+		inputColor = bright_green;
+		if (name == "" && flag == true)
+		{
+			bannerMessage = "Must enter file name!";
+			bannerMessageColor = red;
+			inputColor = red;
+		}
 
 
 
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(), vbox({
-				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green)))| borderRounded,
+				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(inputColor)))| borderRounded,
 				center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 				center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green)))
 				}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
@@ -970,6 +1016,12 @@ void EnterBusInfo(UserAccount& administrator, std::string name)
 	path += ".txt";
 	std::ofstream data;
 
+	ftxui::Color brandInputColor;
+	ftxui::Color modelInputColor;
+	ftxui::Color yearInputColor;
+	ftxui::Color registrationInputColor;
+	ftxui::Color seatsInputColor;
+
 
 	ftxui::Component brandInput = ftxui::Input(&brand, "Enter brand");
 	ftxui::Component modelInput = ftxui::Input(&model, "Enter model");
@@ -977,11 +1029,12 @@ void EnterBusInfo(UserAccount& administrator, std::string name)
 	ftxui::Component RegistrationInput = ftxui::Input(&regis, "Enter registration");
 	ftxui::Component SeatsInput = ftxui::Input(&Numseats, "Enter number of seats");
 
+	bool flag = false;
 
 	int t = 0;
 	auto backButton = ftxui::Button("     BACK", [&] { gui::createCodeBus(administrator); });
 
-	auto Enter = ftxui::Button("     ENTER", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), IsEqualBus(data, path, name), gui::createCodeBooksInterface(administrator); });
+	auto Enter = ftxui::Button("     ENTER", [&] {if (brand != "" && model != "" && god != "" && regis != "" && Numseats != "") { writeLocationBus(brand, model, god, regis, Numseats, path, data), IsEqualBus(data, path, name), gui::createCodeBooksInterface(administrator); } else { flag = true; }});
 
 
 	auto component = ftxui::Container::Vertical({ brandInput,backButton,Enter,modelInput,YearInput,RegistrationInput,SeatsInput });
@@ -990,19 +1043,57 @@ void EnterBusInfo(UserAccount& administrator, std::string name)
 
 	auto renderer = ftxui::Renderer(component, [&] {
 		{
-
-
-
+			if (brand != "" && model != "" && god != "" && regis != "" && Numseats != "")
+			{
+				brandInputColor = bright_green;
+				modelInputColor = bright_green;
+				yearInputColor = bright_green;
+				registrationInputColor = bright_green;
+				seatsInputColor = bright_green;
+				bannerMessage = "Bus";
+				bannerMessageColor = blue;
+			}
+			else if(flag)
+			{
+				bannerMessage = "Enter:";
+				bannerMessageColor = red;
+				if (brand == "")
+				{
+					brandInputColor = red;
+					bannerMessage += " Bus!";
+				}
+				if (model == "")
+				{
+					modelInputColor = red;
+					bannerMessage += " Model!";
+				}
+				if (god == "")
+				{
+					yearInputColor = red;
+					bannerMessage += " Prod. Year!";
+				}
+				if (regis == "")
+				{
+					registrationInputColor = red;
+					bannerMessage += " Reg.";
+				}
+				if (Numseats == "")
+				{
+					seatsInputColor = red;
+					bannerMessage += " Num. of Seats";
+				}
+			}
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 				separatorDouble(), vbox({vbox({
-					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
-					center(hbox(modelInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
-					center(hbox(YearInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
-					center(hbox(RegistrationInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
-					center(hbox(SeatsInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded})| borderRounded,
+					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(brandInputColor))) | borderRounded,
+					center(hbox(modelInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(modelInputColor))) | borderRounded,
+					center(hbox(YearInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(yearInputColor))) | borderRounded,
+					center(hbox(RegistrationInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(registrationInputColor))) | borderRounded,
+					center(hbox(SeatsInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(seatsInputColor))) | borderRounded}) | borderRounded,
 					hbox({center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 					center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green)))}),
 					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+
 		}});
 
 
@@ -1031,16 +1122,20 @@ void gui::createCodeBus(UserAccount& administrator)
 	std::string name;
 	std::string type;
 
+	ftxui::Color inputColor = bright_green;
+
 	std::filesystem::path location3 = std::filesystem::current_path();
 	location3 += "\\data\\codebooks";
 	std::filesystem::create_directories(location3);
 	location3 += "\\Bus.txt";
 
+	bool flag = false;
+
 	auto backButton = ftxui::Button("BACK", [&] { gui::administrator_interface(administrator); });
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("      ENTER", [&] {writeinFile(name, word1), writeinFile(name, location3), EnterBusInfo(administrator, name), t = 1; });
+	auto Enter = ftxui::Button("      ENTER", [&] {if (name != "") { writeinFile(name, word1), writeinFile(name, location3), EnterBusInfo(administrator, name), t = 1; } else flag = true; });
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -1063,13 +1158,22 @@ void gui::createCodeBus(UserAccount& administrator)
 
 	if (t == 0)
 	{
-		bannerMessageColor = blue;
-
-
+		if (name == "" && flag == true)
+		{
+			inputColor = red;
+			bannerMessage = "Must enter file name!";
+			bannerMessageColor = red;
+		}
+		else
+		{
+			bannerMessageColor = blue;
+			bannerMessage = "Bus";
+			inputColor = bright_green;
+		}
 
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(), vbox({
-				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))) | borderRounded,
+				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(inputColor))) | borderRounded,
 					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
 				}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
@@ -1162,12 +1266,14 @@ void writeTour(std::string Location, std::filesystem::path path, std::ofstream& 
 		data << Location << "#";
 	data.close();
 };
-void EnterTourInfo(UserAccount& administrator, std::string name)
+void EnterTourInfo(UserAccount& administrator, std::string name, int& locationCounter)
 {
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
 	std::string bannerMessage = "Tour";
-	std::string brand;
+	std::string location;
+
+	int flag = 0;
 
 	std::filesystem::path path = std::filesystem::current_path();
 	path += "\\data\\codebooks\\";
@@ -1175,31 +1281,56 @@ void EnterTourInfo(UserAccount& administrator, std::string name)
 	path += ".txt";
 	std::ofstream data;
 
-
-	ftxui::Component brandInput = ftxui::Input(&brand, "Enter destination");
-
-
+	ftxui::Color locationInputColor = bright_green;
+	ftxui::Component locationInput = ftxui::Input(&location, "Enter destination");
 
 	int t = 0;
-	auto backButton = ftxui::Button("DONE", [&] {IsEqualTour(data, path, name), gui::createCodeTour(administrator); });//IS EQual
-	auto brandButton = ftxui::Button("ENTER", [&] {writeTour(brand, path, data), t = 1, EnterTourInfo(administrator, name); });
+	auto backButton = ftxui::Button("DONE", [&] {if (locationCounter < 2) { flag = 2; } else { IsEqualTour(data, path, name), gui::createCodeTour(administrator); }});//IS EQual
+	auto enterButton = ftxui::Button("ENTER", [&] {if (location != "") { locationCounter++; writeTour(location, path, data), t = 1, EnterTourInfo(administrator, name, locationCounter); if (locationCounter >= 2) flag = 0; } else { flag = 1; }});
 
 	//auto Enter = ftxui::Button("Exit", [&] { EnterBusInfo(username, name), t = 0; });//ENTER
 
 
-	auto component = ftxui::Container::Vertical({ brandInput,backButton,brandButton });
+	auto component = ftxui::Container::Vertical({ locationInput,backButton,enterButton });
 
 
 
 	auto renderer = ftxui::Renderer(component, [&] {
 		{
+			if (flag == 1)
+			{
+				if (location == "")
+				{
+					locationInputColor = red;
+					bannerMessage = "Must Enter Location!";
+					bannerMessageColor = red;
+				}
+				else
+				{
+					locationInputColor = bright_green;
+					bannerMessage = "Enter Location:";
+					bannerMessageColor = blue;
+				}
+			}
+			else if (flag == 2)
+			{
+				locationInputColor = red;
+				bannerMessage = "Must Enter At Least Two Locations!";
+				bannerMessageColor = red;
+			}
+			else
+			{
+				locationInputColor = bright_green;
+				bannerMessage = "Enter Location:";
+				bannerMessageColor = blue;
+			}
 
 
 
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 				separatorDouble(), vbox({
-					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded,
-					center(hbox(brandButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
+					center(hbox(locationInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(locationInputColor))) | borderRounded,
+					center(hbox(enterButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 					center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 
 					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
@@ -1225,6 +1356,7 @@ void gui::createCodeTour(UserAccount& administrator)
 
 	Data.close();
 
+	bool flag = false;
 
 	ftxui::Color bannerMessageColor = blue;
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -1237,12 +1369,15 @@ void gui::createCodeTour(UserAccount& administrator)
 	std::filesystem::create_directories(location3);
 	location3 += "\\Tour.txt";
 
+	int locationCounter = 0;
+
+	ftxui::Color inputColor = bright_green;
 
 	auto backButton = ftxui::Button("DONE", [&] { gui::administrator_interface(administrator); });
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("      ENTER", [&] {writeinFile(name, word1), writeinFile(name, location3), EnterTourInfo(administrator, name), t = 1; });//Napraviti tour info
+	auto Enter = ftxui::Button("      ENTER", [&] {if (name != "") { writeinFile(name, word1), writeinFile(name, location3), EnterTourInfo(administrator, name, locationCounter), t = 1; } else { flag = true; }});//Napraviti tour info
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -1257,6 +1392,7 @@ void gui::createCodeTour(UserAccount& administrator)
 	{
 		if (name == CodeBook[i])
 		{
+			inputColor = red;
 			bannerMessageColor = red;
 			t = 1;
 		}
@@ -1265,13 +1401,34 @@ void gui::createCodeTour(UserAccount& administrator)
 
 	if (t == 0)
 	{
-		bannerMessageColor = blue;
+		if (flag == true)
+		{
+			if (name == "")
+			{
+				inputColor = red;
+				bannerMessage = "Must Enter Filename!";
+				bannerMessageColor = red;
+			}
+			else
+			{
+				bannerMessageColor = blue;
+				bannerMessage = "Enter Filename";
+				inputColor = bright_green;
+			}
+		}
+		else
+		{
+			bannerMessageColor = blue;
+			bannerMessage = "Enter Filename";
+			inputColor = bright_green;
+		}
+		
 
 
 
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(), vbox({
-				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))) | borderRounded,
+				center(hbox(usernameInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(inputColor))) | borderRounded,
 					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))),
 				center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
 				}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
@@ -1281,7 +1438,7 @@ void gui::createCodeTour(UserAccount& administrator)
 		std::string bannerMessage = "Already exist!";
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 		separatorDouble(), vbox({
-			center(hbox(usernameInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+			center(hbox(usernameInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(inputColor))),
 			center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
 			}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 
@@ -1688,7 +1845,7 @@ void EnterTourModify(std::string name, UserAccount& administrator)
 	std::ofstream data;
 
 
-	ftxui::Component brandInput = ftxui::Input(&brand, "Enter destination");
+	ftxui::Component brandInput = ftxui::Input(&brand, "Add Location To Tour");
 
 
 
@@ -1855,8 +2012,8 @@ void gui::CreateSafetycopy(UserAccount& administrator)
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 				separatorDouble(), vbox({
 					hbox({
-					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 10) | ftxui::color(bright_green))),
-					}),center(hbox(Enter->Render() | size(WIDTH,EQUAL, 30) | ftxui::color(bright_green)))
+					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 30) | ftxui::color(bright_green))) | borderRounded ,
+					}),center(hbox(Enter->Render() | size(WIDTH,LESS_THAN, 20) | ftxui::color(bright_green)))
 
 					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		}});

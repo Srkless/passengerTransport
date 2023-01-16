@@ -552,7 +552,7 @@ void gui::administrator_interface(UserAccount& administrator)
 	auto codeBooksSettings = ftxui::Button("    Codebooks settings", [&] {gui::createCodeBooksInterface(administrator); }); // done
 	auto ScheduleSettings = ftxui::Button("    Schedule settings", [&] { gui::ScheduleSettings(administrator); }); // done
 	auto reportsSettings = ftxui::Button("     Reports settings", [&] {gui::reportsSettings(administrator); }); // done
-	auto safety = ftxui::Button("    Create Backup Copy", [&] {gui::CreateSafetycopy(administrator); });
+	auto safety = ftxui::Button("   Create Backup Copy", [&] {gui::CreateSafetycopy(administrator); });
 	auto generateTravelWarrant = ftxui::Button(" Generate Travel Warrant", [&] {gui::generateTravelWarrant(administrator); });
 	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); }); // done
 
