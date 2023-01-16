@@ -541,12 +541,13 @@ void gui::administrator_interface(UserAccount& administrator)
 	auto codeBooksSettings = ftxui::Button("    Codebooks settings", [&] {gui::createCodeBooksInterface(administrator); }); // done
 	auto ScheduleSettings = ftxui::Button("    Schedule settings", [&] { gui::ScheduleSettings(administrator); }); // done
 	auto reportsSettings = ftxui::Button("     Reports settings", [&] {gui::reportsSettings(administrator); }); // done
+	auto safety = ftxui::Button("    Create Backup Copy", [&] {gui::CreateSafetycopy(administrator); });
 	auto generateTravelWarrant = ftxui::Button(" Generate Travel Warrant", [&] {gui::generateTravelWarrant(administrator); });
 	auto logout = ftxui::Button("SIGN OUT", [&] {loginInterface(); }); // done
 
 	auto notBox = ftxui::Button("", [&] {noticationInterface(administrator); }); // done
 
-	auto component = ftxui::Container::Vertical({ notBox, accountSettings, codeBooksSettings, ScheduleSettings, reportsSettings, generateTravelWarrant, logout });
+	auto component = ftxui::Container::Vertical({ notBox, accountSettings, codeBooksSettings, ScheduleSettings, reportsSettings, generateTravelWarrant, logout,safety });
 
 	auto renderer = ftxui::Renderer(component, [&] {
 		pressed = 0;
@@ -557,6 +558,7 @@ void gui::administrator_interface(UserAccount& administrator)
 				center(hbox(codeBooksSettings->Render() | size(WIDTH, EQUAL, 27) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(ScheduleSettings->Render() | size(WIDTH, EQUAL, 27) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(reportsSettings->Render() | size(WIDTH, EQUAL, 27) | ftxui::color(light_gray) | hcenter)),
+				center(hbox(safety->Render() | size(WIDTH, EQUAL, 27) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(generateTravelWarrant->Render() | size(WIDTH, EQUAL, 27) | ftxui::color(light_gray) | hcenter)),
 				center(hbox(logout->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(red))) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});

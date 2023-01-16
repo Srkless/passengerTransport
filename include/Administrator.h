@@ -15,6 +15,5 @@ public:
 	bool CreateCodeBook();
 	bool DeleteCodeBook();
 	bool ModificationCodeBoks();
-
 };
 
