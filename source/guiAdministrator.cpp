@@ -767,9 +767,9 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 	ftxui::Component countryInput = ftxui::Input(&country, "Enter country");
 
 	int t = 0;
-	auto backButton = ftxui::Button("BACK", [&] {gui::createCodeLocation(administrator); });
+	auto backButton = ftxui::Button(" BACK", [&] {gui::createCodeLocation(administrator); });
 
-	auto Enter = ftxui::Button("ENTER", [&] {writeLocation(country, location, path, data), IsEqual(data, path, name), gui::createCodeBooksInterface(administrator); });
+	auto Enter = ftxui::Button("  ENTER", [&] {writeLocation(country, location, path, data), IsEqual(data, path, name), gui::createCodeBooksInterface(administrator); });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
@@ -781,10 +781,10 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 				separatorDouble(), vbox({
-					center(hbox(locationInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green)))| borderRounded,
-					center(hbox(countryInput->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))) | borderRounded,
-					center(hbox(Enter->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
-					center(hbox(backButton->Render() | size(WIDTH, LESS_THAN, 20) | ftxui::color(bright_green))),
+					center(vbox({center(hbox(locationInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))) | borderRounded,
+					center(hbox(countryInput->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green))) | borderRounded})) | borderRounded,
+					center(hbox(Enter->Render() | size(WIDTH, EQUAL, 10) | ftxui::color(bright_green))),
+					center(hbox(backButton->Render() | size(WIDTH, EQUAL, 10) | ftxui::color(bright_green))),
 
 					
 					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
