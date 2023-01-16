@@ -107,7 +107,18 @@ void gui::registerInterface(std::string accountUsername, int number)
 	}
 		});
 	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::loginInterface(); });
+	auto backButton = ftxui::Button("BACK", [&]
+		{
+			if (userDatabase[accountUsername].getAccountType() == "administrator")
+			administrator_interface(userDatabase[accountUsername]);
+			else if (userDatabase[accountUsername].getAccountType() == "driver")
+			{
+				DriverAccount curr(accountUsername, password, "driver", 0);
+				DriverInterface(curr);
+			}
+			else
+				gui::loginInterface(); 
+		});
 	auto component = ftxui::Container::Vertical({ inputUsername, inputPassword, inputPasswordAgain, registerButton, exitButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
