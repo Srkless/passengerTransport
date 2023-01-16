@@ -1834,3 +1834,34 @@ void gui::createCodeBooksInterface(UserAccount& administrator)
 		});
 	screen.Loop(renderer);
 };
+void gui::CreateSafetycopy(UserAccount& administrator)
+{
+
+	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	std::string bannerMessage = "Safety Copy Generator";
+	ftxui::Color bannerMessageColor = blue;
+	std::string location;
+	ftxui::Component brandInput = ftxui::Input(&location, "Enter destination directory");
+
+	auto Enter = ftxui::Button("Enter", [&] {std::filesystem::path path = location;  db::createSafetyCopy(path); gui::administrator_interface(administrator); });
+
+
+	auto component = ftxui::Container::Vertical({ Enter,brandInput });
+
+
+	auto renderer = ftxui::Renderer(component, [&] {
+		{
+
+			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
+				separatorDouble(), vbox({
+					hbox({
+					center(hbox(brandInput->Render() | size(WIDTH, EQUAL, 10) | ftxui::color(bright_green))),
+					}),center(hbox(Enter->Render() | size(WIDTH,EQUAL, 30) | ftxui::color(bright_green)))
+
+					}) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
+		}});
+
+
+	screen.Loop(renderer);
+
+}

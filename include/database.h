@@ -19,6 +19,28 @@
 namespace db
 {
 
+	inline void createSafetyCopy(const std::filesystem::path& destination)
+	{
+		std::filesystem::path source = "data\\";
+		std::filesystem::create_directories(destination);
+		for (auto& file : std::filesystem::recursive_directory_iterator(source))
+		{
+			std::filesystem::path currentFile = file.path();
+			std::filesystem::path newFile = destination / currentFile.relative_path();
+			if (std::filesystem::is_directory(currentFile))
+			{
+				std::filesystem::create_directories(newFile);
+			}
+			else
+			{
+				std::filesystem::create_directories(newFile.parent_path());
+				std::ifstream  src(currentFile, std::ios::binary);
+				std::ofstream  dst(newFile, std::ios::binary);
+				dst << src.rdbuf();
+			}
+		}
+	}
+
 	inline std::unordered_map<std::string, bus> readBusFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();

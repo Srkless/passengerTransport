@@ -62,6 +62,7 @@ namespace gui {
 
 	void DriverInterface(DriverAccount& driver);
 	void UserInterface(UserAccount& user);
+	void CreateSafetycopy(UserAccount& administrator);
 };
 
 void routeOverviewInterface(DriverAccount& driver);
