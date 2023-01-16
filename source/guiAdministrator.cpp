@@ -771,9 +771,9 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 	ftxui::Component countryInput = ftxui::Input(&country, "Enter country");
 
 	int t = 0;
-	auto backButton = ftxui::Button("BACK", [&] {gui::createCodeLocation(administrator); });
+	auto backButton = ftxui::Button(" BACK", [&] {gui::createCodeLocation(administrator); });
 
-	auto Enter = ftxui::Button("ENTER", [&] {if (location == "" || country == "") { flag = true; } else { writeLocation(country, location, path, data), IsEqual(data, path, name), gui::createCodeBooksInterface(administrator); } });
+	auto Enter = ftxui::Button("  ENTER", [&] {if (location == "" || country == "") { flag = true; } else { writeLocation(country, location, path, data), IsEqual(data, path, name), gui::createCodeBooksInterface(administrator); } });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
