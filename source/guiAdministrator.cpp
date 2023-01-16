@@ -649,23 +649,26 @@ inline bool is_equalFile(std::string name)
 
 	return false;
 }
-void writeLocation(std::string name, std::string country, std::filesystem::path path, std::ofstream& data)
+
+void writeBusModify(std::string brand, std::string model, std::string god, std::string registration, std::string NumSeats, std::filesystem::path path, std::ofstream& data)
 {
-	data.open(path, std::ios::app);
-	if (name != "" && country != "")
-	{
-		data.seekp(0, std::ios::end);
-		if (data.tellp() == 0)
-		{
-			data << name << "#" << country;
-		}
-		else
-		{
-			data << std::endl << name << "#" << country;
-		}
-	}
+
+	data.open(path);
+
+	if (brand != "" && model != "" && god != "" && registration != "" && NumSeats != "")
+		data << brand << "#" << model << "#" << god << "#" << registration << "#" << NumSeats;
+
 	data.close();
 };
+
+void writeLocationModify(std::string name, std::string country, std::filesystem::path path, std::ofstream& data)
+{
+	data.open(path);
+	data << name << "#" << country;
+	data.close();
+
+};
+
 void writeinFile(std::string name, std::filesystem::path data)
 {
 	if (std::filesystem::exists(data))
@@ -773,7 +776,7 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 	int t = 0;
 	auto backButton = ftxui::Button(" BACK", [&] {gui::createCodeLocation(administrator); });
 
-	auto Enter = ftxui::Button("  ENTER", [&] {if (location == "" || country == "") { flag = true; } else { writeLocation(country, location, path, data), IsEqual(data, path, name), gui::createCodeBooksInterface(administrator); } });
+	auto Enter = ftxui::Button("  ENTER", [&] {if (location == "" || country == "") { flag = true; } else { writeLocationModify(country, location, path, data), IsEqual(data, path, name), gui::createCodeBooksInterface(administrator); } });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
@@ -830,6 +833,7 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 
 
 };
+
 void gui::createCodeLocation(UserAccount& administrator)
 {
 	std::filesystem::path word1 = std::filesystem::current_path();
@@ -924,23 +928,7 @@ void gui::createCodeLocation(UserAccount& administrator)
 
 
 }
-void writeLocationBus(std::string brand, std::string model, std::string god, std::string registration, std::string NumSeats, std::filesystem::path path, std::ofstream& data)
-{
-	if (std::filesystem::exists(path))
-	{
-		data.open(path);
-		if (brand != "" && model != "" && god != "" && registration != "" && NumSeats != "")
-			data << std::endl << brand << "#" << model << "#" << god << "#" << registration << "#" << NumSeats;
-		data.close();
-	}
-	else
-	{
-		data.open(path);
-		if (brand != "" && model != "" && god != "" && registration != "" && NumSeats != "")
-			data << brand << "#" << model << "#" << god << "#" << registration << "#" << NumSeats;
-		data.close();
-	}
-};
+
 int IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string name)
 {
 	if (is_equalFile(name))
@@ -1001,8 +989,17 @@ int IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string name
 		Data2.close();
 	};
 	return 1;
-
 }
+
+bool isInt(std::string str)
+{
+	int num;
+	std::stringstream sstream(str);
+	if (sstream >> num)
+		return true;
+	return false;
+}
+
 void EnterBusInfo(UserAccount& administrator, std::string name)
 {
 	ftxui::Color bannerMessageColor = blue;
@@ -1030,11 +1027,12 @@ void EnterBusInfo(UserAccount& administrator, std::string name)
 	ftxui::Component SeatsInput = ftxui::Input(&Numseats, "Enter number of seats");
 
 	bool flag = false;
-
+	bool notIntFlag = false;
+	bool notIntFlag2 = false;
 	int t = 0;
 	auto backButton = ftxui::Button("     BACK", [&] { gui::createCodeBus(administrator); });
 
-	auto Enter = ftxui::Button("     ENTER", [&] {if (brand != "" && model != "" && god != "" && regis != "" && Numseats != "") { writeLocationBus(brand, model, god, regis, Numseats, path, data), IsEqualBus(data, path, name), gui::createCodeBooksInterface(administrator); } else { flag = true; }});
+	auto Enter = ftxui::Button("     ENTER", [&] {if (!isInt(Numseats) && Numseats != "") { notIntFlag = true; } else if (!isInt(god) && god != "") { notIntFlag2 = true; } else if (brand != "" && model != "" && god != "" && regis != "" && Numseats != "") { notIntFlag = false; notIntFlag2 = false; writeBusModify(brand, model, god, regis, Numseats, path, data), IsEqualBus(data, path, name), gui::createCodeBooksInterface(administrator); } else { flag = true; notIntFlag = false; notIntFlag2 = false; }});
 
 
 	auto component = ftxui::Container::Vertical({ brandInput,backButton,Enter,modelInput,YearInput,RegistrationInput,SeatsInput });
@@ -1053,7 +1051,7 @@ void EnterBusInfo(UserAccount& administrator, std::string name)
 				bannerMessage = "Bus";
 				bannerMessageColor = blue;
 			}
-			else if(flag)
+			else if (flag == 1)
 			{
 				bannerMessage = "Enter:";
 				bannerMessageColor = red;
@@ -1062,25 +1060,71 @@ void EnterBusInfo(UserAccount& administrator, std::string name)
 					brandInputColor = red;
 					bannerMessage += " Bus!";
 				}
+				else
+				{
+					brandInputColor = bright_green;
+				}
 				if (model == "")
 				{
 					modelInputColor = red;
 					bannerMessage += " Model!";
+				}
+				else
+				{
+					modelInputColor = bright_green;
 				}
 				if (god == "")
 				{
 					yearInputColor = red;
 					bannerMessage += " Prod. Year!";
 				}
+				else if (notIntFlag2)
+				{
+					yearInputColor = red;
+					bannerMessage += " Prod. Year Must Be A Number";
+				}
+				else
+				{
+					yearInputColor = bright_green;
+				}
 				if (regis == "")
 				{
 					registrationInputColor = red;
 					bannerMessage += " Reg.";
 				}
+				else
+				{
+					registrationInputColor = bright_green;
+				}
 				if (Numseats == "")
 				{
 					seatsInputColor = red;
 					bannerMessage += " Num. of Seats";
+				}
+				else if(notIntFlag)
+				{
+					seatsInputColor = red;
+					bannerMessage += " Num. Of Seats Must Be A Number";
+				}
+				else
+				{
+					seatsInputColor = bright_green;
+				}
+			}
+			else
+			{
+				bannerMessage = "";
+				if (notIntFlag)
+				{
+					seatsInputColor = red;
+					bannerMessage += " Num. Of Seats Must Be A Number";
+					bannerMessageColor = red;
+				}
+				if (notIntFlag2)
+				{
+					yearInputColor = red;
+					bannerMessage += " Prod. Year Must Be A Number";
+					bannerMessageColor = red;
 				}
 			}
 			return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
@@ -1630,6 +1674,7 @@ void gui::DeleteCodeBooks(UserAccount& administrator)
 	screen.Loop(renderer);
 
 };
+
 void EnterLocationModify(std::string name, UserAccount& administrator)
 {
 	
@@ -1652,7 +1697,7 @@ void EnterLocationModify(std::string name, UserAccount& administrator)
 	int t = 0;
 	auto backButton = ftxui::Button("BACK", [&] { gui::LocationModify(administrator); });
 
-	auto Enter = ftxui::Button("ENTER", [&] {writeLocation(country, location, path, data), EnterLocationModify(name,administrator), t = 0; });
+	auto Enter = ftxui::Button("ENTER", [&] {writeLocationModify(country, location, path, data), EnterLocationModify(name,administrator), t = 0; });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
@@ -1727,6 +1772,7 @@ void gui::LocationModify(UserAccount& administrator)
 	screen.Loop(renderer);
 
 };
+
 void EnterBusModify(std::string name, UserAccount& administrator)
 {
 
@@ -1753,7 +1799,7 @@ void EnterBusModify(std::string name, UserAccount& administrator)
 	int t = 0;
 	auto backButton = ftxui::Button("BACK", [&] { gui::BusModify(administrator); });
 
-	auto Enter = ftxui::Button("ENTER", [&] {writeLocationBus(brand, model, god, regis, Numseats, path, data), gui::createCodeBus(administrator), t = 0; });
+	auto Enter = ftxui::Button("ENTER", [&] {writeBusModify(brand, model, god, regis, Numseats, path, data), gui::createCodeBus(administrator), t = 0; });
 
 
 	auto component = ftxui::Container::Vertical({ brandInput,backButton,Enter,modelInput,YearInput,RegistrationInput,SeatsInput });
