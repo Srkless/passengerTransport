@@ -42,7 +42,7 @@ void routeOverviewInterface(DriverAccount& driver)
 	auto allDrivenRides = Radiobox(&drivenRideIds, &selectedAllDrivenRides);
 	auto allUndrivenRides = Radiobox(&undrivenRideIds, &selectedAllUndriverRides);
 	auto driveButton = Button("DRIVE", [&] {driver.driveRoute(undrivenRideIds[selectedAllUndriverRides]); driver.decreaseReport(); gui::DriverInterface(driver); });
-	auto backButton = Button("BACK", [&] {gui::DriverInterface(driver); });
+	auto backButton = Button("       BACK", [&] {gui::DriverInterface(driver); });
 	auto component = ftxui::Container::Vertical({ allDrivenRides, allUndrivenRides, driveButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
@@ -100,7 +100,7 @@ void reportsOverviewInterface(DriverAccount& driver)
 	auto allPassangerProblemsBox = Radiobox(&passangerProblems, &passProbSelect);
 	auto allBusProblemsBox = Radiobox(&busProblems, &busProbSelect);
 
-	auto backButton = Button("BACK", [&] {gui::DriverInterface(driver); });
+	auto backButton = Button("       BACK", [&] {gui::DriverInterface(driver); });
 	auto component = ftxui::Container::Vertical({ allReportsBox, allPassangerProblemsBox, allBusProblemsBox, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {

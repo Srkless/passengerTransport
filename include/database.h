@@ -50,25 +50,27 @@ namespace db
 		std::ifstream iFile(path);
 		std::unordered_map<std::string, bus> busMap;
 
-		while (!iFile.eof())
+		if (std::filesystem::exists(path))
 		{
-			path = std::filesystem::current_path();
-			path += "\\data\\codebooks\\";
+			while (!iFile.eof())
+			{
+				path = std::filesystem::current_path();
+				path += "\\data\\codebooks\\";
 
-			std::string name;
-			std::getline(iFile, name);
-			path += (name + ".txt");
+				std::string name;
+				std::getline(iFile, name);
+				path += (name + ".txt");
 
-			bus tmpBus;
+				bus tmpBus;
 
-			std::ifstream iFile2(path);
-			iFile2 >> tmpBus;
+				std::ifstream iFile2(path);
+				iFile2 >> tmpBus;
 
-			busMap[tmpBus.getRegistraion()] = tmpBus;
-			iFile2.close();
+				busMap[tmpBus.getRegistraion()] = tmpBus;
+				iFile2.close();
+			}
+			iFile.close();
 		}
-		iFile.close();
-
 		return busMap;
 	}
 
@@ -81,30 +83,32 @@ namespace db
 		std::ifstream iFile(path);
 		std::unordered_map<std::string, std::vector<std::string>> tourMap;
 
-		while (!iFile.eof())
+		if (std::filesystem::exists(path))
 		{
-			path = std::filesystem::current_path();
-			path += "\\data\\codebooks\\";
+			while (!iFile.eof())
+			{
+				path = std::filesystem::current_path();
+				path += "\\data\\codebooks\\";
 
-			std::string name;
-			std::getline(iFile, name);
-			path += (name + ".txt");
+				std::string name;
+				std::getline(iFile, name);
+				path += (name + ".txt");
 
-			std::vector<std::string> tmpTour;
-			std::string tmpString;
-			std::ifstream iFile2(path);
-			iFile2 >> tmpString;
-			iFile2.close();
+				std::vector<std::string> tmpTour;
+				std::string tmpString;
+				std::ifstream iFile2(path);
+				iFile2 >> tmpString;
+				iFile2.close();
 
-			std::stringstream ss(tmpString);
-			std::string item;
-			while (getline(ss, item, '#'))
-				tmpTour.push_back(item);
+				std::stringstream ss(tmpString);
+				std::string item;
+				while (getline(ss, item, '#'))
+					tmpTour.push_back(item);
 
-			tourMap[tmpTour[0]] = tmpTour;
+				tourMap[tmpTour[0]] = tmpTour;
+			}
+			iFile.close();
 		}
-		iFile.close();
-
 		return tourMap;
 	}
 
