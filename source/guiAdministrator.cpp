@@ -161,8 +161,13 @@ void gui::addRideInterface(UserAccount& administrator)
 			error = 2;
 		if (tourMap.size())
 		{
+			int counter = 0;
 			for (auto& tour : tourMap)
 			{
+				if (counter == allLocations.size())
+					break;
+				else
+					counter = 0;
 				if (tour.second.size() == allLocations.size())
 				{
 					for (int i = 0; i < allLocations.size(); i++)
@@ -172,6 +177,8 @@ void gui::addRideInterface(UserAccount& administrator)
 							error = 1;
 							break;
 						}
+						else
+							counter++;
 					}
 				}
 				else
@@ -208,8 +215,13 @@ void gui::addRideInterface(UserAccount& administrator)
 			error = 2;
 		if (tourMap.size())
 		{
+			int counter = 0;
 			for (auto& tour : tourMap)
 			{
+				if (counter == allLocations.size())
+					break;
+				else
+					counter = 0;
 				if (tour.second.size() == allLocations.size())
 				{
 					for (int i = 0; i < allLocations.size(); i++)
@@ -219,7 +231,9 @@ void gui::addRideInterface(UserAccount& administrator)
 							error = 1;
 							break;
 						}
-					}
+						else
+							counter++;
+					}	
 				}
 				else
 					error = 1;
