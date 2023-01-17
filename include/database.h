@@ -52,22 +52,30 @@ namespace db
 
 		if (std::filesystem::exists(path))
 		{
-			while (!iFile.eof())
+			iFile.seekg(0, std::ios::end);
+			if (iFile.peek() == std::ifstream::traits_type::eof())
 			{
-				path = std::filesystem::current_path();
-				path += "\\data\\codebooks\\";
+				return busMap;
+			}
+			else
+			{
+				while (!iFile.eof())
+				{
+					path = std::filesystem::current_path();
+					path += "\\data\\codebooks\\";
 
-				std::string name;
-				std::getline(iFile, name);
-				path += (name + ".txt");
+					std::string name;
+					std::getline(iFile, name);
+					path += (name + ".txt");
 
-				bus tmpBus;
+					bus tmpBus;
 
-				std::ifstream iFile2(path);
-				iFile2 >> tmpBus;
+					std::ifstream iFile2(path);
+					iFile2 >> tmpBus;
 
-				busMap[tmpBus.getRegistraion()] = tmpBus;
-				iFile2.close();
+					busMap[tmpBus.getRegistraion()] = tmpBus;
+					iFile2.close();
+				}
 			}
 			iFile.close();
 		}
@@ -85,29 +93,37 @@ namespace db
 
 		if (std::filesystem::exists(path))
 		{
-			while (!iFile.eof())
+			if (iFile.peek() == std::ifstream::traits_type::eof())
 			{
-				path = std::filesystem::current_path();
-				path += "\\data\\codebooks\\";
-
-				std::string name;
-				std::getline(iFile, name);
-				path += (name + ".txt");
-
-				std::vector<std::string> tmpTour;
-				std::string tmpString;
-				std::ifstream iFile2(path);
-				iFile2 >> tmpString;
-				iFile2.close();
-
-				std::stringstream ss(tmpString);
-				std::string item;
-				while (getline(ss, item, '#'))
-					tmpTour.push_back(item);
-
-				tourMap[tmpTour[0]] = tmpTour;
+				return tourMap;
 			}
-			iFile.close();
+			else
+			{
+				while (!iFile.eof())
+				{
+
+					path = std::filesystem::current_path();
+					path += "\\data\\codebooks\\";
+
+					std::string name;
+					std::getline(iFile, name);
+					path += (name + ".txt");
+
+					std::vector<std::string> tmpTour;
+					std::string tmpString;
+					std::ifstream iFile2(path);
+					iFile2 >> tmpString;
+					iFile2.close();
+
+					std::stringstream ss(tmpString);
+					std::string item;
+					while (getline(ss, item, '#'))
+						tmpTour.push_back(item);
+
+					tourMap[tmpTour[0]] = tmpTour;
+				}
+				iFile.close();
+			}
 		}
 		return tourMap;
 	}
@@ -157,11 +173,18 @@ namespace db
 		{
 			
 			std::ifstream iFile(schedulePath);
-			while (!iFile.eof())
+			if (iFile.peek() == std::ifstream::traits_type::eof())
 			{
-				std::string rideID;
-				iFile >> rideID;
-				tmp.addRideToSchedule(rideID);
+				return tmp;
+			}
+			else
+			{
+				while (!iFile.eof())
+				{
+					std::string rideID;
+					iFile >> rideID;
+					tmp.addRideToSchedule(rideID);
+				}
 			}
 		}
 		return tmp;

@@ -45,7 +45,7 @@ namespace gui {
 	void administrator_interface(UserAccount& administrator);
 	void accountSettingsInterface(UserAccount& administrator);
 	void createCodeBooksInterface(UserAccount& administrator);
-	void EnterLocation(UserAccount& administrator, std::string name);
+	void EnterLocation(UserAccount& administrator, std::string name, std::filesystem::path& path1, std::filesystem::path& path2);
 	void createCodeBus(UserAccount& administrator);
 	void createCodeTour(UserAccount& administrator);
 	void createCodeLocation(UserAccount& administrator);
