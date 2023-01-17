@@ -41,7 +41,7 @@ void routeOverviewInterface(DriverAccount& driver)
 	//db::writeUsersToFile(userDatabase);
 	auto allDrivenRides = Radiobox(&drivenRideIds, &selectedAllDrivenRides);
 	auto allUndrivenRides = Radiobox(&undrivenRideIds, &selectedAllUndriverRides);
-	auto driveButton = Button("DRIVE", [&] {driver.driveRoute(undrivenRideIds[selectedAllUndriverRides]); driver.decreaseReport(); gui::DriverInterface(driver); });
+	auto driveButton = Button("       DRIVE", [&] {driver.driveRoute(undrivenRideIds[selectedAllUndriverRides]); driver.decreaseReport(); gui::DriverInterface(driver); });
 	auto backButton = Button("       BACK", [&] {gui::DriverInterface(driver); });
 	auto component = ftxui::Container::Vertical({ allDrivenRides, allUndrivenRides, driveButton, backButton });
 

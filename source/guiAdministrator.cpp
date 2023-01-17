@@ -131,7 +131,7 @@ void gui::addRideInterface(UserAccount& administrator)
 
 	int flag = 0;
 
-	auto enterButton = ftxui::Button("DONE", [&] {
+	auto enterButton = ftxui::Button("   DONE", [&] {
 		std::vector<std::string> allLocations;
 			std::stringstream ss(Location);
 			while (std::getline(ss, item, ','))
@@ -236,7 +236,7 @@ void gui::addRideInterface(UserAccount& administrator)
 	}
 		});
 
-	auto backButton = ftxui::Button("BACK", [&] {gui::generateTravelWarrant(administrator); });
+	auto backButton = ftxui::Button("   BACK", [&] {gui::generateTravelWarrant(administrator); });
 
 	ftxui::Color inputColor = light_gray;
 	auto component = ftxui::Container::Vertical({ RideIDComponent, DriverComponent, BusRegistrationComponent, StartTimeComponent, EndTimeComponent, LocationComponent, enterButton, backButton });
@@ -375,8 +375,8 @@ void gui::deleteRideInterface(UserAccount& administrator)
 		flag = 1;
 	auto menu = Radiobox(&allRides, &selected);
 
-	auto enterButton = ftxui::Button("ENTER", [&] { deleteRideFile(allRides[selected]), gui::generateTravelWarrant(administrator); });
-	auto backButton = ftxui::Button("BACK", [&] {gui::generateTravelWarrant(administrator); });
+	auto enterButton = ftxui::Button("            ENTER", [&] { deleteRideFile(allRides[selected]), gui::generateTravelWarrant(administrator); });
+	auto backButton = ftxui::Button("             BACK", [&] {gui::generateTravelWarrant(administrator); });
 	//auto Enter = ftxui::Button("Enter", [&] {exit(0); });
 
 	auto component = ftxui::Container::Vertical({ menu, enterButton, backButton});
@@ -774,9 +774,9 @@ void gui::EnterLocation(UserAccount& administrator, std::string name)
 	ftxui::Component countryInput = ftxui::Input(&country, "Enter country");
 
 	int t = 0;
-	auto backButton = ftxui::Button(" BACK", [&] {gui::createCodeLocation(administrator); });
+	auto backButton = ftxui::Button("  BACK", [&] {gui::createCodeLocation(administrator); });
 
-	auto Enter = ftxui::Button("ENTER", [&] {if (location == "" || country == "") { flag = true; } else { writeLocationModify(country, location, path, data), IsEqual(data, path, name), gui::createCodeBooksInterface(administrator); } });
+	auto Enter = ftxui::Button(" ENTER", [&] {if (location == "" || country == "") { flag = true; } else { writeLocationModify(country, location, path, data), IsEqual(data, path, name), gui::createCodeBooksInterface(administrator); } });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
@@ -865,11 +865,11 @@ void gui::createCodeLocation(UserAccount& administrator)
 
 	bool flag = false;
 
-	auto backButton = ftxui::Button("BACK", [&] { gui::administrator_interface(administrator); });
+	auto backButton = ftxui::Button("       BACK", [&] { gui::administrator_interface(administrator); });
 	ftxui::Component usernameInput = ftxui::Input(&name, "Name codebook");
 
 	int t = 0;
-	auto Enter = ftxui::Button("ENTER", [&] {if (name == "") { flag = true; } else { writeinFile(name, word1), writeinFile(name, location3), EnterLocation(administrator, name), t = 1; }});
+	auto Enter = ftxui::Button("       ENTER", [&] {if (name == "") { flag = true; } else { writeinFile(name, word1), writeinFile(name, location3), EnterLocation(administrator, name), t = 1; }});
 
 
 	auto component = ftxui::Container::Vertical({ usernameInput,backButton,Enter });
@@ -1030,9 +1030,9 @@ void EnterBusInfo(UserAccount& administrator, std::string name)
 	bool notIntFlag = false;
 	bool notIntFlag2 = false;
 	int t = 0;
-	auto backButton = ftxui::Button("     BACK", [&] { gui::createCodeBus(administrator); });
+	auto backButton = ftxui::Button("       BACK", [&] { gui::createCodeBus(administrator); });
 
-	auto Enter = ftxui::Button("     ENTER", [&] {
+	auto Enter = ftxui::Button("       ENTER", [&] {
 		if (!isInt(Numseats) && Numseats != "") 
 		{ notIntFlag = true; } 
 		else if (!isInt(god) && god != "") 
@@ -1336,8 +1336,8 @@ void EnterTourInfo(UserAccount& administrator, std::string name, int& locationCo
 	ftxui::Component locationInput = ftxui::Input(&location, "Enter destination");
 
 	int t = 0;
-	auto backButton = ftxui::Button("DONE", [&] {if (locationCounter < 2) { flag = 2; } else { IsEqualTour(data, path, name), gui::createCodeTour(administrator); }});//IS EQual
-	auto enterButton = ftxui::Button("ENTER", [&] {if (location != "") { locationCounter++; writeTour(location, path, data), t = 1, EnterTourInfo(administrator, name, locationCounter); if (locationCounter >= 2) flag = 0; } else { flag = 1; }});
+	auto backButton = ftxui::Button("       DONE", [&] {if (locationCounter < 2) { flag = 2; } else { IsEqualTour(data, path, name), gui::createCodeTour(administrator); }});//IS EQual
+	auto enterButton = ftxui::Button("      ENTER", [&] {if (location != "") { locationCounter++; writeTour(location, path, data), t = 1, EnterTourInfo(administrator, name, locationCounter); if (locationCounter >= 2) flag = 0; } else { flag = 1; }});
 
 	//auto Enter = ftxui::Button("Exit", [&] { EnterBusInfo(username, name), t = 0; });//ENTER
 
