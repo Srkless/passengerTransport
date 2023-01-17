@@ -184,6 +184,12 @@ void gui::addRideInterface(UserAccount& administrator)
 				else
 					error = 1;
 			}
+			if (counter == allLocations.size())
+			{
+				error = 0;
+			}
+			else
+				counter = 0;
 		}
 		else
 			error = 1;
@@ -200,7 +206,7 @@ void gui::addRideInterface(UserAccount& administrator)
 		{
 			for (auto& bus : buses)
 			{
-				if (bus.first == BusRegistration)
+				if (bus.first != BusRegistration)
 				{
 					error = 2;
 				}
@@ -218,10 +224,6 @@ void gui::addRideInterface(UserAccount& administrator)
 			int counter = 0;
 			for (auto& tour : tourMap)
 			{
-				if (counter == allLocations.size())
-					break;
-				else
-					counter = 0;
 				if (tour.second.size() == allLocations.size())
 				{
 					for (int i = 0; i < allLocations.size(); i++)
@@ -238,9 +240,16 @@ void gui::addRideInterface(UserAccount& administrator)
 				else
 					error = 1;
 			}
+			if (counter == allLocations.size())
+			{
+				error = 0;
+			}
+			else
+				counter = 0;
 		}
 		else
 			error = 1;
+		
 		if (error == 0)
 		{
 			Ride ride(RideID, Driver, BusRegistration, StartTime, EndTime, allLocations[0], allLocations[1]);
@@ -733,7 +742,11 @@ int IsEqual(std::ofstream& data, std::filesystem::path path, std::string name)
 		CodeBooks2.erase(it);
 		for (int i = 0; i < CodeBooks2.size(); i++)
 		{
-			Data1 << CodeBooks2[i] << std::endl;
+			Data1.seekp(0, std::ios::end);
+			if (Data1.tellp() == 0)
+				Data1 << CodeBooks2[i];
+			else
+				Data1 << std::endl << CodeBooks2[i];
 		}
 		Data1.close();
 
@@ -759,7 +772,11 @@ int IsEqual(std::ofstream& data, std::filesystem::path path, std::string name)
 		Code.erase(it);
 		for (int i = 0; i < Code.size(); i++)
 		{
-			Data2 << Code[i] << std::endl;
+			Data2.seekp(0, std::ios::end);
+			if (Data2.tellp() == 0)
+				Data2 << Code[i];
+			else
+				Data2 << std::endl << Code[i];
 		}
 		Data2.close();
 
@@ -976,7 +993,12 @@ int IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string name
 		CodeBooks2.erase(it);
 		for (int i = 0; i < CodeBooks2.size(); i++)
 		{
-			Data1 << CodeBooks2[i] << std::endl;
+
+			Data1.seekp(0, std::ios::end);
+			if (Data1.tellp() == 0)
+				Data1 << CodeBooks2[i];
+			else
+				Data1 << std::endl << CodeBooks2[i];
 		}
 		Data1.close();
 
@@ -1002,7 +1024,11 @@ int IsEqualBus(std::ofstream& data, std::filesystem::path path, std::string name
 		Code.erase(it);
 		for (int i = 0; i < Code.size(); i++)
 		{
-			Data2 << Code[i] << std::endl;
+			Data2.seekp(0, std::ios::end);
+			if (Data2.tellp() == 0)
+				Data2 << Code[i];
+			else
+				Data2 << std::endl << Code[i];
 		}
 		Data2.close();
 	};
@@ -1014,7 +1040,8 @@ bool isInt(std::string str)
 	int num;
 	std::stringstream sstream(str);
 	if (sstream >> num)
-		return true;
+		if(num > 5)
+			return true;
 	return false;
 }
 
@@ -1292,7 +1319,11 @@ int IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string nam
 		CodeBooks2.erase(it);
 		for (int i = 0; i < CodeBooks2.size(); i++)
 		{
-			Data1 << CodeBooks2[i] << std::endl;
+			Data1.seekp(0, std::ios::end);
+			if (Data1.tellp() == 0)
+				Data1 << CodeBooks2[i];
+			else
+				Data1 << std::endl << CodeBooks2[i];
 		}
 		Data1.close();
 
@@ -1318,7 +1349,11 @@ int IsEqualTour(std::ofstream& data, std::filesystem::path path, std::string nam
 		Code.erase(it);
 		for (int i = 0; i < Code.size(); i++)
 		{
-			Data2 << Code[i] << std::endl;
+			Data2.seekp(0, std::ios::end);
+			if (Data2.tellp() == 0)
+				Data2 << CodeBooks2[i];
+			else
+				Data2 << std::endl << CodeBooks2[i];
 		}
 		Data2.close();
 
@@ -1622,28 +1657,44 @@ int DeleteFile1(std::string name)
 
 	for (int i = 0; i < CodeBooks2.size(); i++)
 	{
-		DATA << CodeBooks2[i] << std::endl;
+		DATA.seekp(0, std::ios::end);
+		if (DATA.tellp() == 0)
+			DATA << CodeBooks2[i];
+		else
+			DATA << std::endl << CodeBooks2[i];
 	};
 	DATA.close();
 
 	DATA.open(word2);
 	for (int i = 0; i < CodeBooks3.size(); i++)
 	{
-		DATA << CodeBooks3[i] << std::endl;
+		DATA.seekp(0, std::ios::end);
+		if (DATA.tellp() == 0)
+			DATA << CodeBooks3[i];
+		else
+			DATA << std::endl << CodeBooks3[i];
 	};
 	DATA.close();
 
 	DATA.open(word3);
 	for (int i = 0; i < CodeBooks4.size(); i++)
 	{
-		DATA << CodeBooks4[i] << std::endl;
+		DATA.seekp(0, std::ios::end);
+		if (DATA.tellp() == 0)
+			DATA << CodeBooks4[i];
+		else
+			DATA << std::endl << CodeBooks4[i];
 	};
 	DATA.close();
 
 	DATA.open(word4);
 	for (int i = 0; i < CodeBooks5.size(); i++)
 	{
-		DATA << CodeBooks5[i] << std::endl;
+		DATA.seekp(0, std::ios::end);
+		if (DATA.tellp() == 0)
+			DATA << CodeBooks5[i];
+		else
+			DATA << std::endl << CodeBooks5[i];
 	};
 	DATA.close();
 	return 1;
@@ -1722,11 +1773,10 @@ void EnterLocationModify(std::string name, UserAccount& administrator)
 	int t = 0;
 	auto backButton = ftxui::Button(" BACK", [&] { gui::LocationModify(administrator); });
 
-	auto Enter = ftxui::Button("ENTER", [&] {writeLocationModify(country, location, path, data), EnterLocationModify(name,administrator), t = 0; });
+	auto Enter = ftxui::Button("ENTER", [&] {writeLocationModify(country, location, path, data), gui::LocationModify(administrator), t = 0; });
 
 
 	auto component = ftxui::Container::Vertical({ locationInput,backButton,Enter,countryInput });
-
 
 
 	auto renderer = ftxui::Renderer(component, [&] {
