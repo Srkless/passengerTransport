@@ -53,7 +53,7 @@ namespace db
 		if (std::filesystem::exists(path))
 		{
 			iFile.seekg(0, std::ios::end);
-			if (iFile.tellg() == 0)
+			if (iFile.peek() == std::ifstream::traits_type::eof())
 			{
 				return busMap;
 			}
@@ -93,8 +93,7 @@ namespace db
 
 		if (std::filesystem::exists(path))
 		{
-			iFile.seekg(0, std::ios::end);
-			if (iFile.tellg() == 0)
+			if (iFile.peek() == std::ifstream::traits_type::eof())
 			{
 				return tourMap;
 			}
@@ -174,11 +173,18 @@ namespace db
 		{
 			
 			std::ifstream iFile(schedulePath);
-			while (!iFile.eof())
+			if (iFile.peek() == std::ifstream::traits_type::eof())
 			{
-				std::string rideID;
-				iFile >> rideID;
-				tmp.addRideToSchedule(rideID);
+				return tmp;
+			}
+			else
+			{
+				while (!iFile.eof())
+				{
+					std::string rideID;
+					iFile >> rideID;
+					tmp.addRideToSchedule(rideID);
+				}
 			}
 		}
 		return tmp;

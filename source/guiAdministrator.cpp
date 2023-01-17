@@ -1055,7 +1055,7 @@ void EnterBusInfo(UserAccount& administrator, std::string name, std::filesystem:
 		{ notIntFlag = true; } 
 		else if (!isInt(god) && god != "") 
 		{ notIntFlag2 = true; } 
-		else if (brand != "" && model != "" && isInt(god) && regis != "" && !isInt(Numseats)) 
+		else if (brand != "" && model != "" && isInt(god) && regis != "" && isInt(Numseats)) 
 		{ notIntFlag = false; notIntFlag2 = false; writeBusModify(brand, model, god, regis, Numseats, path, data), IsEqualBus(data, path, name), writeinFile(name, path1), writeinFile(name, path2), gui::createCodeBooksInterface(administrator); } 
 		else { flag = true; notIntFlag = false; notIntFlag2 = false; }});
 
