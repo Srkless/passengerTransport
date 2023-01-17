@@ -355,7 +355,11 @@ int deleteRideFile(std::string name)
 
 	for (int i = 0; i < allRides.size(); i++)
 	{
-		newRides << allRides[i] << std::endl;
+		newRides.seekp(0, std::ios::end);
+		if (newRides.tellp() == 0)
+			newRides << allRides[i];
+		else
+			newRides << std::endl << allRides[i];
 	};
 	newRides.close();
 	return 1;
