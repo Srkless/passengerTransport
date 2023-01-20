@@ -1169,7 +1169,7 @@ void EnterBusInfo(UserAccount& administrator, std::string name, std::filesystem:
 				else if(notIntFlag)
 				{
 					seatsInputColor = red;
-					bannerMessage += " Num. Of Seats Must Be A Number";
+					bannerMessage += " Num. Of Seats Must Be A Number and higher than 5";
 				}
 				else
 				{
