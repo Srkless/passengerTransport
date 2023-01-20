@@ -700,10 +700,23 @@ void writeinFile(std::string name, std::filesystem::path data)
 {
 	if (std::filesystem::exists(data))
 	{
-		std::ofstream oFile;
-		oFile.open(data, std::ios::app);
-		oFile << std::endl << name;
-		oFile.close();
+		std::ifstream iFile(data);
+		iFile.seekg(0, std::ios::beg);
+		if (!(iFile.peek() == std::ifstream::traits_type::eof()))
+		{
+			iFile.close();
+			std::ofstream oFile;
+			oFile.open(data, std::ios::app);
+			oFile << std::endl << name;
+			oFile.close();
+		}
+		else
+		{
+			std::ofstream oFile;
+			oFile.open(data);
+			oFile << name;
+			oFile.close();
+		}
 	}
 	else
 	{

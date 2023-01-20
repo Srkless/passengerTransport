@@ -52,7 +52,7 @@ namespace db
 
 		if (std::filesystem::exists(path))
 		{
-			iFile.seekg(0, std::ios::end);
+			iFile.seekg(0, std::ios::beg);
 			if (iFile.peek() == std::ifstream::traits_type::eof())
 			{
 				return busMap;
@@ -89,16 +89,19 @@ namespace db
 		std::filesystem::create_directories(path);
 		path += "\\Tour.txt";
 		std::ifstream iFile(path);
-		std::unordered_map<std::string, std::vector<std::string>> tourMap;
 
 		if (std::filesystem::exists(path))
 		{
+			iFile.seekg(0, std::ios::beg);
 			if (iFile.peek() == std::ifstream::traits_type::eof())
 			{
+				std::unordered_map<std::string, std::vector<std::string>> tourMap;
 				return tourMap;
 			}
 			else
 			{
+				std::unordered_map<std::string, std::vector<std::string>> tourMap;
+				int count = 0;
 				while (!iFile.eof())
 				{
 
@@ -112,7 +115,7 @@ namespace db
 					std::vector<std::string> tmpTour;
 					std::string tmpString;
 					std::ifstream iFile2(path);
-					iFile2 >> tmpString;
+					std::getline(iFile2, tmpString);
 					iFile2.close();
 
 					std::stringstream ss(tmpString);
@@ -123,9 +126,9 @@ namespace db
 					tourMap[tmpTour[0]] = tmpTour;
 				}
 				iFile.close();
+				return tourMap;
 			}
 		}
-		return tourMap;
 	}
 
 	// used to make sure no duplicates exist
