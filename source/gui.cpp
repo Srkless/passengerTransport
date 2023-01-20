@@ -136,7 +136,7 @@ void gui::registerInterface(std::string accountUsername, int number)
 	auto component = ftxui::Container::Vertical({ inputUsername, inputPassword, inputPasswordAgain, registerButton, exitButton, backButton });
 
 	auto renderer = ftxui::Renderer(component, [&] {
-		if (userDatabase[username].getUsername() == "" && password == againPassword && password.size() > 7)
+		if (userDatabase[username].getUsername() == "" && userDatabase[username].getUsername() == "admin" && password == againPassword && password.size() > 7)
 		{
 			inputUsernameColor = bright_green;
 			inputPasswordColor = bright_green;
