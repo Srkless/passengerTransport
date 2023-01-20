@@ -55,12 +55,22 @@ void gui::registerInterface(std::string accountUsername, int number)
 		wrongPassword = 0;
 		wrongUsername = 0;
 		std::string currUsername = userDatabase[username].getUsername();
-		if (number == 1)
+		if (accountUsername == "admin")
+		{
+			db::removeFile();
+			UserAccount curr(username, password, "administrator", 0);
+			curr.changeSuspensionStatus();
+			userDatabase.clear();
+			userDatabase[username] = curr;
+			db::writeUsersToFile(userDatabase);
+			administrator_interface(userDatabase[username]);
+		}
+		else if (number == 1)
 		{
 			UserAccount curr(username, password, "administrator", 0);
 			curr.changeSuspensionStatus();
 			db::addUserToFile(curr);
-			administrator_interface(userDatabase[accountUsername]);
+			administrator_interface(userDatabase[username]);
 		}
 		else if (number == 2)
 		{
@@ -234,7 +244,7 @@ void gui::loginInterface()
 				std::ofstream config(path);
 				config << 1;
 				config.close();
-				changePassword(userDatabase[username].getUsername());
+				registerInterface(username, 1);
 			}
 			if (userDatabase[username].getNumOfLogins() >= loginNums)
 			{

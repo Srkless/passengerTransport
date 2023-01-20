@@ -358,6 +358,7 @@ namespace db
 		return reports;
 	}
 
+	
 	inline std::unordered_map<std::string, ProblemReport> loadProblemReportsFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
@@ -408,6 +409,16 @@ namespace db
 		oFile.close();
 	}
 
+	inline void removeFile()
+	{
+		std::filesystem::path path = std::filesystem::current_path();
+		path += "\\data\\users";
+		std::filesystem::create_directories(path);
+		path += "\\userData.txt";
+
+		std::filesystem::remove(path);
+	}
+
 	// write users to database
 	inline void writeUsersToFile(std::unordered_map<std::string, UserAccount>& map)
 	{
@@ -416,20 +427,32 @@ namespace db
 		std::filesystem::create_directories(path);
 		path += "\\userData.txt";
 
-		std::ofstream oFile(path);
-
 		for (auto& user : map)
 		{
 			if (user.second.getUsername() != "")
 			{
-				oFile.seekp(0, std::ios::end);
-				if (oFile.tellp() == 0)
-					oFile << user.second;
-				else
+
+				std::ifstream iFile(path);
+				iFile.seekg(0, std::ios::beg);
+				if (!(iFile.peek() == std::ifstream::traits_type::eof()))
+				{
+					iFile.close();
+					std::ofstream oFile;
+					oFile.open(path, std::ios::app);
 					oFile << std::endl << user.second;
+					oFile.close();
+				}
+				else
+				{
+					iFile.close();
+					std::ofstream oFile;
+					oFile.open(path);
+					oFile << user.second;
+					oFile.close();
+				}
 			}
 		}
-		oFile.close();
+		
 	}
 
 	template<typename T>
