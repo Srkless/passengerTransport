@@ -1,4 +1,5 @@
 #include "gui.h"
+#include <iomanip>
 
 void viewAllRoutsInterface(UserAccount& user)
 {
@@ -336,7 +337,9 @@ void viewTicketsInterface(UserAccount& user)
 void viewTicketInterface(UserAccount& user, BusTicket& ticket)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string bannerMessage1 = "Ride ID: " + ticket.getRideID();
+	std::string bannerMessage1 = "Ride ID: " + ticket.getRideID() + " Price: ";
+	std::ostringstream sstream; sstream << std::fixed << std::setprecision(2) << ticket.getPrice(); std::string priceString = sstream.str();
+	bannerMessage1 += priceString;
 	std::string bannerMessage2 = "Start Location: " + ticket.getStartLocation();
 	std::string bannerMessage3 = "End Location: " + ticket.getEndLocation();
 	std::string bannerMessage4 = "Start Time: " + ticket.getStartTime() + " Est.Arrival Time: " + ticket.getEndTime();

@@ -17,9 +17,10 @@ private:
 	bool m_hasBaggage = false;
 	std::string m_startTime;
 	std::string m_endTime;
+	double m_price;
 public:
 	BusTicket();
-	BusTicket(std::string rideID, std::string startLocation, std::string endLocation, std::string startTime, std::string endTime, bool hasBaggage = false);
+	BusTicket(std::string rideID, std::string startLocation, std::string endLocation, std::string startTime, std::string endTime, bool hasBaggage = false, double price = 0);
 	
 	void setRideID(const std::string&);
 	void setStartLocation(const std::string&);
@@ -33,6 +34,7 @@ public:
 	std::string getStartTime();
 	std::string getEndTime();
 	bool hasBaggage();
+	double getPrice();
 
 	double generatePrice(Ride& ride);
 	void addBaggage();

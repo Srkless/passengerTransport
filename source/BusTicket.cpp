@@ -5,8 +5,8 @@ BusTicket::BusTicket()
 {
 }
 
-BusTicket::BusTicket(std::string rideID, std::string startLocation, std::string endLocation, std::string startTime, std::string endTime, bool hasBaggage)
-	: m_rideID(rideID), m_startLocation(startLocation), m_endLocation(endLocation), m_startTime(startTime), m_endTime(endTime), m_hasBaggage(hasBaggage)
+BusTicket::BusTicket(std::string rideID, std::string startLocation, std::string endLocation, std::string startTime, std::string endTime, bool hasBaggage, double price)
+	: m_rideID(rideID), m_startLocation(startLocation), m_endLocation(endLocation), m_startTime(startTime), m_endTime(endTime), m_hasBaggage(hasBaggage), m_price(price)
 {}
 
 void BusTicket::setRideID(const std::string& ID)
@@ -64,6 +64,11 @@ bool BusTicket::hasBaggage()
 	return m_hasBaggage;
 }
 
+double BusTicket::getPrice()
+{
+	return m_price;
+}
+
 double BusTicket::generatePrice(Ride& currentRide)
 {
 	std::vector<std::string> route;
@@ -102,7 +107,8 @@ double BusTicket::generatePrice(Ride& currentRide)
 	{
 		route.push_back(m_endLocation);
 	}
-	return (7 * route.size() + (2 * m_hasBaggage));
+	m_price = (7 * route.size() + (2 * m_hasBaggage));
+	return m_price;
 }
 
 void BusTicket::addBaggage()
@@ -275,7 +281,7 @@ void BusTicket::writeToFile(UserAccount& usr, Ride& ride)
 		std::filesystem::create_directories(path);
 		path += (m_rideID + "_" + std::to_string(tickets[m_rideID]) + ".txt");
 		std::ofstream outFile(path);
-		outFile << m_rideID << "#" << m_startLocation << "#" << m_endLocation << "#" << m_hasBaggage << "#" << ride.getStartTime() << "#" << ride.getEndTime();
+		outFile << m_rideID << "#" << m_startLocation << "#" << m_endLocation << "#" << m_hasBaggage << "#" << ride.getStartTime() << "#" << ride.getEndTime() << "#" << m_price;
 		outFile.close();
 	}
 }
@@ -291,11 +297,11 @@ BusTicket BusTicket::readFromFile(UserAccount& usr, std::string& name)
 	std::stringstream sstream(line);
 	std::vector<std::string> arr;
 	size_t count = 0;
-	while (std::getline(sstream, line, '#') && count < 6)
+	while (std::getline(sstream, line, '#') && count < 7)
 	{
 		arr.push_back(line);
 		count++;
 	}
-	BusTicket tmp(arr[0], arr[1], arr[2], arr[4], arr[5], std::stoi(arr[3]));
+	BusTicket tmp(arr[0], arr[1], arr[2], arr[4], arr[5], std::stoi(arr[3]), std::stod(arr[6]));
 	return tmp;
 }
