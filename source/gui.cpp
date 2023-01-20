@@ -57,7 +57,7 @@ void gui::registerInterface(std::string accountUsername, int number, bool flagFi
 		std::string currUsername = userDatabase[username].getUsername();
 		if (number == 1)
 		{
-			if (flag == true)
+			if (flagFirst)
 			{
 				std::filesystem::path path = std::filesystem::current_path();
 				path += "\\data";
@@ -86,6 +86,7 @@ void gui::registerInterface(std::string accountUsername, int number, bool flagFi
 			DriverAccount curr(username, password, "driver", 0);
 			curr.changeSuspensionStatus();
 			db::addUserToFile(curr);
+			userDatabase[curr.getUsername()] = curr;
 			administrator_interface(userDatabase[accountUsername]);
 		}
 		else

@@ -417,15 +417,20 @@ namespace db
 		path += "\\userData.txt";
 
 		std::ofstream oFile(path);
+		bool flag = false;
 
 		for (auto& user : map)
 		{
 			if (user.second.getUsername() != "")
 			{
-				oFile.seekp(0, std::ios::end);
-				if (oFile.tellp() == 0)
-					if(!(user.second.getUsername() == ""))
-						oFile << user.second;
+				if(flag == false)
+				{
+					oFile.seekp(0, std::ios::end);
+					if (oFile.tellp() == 0)
+						if (!(user.second.getUsername() == ""))
+							oFile << user.second;
+					flag = true;
+				}
 				else
 					if (!(user.second.getUsername() == ""))
 						oFile << std::endl << user.second;
