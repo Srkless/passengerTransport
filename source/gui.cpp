@@ -14,7 +14,7 @@
 
 int pressed = 0;
 
-void gui::registerInterface(std::string accountUsername, int number)
+void gui::registerInterface(std::string accountUsername, int number, bool flagFirst)
 {
 	std::string username;
 	std::string password;
@@ -57,10 +57,29 @@ void gui::registerInterface(std::string accountUsername, int number)
 		std::string currUsername = userDatabase[username].getUsername();
 		if (number == 1)
 		{
-			UserAccount curr(username, password, "administrator", 0);
-			curr.changeSuspensionStatus();
-			db::addUserToFile(curr);
-			administrator_interface(userDatabase[accountUsername]);
+			if (flag == true)
+			{
+				std::filesystem::path path = std::filesystem::current_path();
+				path += "\\data";
+				std::filesystem::create_directories(path);
+				path += "\\config.txt";
+				std::ofstream config(path);
+				config << 1;
+				config.close();
+				userDatabase.erase("admin");
+				UserAccount curr(username, password, "administrator", 0);
+				curr.changeSuspensionStatus();
+				userDatabase[curr.getUsername()] = curr;
+				db::writeUsersToFile(userDatabase);
+				administrator_interface(userDatabase[curr.getUsername()]);
+			}
+			else
+			{
+				UserAccount curr(username, password, "administrator", 0);
+				curr.changeSuspensionStatus();
+				db::addUserToFile(curr);
+				administrator_interface(userDatabase[accountUsername]);
+			}
 		}
 		else if (number == 2)
 		{
@@ -113,7 +132,7 @@ void gui::registerInterface(std::string accountUsername, int number)
 	auto exitButton = ftxui::Button("EXIT", [&] { exit(0); });
 	auto backButton = ftxui::Button("BACK", [&]
 		{
-			if (userDatabase[accountUsername].getAccountType() == "administrator")
+			if (userDatabase[accountUsername].getAccountType() == "administrator" && !flagFirst)
 			administrator_interface(userDatabase[accountUsername]);
 			else if (userDatabase[accountUsername].getAccountType() == "driver")
 			{
@@ -232,9 +251,9 @@ void gui::loginInterface()
 			if (userDatabase[username].getUsername() == "admin" && configNum == 0)
 			{
 				std::ofstream config(path);
-				config << 1;
+				config << 0;
 				config.close();
-				changePassword(userDatabase[username].getUsername());
+				registerInterface(userDatabase[username].getUsername(), 1, true);
 			}
 			if (userDatabase[username].getNumOfLogins() >= loginNums)
 			{

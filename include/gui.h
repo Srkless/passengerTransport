@@ -39,7 +39,7 @@ namespace {
 namespace gui {
 
 	void loginInterface();
-	void registerInterface(std::string accountUsername, int number);
+	void registerInterface(std::string accountUsername, int number, bool flagFirst = false);
 	void changePassword(std::string username);
 
 	void administrator_interface(UserAccount& administrator);

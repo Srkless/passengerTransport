@@ -424,9 +424,11 @@ namespace db
 			{
 				oFile.seekp(0, std::ios::end);
 				if (oFile.tellp() == 0)
-					oFile << user.second;
+					if(!(user.second.getUsername() == ""))
+						oFile << user.second;
 				else
-					oFile << std::endl << user.second;
+					if (!(user.second.getUsername() == ""))
+						oFile << std::endl << user.second;
 			}
 		}
 		oFile.close();
