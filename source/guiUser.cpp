@@ -337,7 +337,7 @@ void viewTicketsInterface(UserAccount& user)
 void viewTicketInterface(UserAccount& user, BusTicket& ticket)
 {
 	auto screen = ftxui::ScreenInteractive::TerminalOutput();
-	std::string bannerMessage1 = "Ride ID: " + ticket.getRideID() + " Ticket Price: ";
+	std::string bannerMessage1 = "Ride ID: " + ticket.getRideID() + "   -   Ticket Price: ";
 	std::ostringstream sstream; sstream << std::fixed << std::setprecision(2) << ticket.getPrice(); std::string priceString = sstream.str();
 	bannerMessage1 += priceString;
 	std::string bannerMessage2 = "Start Location: " + ticket.getStartLocation();
