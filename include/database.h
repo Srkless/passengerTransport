@@ -343,6 +343,7 @@ namespace db
 				std::string name;
 				std::getline(iFile, name);
 				path += name;
+				path += ".txt";
 
 				Report rep;
 
@@ -361,7 +362,7 @@ namespace db
 	inline std::unordered_map<std::string, ProblemReport> loadProblemReportsFromFile()
 	{
 		std::filesystem::path path = std::filesystem::current_path();
-		path += "\\data\\reports";
+		path += "\\data\\problemReports";
 		std::filesystem::create_directories(path);
 		path += "\\allProblemReports.txt";
 		std::unordered_map<std::string, ProblemReport> problemReports;
@@ -372,11 +373,12 @@ namespace db
 			while (!iFile.eof())
 			{
 				std::filesystem::path path = std::filesystem::current_path();
-				path += "\\data\\reports\\";
+				path += "\\data\\problemReports\\";
 
 				std::string name;
 				std::getline(iFile, name);
 				path += name;
+				path += ".txt";
 
 				ProblemReport probRep;
 

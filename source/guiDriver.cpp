@@ -107,11 +107,11 @@ void reportsOverviewInterface(DriverAccount& driver)
 		return ftxui::vbox({ center(bold(ftxui::text(bannerMessage)) | vcenter | size(HEIGHT, EQUAL, 3) | ftxui::color(bannerMessageColor)),
 			separatorDouble(), vbox({
 				center(hbox(text(""), allReportsBox->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-				(reportSelect > 0)?center(hbox(text(allReports[reportSelect]))) | borderHeavy | size(WIDTH, EQUAL, 150) : center(hbox()),
+				(reportSelect > 0) ? center(hbox(text(reports[allReports[reportSelect]].getContent()))) | borderHeavy | size(WIDTH, EQUAL, 150) : center(hbox()),
 				center(hbox(text(""), allPassangerProblemsBox->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-				(passProbSelect > 0)?center(hbox(text(passangerProblems[passProbSelect]))) | borderHeavy | size(WIDTH, EQUAL, 150) : center(hbox()),
+				(passProbSelect > 0) ? center(hbox(text(problems[passangerProblems[passProbSelect]].getContent()))) | borderHeavy | size(WIDTH, EQUAL, 150) : center(hbox()),
 				center(hbox(text(""), allBusProblemsBox->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(light_gray) | hcenter)),
-				(busProbSelect > 0)?center(hbox(text(busProblems[busProbSelect]))) | borderHeavy | size(WIDTH, EQUAL, 150) : center(hbox()),
+				(busProbSelect > 0) ? center(hbox(text(problems[busProblems[busProbSelect]].getContent()))) | borderHeavy | size(WIDTH, EQUAL, 150) : center(hbox()),
 				center(hbox(backButton->Render() | size(WIDTH, EQUAL, 20) | ftxui::color(bright_green) | hcenter)) }) }) | hcenter | color(white) | borderHeavy | size(WIDTH, EQUAL, 150);
 		});
 	screen.Loop(renderer);

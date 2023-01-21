@@ -159,40 +159,43 @@ void gui::addRideInterface(UserAccount& administrator)
 		}
 		else
 			error = 2;
-		if (tourMap.size())
+		if (error == 0)
 		{
-			int counter = 0;
-			for (auto& tour : tourMap)
+			if (tourMap.size())
 			{
-				if (counter == allLocations.size())
-					break;
-				else
-					counter = 0;
-				if (tour.second.size() == allLocations.size())
+				int counter = 0;
+				for (auto& tour : tourMap)
 				{
-					for (int i = 0; i < allLocations.size(); i++)
+					if (counter == allLocations.size())
+						break;
+					else
+						counter = 0;
+					if (tour.second.size() == allLocations.size())
 					{
-						if (tour.second[i] != allLocations[i])
+						for (int i = 0; i < allLocations.size(); i++)
 						{
-							error = 1;
-							break;
+							if (tour.second[i] != allLocations[i])
+							{
+								error = 1;
+								break;
+							}
+							else
+								counter++;
 						}
-						else
-							counter++;
 					}
+					else
+						error = 1;
+				}
+				if (counter == allLocations.size())
+				{
+					error = 0;
 				}
 				else
-					error = 1;
-			}
-			if (counter == allLocations.size())
-			{
-				error = 0;
+					counter = 0;
 			}
 			else
-				counter = 0;
+				error = 1;
 		}
-		else
-			error = 1;
 		if(error == 0)
 		{
 			Ride ride(RideID, Driver, BusRegistration, StartTime, EndTime, allLocations[0], locations, allLocations[allLocations.size() - 1]);
@@ -219,37 +222,41 @@ void gui::addRideInterface(UserAccount& administrator)
 		}
 		else
 			error = 2;
-		if (tourMap.size())
+		if(error == 0)
+
 		{
-			int counter = 0;
-			for (auto& tour : tourMap)
+			if (tourMap.size())
 			{
-				if (tour.second.size() == allLocations.size())
+				int counter = 0;
+				for (auto& tour : tourMap)
 				{
-					for (int i = 0; i < allLocations.size(); i++)
+					if (tour.second.size() == allLocations.size())
 					{
-						if (tour.second[i] != allLocations[i])
+						for (int i = 0; i < allLocations.size(); i++)
 						{
-							error = 1;
-							break;
+							if (tour.second[i] != allLocations[i])
+							{
+								error = 1;
+								break;
+							}
+							else
+								counter++;
 						}
-						else
-							counter++;
-					}	
+					}
+					else
+						error = 1;
+				}
+				if (counter == allLocations.size())
+				{
+					error = 0;
 				}
 				else
-					error = 1;
-			}
-			if (counter == allLocations.size())
-			{
-				error = 0;
+					counter = 0;
 			}
 			else
-				counter = 0;
+				error = 1;
+
 		}
-		else
-			error = 1;
-		
 		if (error == 0)
 		{
 			Ride ride(RideID, Driver, BusRegistration, StartTime, EndTime, allLocations[0], allLocations[1]);
